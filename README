@@ -1,6 +1,9 @@
 /*************************************************/
 /*    !!! Sjamayee is WORK IN PROGRESS !!!       */
 /* THE CODE IS NOT USEFUL IN IT'S CURRENT STATE. */
+/*                    *******                    */
+/* ***     NEEDS SOME MAJOR REFACTORINGS     *** */
+/* **  TO ACTIVATE THE EXISTING FUNCTIONALITY ** */
 /*************************************************/
 
 Sjamayee is a data browser, explorer and object composer.
@@ -18,6 +21,19 @@ Can be used as an alternative console application, evt. for cross-platform (like
 Publishing/combining databases/files to the intranet/internet and thereby using added functionality, like Google AJAX Language API.
 
 Using Yahoo Pipes for adding webcontent.
+
+Some characteristics:
+- a dynamic grid (default/setting: -25/+15 columns 10/20 rows).
+- parent/child/root.
+- every cell (parent/child) can become the new ROOT for a new navigation (-25/0/+15).
+- fast to leftmost column (HOME) and to the rightmost column (END).
+- CRUD on relations/references with UNDO/REDO.
+- MODEL and DATA environments.
+- MODEL for defining model objects/references with there generator texts.
+- DATA for the end-user environment.
+- in MODEL and DATA there's a list with all objects and grid with all references between the objects.
+- polymorphic browsing ex. resource->employee->manager->CTO.
+- in each class the object exposes the appropriate relations. 
 
 Goal:
 
@@ -37,10 +53,10 @@ Goal:
 
 New/Other Goal: The same simple interface on all data sources, like:
 
-1. Sjamayee on Drupal: A view on all Drupals and their dynamic content.
-2. Sjamayee on Salesforce: A view/console for Salesforce.com.
-3. Sjamayee on Git: A view on Git (repositories).
-4. Sjamayee on MySql, Oracle, ... (database).
-5. Sjamayee on SAP, Documentum and others.
-5. Sjamayee on the Semantic Web (RDF) ...
+1. sjamayee4drupal / Sjamayee on Drupal: A view on all Drupals and their dynamic content.
+2. sjamayee4sfdc   / Sjamayee on Salesforce: A view/console for Salesforce.com.
+3. sjamayee4git    / Sjamayee on Git: A view on Git (repositories).
+4. sjamayee4db     / Sjamayee on MySql, Oracle, ... (database).
+5. sjamayee4sap    / Sjamayee on SAP, Documentum and others.
+5. sjamayee4ppp    / Sjamayee on the Semantic Web (RDF) ...
 
