@@ -1,12 +1,19 @@
+/*************************************************/
+/*    !!! Sjamayee is WORK IN PROGRESS !!!       */
+/* THE CODE IS NOT USEFUL IN IT'S CURRENT STATE. */
+/*************************************************/
+
 Sjamayee is a data browser, explorer and object composer.
 
 Sjamayee is a fast data browser, gives quick access to all your data in a dynamic grid.
 
-All data is viewed in one grid, without scrollbars, for fast navigation with keys or mousewheel.
+All data is viewed in one grid, without scrollbars, for fast navigation with navigation-keys/mousewheel.
+Could be used as another view on the data of a lot of products like Drupal, Salesforce.com, Sap, Documentum and
+all other products for which we write a sjamayee interface (scrambler and dataservices).
 Helps in data navigation and does not change your data in any way.
 Shows all data in a where-used/what-used structure and remembers the navigation path.
 Completely written in javascript and extendable with webservices.
-Can be used as an alternative console application, evt. for cross-platform (like Salesforce.com, SAP, ...).
+Can be used as an alternative console application, evt. for cross-platform (like Salesforce.com, SAP, Documentum, ...).
 
 Publishing/combining databases/files to the intranet/internet and thereby using added functionality, like Google AJAX Language API.
 
@@ -30,9 +37,10 @@ Goal:
 
 New/Other Goal: The same simple interface on all data sources, like:
 
-1. Sjamayee on Drupal: A view on all Drupals and there dynamic content.
+1. Sjamayee on Drupal: A view on all Drupals and their dynamic content.
 2. Sjamayee on Salesforce: A view/console for Salesforce.com.
 3. Sjamayee on Git: A view on Git (repositories).
 4. Sjamayee on MySql, Oracle, ... (database).
-5. Sjamayee on the Semantic Web (RDF) ... (a part of the hole internet).
+5. Sjamayee on SAP, Documentum and others.
+5. Sjamayee on the Semantic Web (RDF) ...
 
