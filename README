@@ -27,13 +27,13 @@ Some characteristics:
 - parent/child/root.
 - every cell (parent/child) can become the new ROOT for a new navigation (-25/0/+15).
 - fast to leftmost column (HOME) and to the rightmost column (END).
-- CRUD on relations/references with UNDO/REDO.
+- CRUD on objects and relations/references with UNDO/REDO.
 - MODEL and DATA environments.
 - MODEL for defining model objects/references with there generator texts.
 - DATA for the end-user environment.
 - in MODEL and DATA there's a list with all objects and grid with all references between the objects.
 - polymorphic browsing ex. resource->employee->manager->CTO.
-- in each class the object exposes the appropriate relations. 
+- in each class an object exposes the appropriate/specific relations/references. 
 
 Goal:
 
