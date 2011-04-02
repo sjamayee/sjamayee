@@ -1,9 +1,15 @@
 /*************************************************/
 /*    !!! Sjamayee is WORK IN PROGRESS !!!       */
+/*                                               */
 /* THE CODE IS NOT USEFUL IN IT'S CURRENT STATE. */
 /*                    *******                    */
 /* ***     NEEDS SOME MAJOR REFACTORINGS     *** */
 /* **  TO ACTIVATE THE EXISTING FUNCTIONALITY ** */
+/*                                               */
+/* The current demo is just a bunch of test data */
+/* without any meaning/logic (just technical).   */
+/*                                               */
+/* Next demo: sjamayee4drupal                    */
 /*************************************************/
 
 Sjamayee is a data browser, explorer and object composer.
@@ -29,11 +35,15 @@ Some characteristics:
 - fast to leftmost column (HOME) and to the rightmost column (END).
 - CRUD on objects and relations/references with UNDO/REDO.
 - MODEL and DATA environments.
-- MODEL for defining model objects/references with there generator texts.
+- MODEL for defining model objects/references with their generator texts.
 - DATA for the end-user environment.
 - in MODEL and DATA there's a list with all objects and grid with all references between the objects.
 - polymorphic browsing ex. resource->employee->manager->CTO.
 - in each class an object exposes the appropriate/specific relations/references. 
+- generator for text generation from the model/data texts.
+- scrambler module for capturing data in the sjamayee model.
+- scrambler can be standard for some generic uses like Drupal (menus,taxonomy,fields/CCK).
+- specific uses need specific scramblers.   
 
 Goal:
 
