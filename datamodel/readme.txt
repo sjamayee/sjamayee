@@ -19,7 +19,7 @@ pei: parent_entity_id			-> model_entities/data_entities
 pid: previous_id					-> same dataset (texts,model_relations,data_relations)
 tid: type_id							-> types
 txi: text_id 							-> texts
-exi: entity_ancestor_id 	-> model_entities (entity extends entity)
+exi: entended_entity_id 	-> model_entities (entity extends entity)
 
 Other fieldnames						 Values
 ---------------------------------------------------------------
