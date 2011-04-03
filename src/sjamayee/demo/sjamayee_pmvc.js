@@ -4531,7 +4531,8 @@ var RelationProxy = new Class({
 	getItems: function(nivo) {
 	  var result = this.parent(nivo);
     //Sort DESCENDING
-    result.sort(RelationProxy.sortName);
+    //result.sort(RelationProxy.sortName);
+    result.sort(RelationProxy.sortValue);
 	  return result;
 	},		
 	addVirtualRelation: function(relation) {
@@ -4703,6 +4704,9 @@ var RelationProxy = new Class({
   	}
   }  
 });
+/*RelationProxy.sortName = function(a,b) {
+  return (a.name < b.name)?-1:1;  
+};*/
 RelationProxy.sortValue = function(a,b) {
   return (a.val < b.val)?-1:1;  
 };
