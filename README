@@ -1,16 +1,23 @@
-/*************************************************/
-/*    !!! Sjamayee is WORK IN PROGRESS !!!       */
-/*                                               */
-/* THE CODE IS NOT USEFUL IN IT'S CURRENT STATE. */
-/*                    *******                    */
-/* ***     NEEDS SOME MAJOR REFACTORINGS     *** */
-/* **  TO ACTIVATE THE EXISTING FUNCTIONALITY ** */
-/*                                               */
-/* The current demo is just a bunch of test data */
-/* without any meaning/logic (just technical).   */
-/*                                               */
-/* Next demo: sjamayee4drupal                    */
-/*************************************************/
+/*****************************************************/
+/*      !!! Sjamayee is WORK IN PROGRESS !!!         */
+/*                                                   */
+/*  THE CODE IS NOT USEFUL IN IT'S CURRENT STATE.    */
+/*                    *******                        */
+/*  ***     NEEDS SOME MAJOR REFACTORINGS     ***    */
+/*  **  TO ACTIVATE THE EXISTING FUNCTIONALITY **    */
+/*                                                   */
+/* The current demo is just a bunch of test data     */
+/* without any meaning/logic (just technical).       */
+/*                                                   */
+/* Navigation does not work for the moment!!!        */
+/*                                                   */
+/* Should give at least page in these browsers:      */
+/*   Google Chrome v10.0                             */
+/*   Firefox v3.6.15                                 */
+/*   Safari v5.0.3                                   */
+/*                                                   */
+/* Next demo: sjamayee4drupal (with full navigation) */
+/*****************************************************/
 
 Sjamayee is a data browser, explorer and object composer.
 
