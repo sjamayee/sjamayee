@@ -19,13 +19,16 @@
 /* Next demo: sjamayee4drupal (with full navigation) */
 /*****************************************************/
 
-Sjamayee is a data browser, explorer and object composer.
+It does not do anything yet!
 
-Sjamayee is a fast data browser, gives quick access to all your data in a dynamic grid.
+What it should do:
+
+Sjamayee is a data browser, explorer and object composer.
+It should give quick access to all your data in a dynamic grid.
 
 All data is viewed in one grid, without scrollbars, for fast navigation with navigation-keys/mousewheel.
 Could be used as another view on the data of a lot of products like Drupal, Salesforce.com, Sap, Documentum and
-all other products for which we write a sjamayee interface (scrambler and dataservices).
+all other products for which we write a sjamayee scrambler and dataservices.
 Helps in data navigation and does not change your data in any way.
 Shows all data in a where-used/what-used structure and remembers the navigation path.
 Completely written in javascript and extendable with webservices.
