@@ -1134,7 +1134,7 @@ var UndoCommand = new Class({
     this.mediator = null;    
   },
 	execute: function(note) {
-    this.mediator = note.getBody();
+    //this.mediator = note.getBody();
 		try {
 			//Insert logic here ... 
 			//Get last Done-command from buffer.
@@ -1214,7 +1214,7 @@ var RedoCommand = new Class({
     this.mediator = null;    
   },
 	execute: function(note) {
-    this.mediator = note.getBody();
+    //this.mediator = note.getBody();
 		try {
 			//Insert logic here ... 
 			//Get first UnDone-command from buffer.
@@ -1335,8 +1335,8 @@ var ResetViewCommand = new Class({
 		var listPaneLeft = null;
 		try {
 			if (dijit) {
-				gridSplitter = dijit.byId(SjamayeeForm.LIST_SPLITTER_ID);     //TODO: SjamayeeForm
-				listPaneLeft = dijit.byId(SjamayeeForm.LIST_PANE_LEFT_ID);
+				gridSplitter = dijit.byId(GridListSplitter.ID);
+				listPaneLeft = dijit.byId(GridListLeft.ID);
 				if (listPaneLeft) {
 					listPaneLeft.attr("style","width:"+this.percent+"%;");
 					listPaneLeft.attr("sizeShare",this.percent);
@@ -1465,8 +1465,9 @@ var AddDataRelationCommand = new Class({
   		  this.sendNotification(SjamayeeFacade.GRID_DATA_CHILD_SHOW);
     		//if (this.getDetailDisplay() == "PARENT") { this.showChild(); }
         this.parent(note); //+mediator ???
+        this.mediator = mediator;
         //this.sendNotification(SjamayeeFacade.RELATION_ADDED,mediator);
-        mediator.setMessageText("Add relation...");
+        this.mediator.setMessageText("Add relation...");
       }  		            
   	} catch(error) {
   		Utils.alert("AddDataRelationCommand - error: "+error.message,Utils.LOG_LEVEL_ERROR);
@@ -1487,8 +1488,9 @@ var AddModelRelationCommand = new Class({
   		  this.sendNotification(SjamayeeFacade.GRID_MODEL_CHILD_SHOW);
     		//if (this.getDetailDisplay() == "PARENT") { this.showChild(); }
         this.parent(note); //+mediator ???
+        this.mediator = mediator;
         //this.sendNotification(SjamayeeFacade.RELATION_ADDED,mediator);
-        mediator.setMessageText("Add relation...");
+        this.mediator.setMessageText("Add relation...");
       }
   	} catch(error) {
   		Utils.alert("AddModelRelationCommand - error: "+error.message,Utils.LOG_LEVEL_ERROR);
@@ -1565,8 +1567,9 @@ var DeleteDataRelationCommand = new Class({
     		//this.setStatusMessage(SjamayeeForm.STATUS_MESSAGE_DELETE_LBL,true);
     		//Insert logic here ... 
     		this.parent(note); //+mediator ???
+    		this.mediator = mediator;
         //this.sendNotification(SjamayeeFacade.RELATION_DELETED,mediator);  		
-        mediator.setMessageText("Relation deleted.");
+        this.mediator.setMessageText("Relation deleted.");
       }
   	} catch(error) {
   		Utils.alert("DeleteDataRelationCommand - error: "+error.message,Utils.LOG_LEVEL_ERROR);
@@ -1585,8 +1588,9 @@ var DeleteModelRelationCommand = new Class({
     		//this.setStatusMessage(SjamayeeForm.STATUS_MESSAGE_DELETE_LBL,true);
     		//Insert logic here ... 
     		this.parent(note); //+mediator ???
+    		this.mediator = mediator;
         //this.sendNotification(SjamayeeFacade.RELATION_DELETED,mediator);  		
-        mediator.setMessageText("Relation deleted.");
+        this.mediator.setMessageText("Relation deleted.");
       }
   	} catch(error) {
   		Utils.alert("DeleteModelRelationCommand - error: "+error.message,Utils.LOG_LEVEL_ERROR);
@@ -1654,8 +1658,9 @@ var EditDataRelationCommand = new Class({
     		//if (this.getDetailDisplay() == "PARENT") { this.showChild(); }
     		//Insert logic here ... 
         this.parent(note); //+mediator ???
+        this.mediator = mediator;
         //this.sendNotification(SjamayeeFacade.RELATION_EDITING,mediator);  		
-        mediator.setMessageText("Edit relation...");
+        this.mediator.setMessageText("Edit relation...");
       }
   	} catch(error) {
   		Utils.alert("EditDataRelationCommand - error: "+error.message,Utils.LOG_LEVEL_ERROR);
@@ -1677,8 +1682,9 @@ var EditModelRelationCommand = new Class({
     		//if (this.getDetailDisplay() == "PARENT") { this.showChild(); }
     		//Insert logic here ... 
         this.parent(note); //+mediator ???
+        this.mediator = mediator;
         //this.sendNotification(SjamayeeFacade.RELATION_EDITING,mediator);  		
-        mediator.setMessageText("Edit relation...");
+        this.mediator.setMessageText("Edit relation...");
       }
   	} catch(error) {
   		Utils.alert("EditModelRelationCommand - error: "+error.message,Utils.LOG_LEVEL_ERROR);
@@ -1765,14 +1771,15 @@ var SaveDataRelationCommand = new Class({
       var mediator = this.facade.retrieveMediator(DataRelationsGridMediator.ID);
       mediator.setMessageText("Relation saving...");
       this.parent(note); //+mediator !!!
-      mediator.setDisplay(true);      
+      this.mediator = mediator;
+      this.mediator.setDisplay(true);      
       //this.sendNotification(SjamayeeFacade.RELATION_SAVED,mediator);  // + !!! relation !!!
-      mediator.setMessageText("Relation saved.");
+      this.mediator.setMessageText("Relation saved.");
   	} catch(error) {
   		Utils.alert("SaveDataRelationCommand Error: "+error.message,Utils.LOG_LEVEL_ERROR);
   	} finally {
-  		mediator.sourceName = null;
-  		mediator.groupId = null;		
+  		this.mediator.sourceName = null;
+  		this.mediator.groupId = null;		
   	}
 	}
 });
@@ -1785,14 +1792,15 @@ var SaveModelRelationCommand = new Class({
       var mediator = this.facade.retrieveMediator(ModelRelationsGridMediator.ID);
       mediator.setMessageText("Relation saving...");
       this.parent(note); //+mediator !!!
-      mediator.setDisplay(true);
+      this.mediator = mediator;
+      this.mediator.setDisplay(true);
       //this.sendNotification(SjamayeeFacade.RELATION_SAVED,mediator);  // + !!! relation !!!
-      mediator.setMessageText("Relation saved.");
+      this.mediator.setMessageText("Relation saved.");
   	} catch(error) {
   		Utils.alert("SaveModelRelationCommand Error: "+error.message,Utils.LOG_LEVEL_ERROR);
   	} finally {
-  		mediator.sourceName = null;
-  		mediator.groupId = null;		
+  		this.mediator.sourceName = null;
+  		this.mediator.groupId = null;		
   	}
 	}
 });
@@ -1814,8 +1822,9 @@ var CancelDataRelationCommand = new Class({
     var mediator = this.facade.retrieveMediator(DataRelationsGridMediator.ID);
     if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
       this.parent(note); //+mediator !!!
+      this.mediator = mediator;
       //this.sendNotification(SjamayeeFacade.RELATION_CANCELED,mediator);
-      mediator.setMessageText("Relation canceled.");
+      this.mediator.setMessageText("Relation canceled.");
     }    
 	}
 });
@@ -1827,8 +1836,9 @@ var CancelModelRelationCommand = new Class({
     var mediator = this.facade.retrieveMediator(ModelRelationsGridMediator.ID);
     if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
       this.parent(note); //+mediator !!!
+      this.mediator = mediator;
       //this.sendNotification(SjamayeeFacade.RELATION_CANCELED,mediator);
-      mediator.setMessageText("Relation canceled.");
+      this.mediator.setMessageText("Relation canceled.");
     }    
 	}
 });
@@ -1912,8 +1922,9 @@ var ExtractDataRelationCommand = new Class({
     		//this.setStatusMessage(SjamayeeForm.STATUS_MESSAGE_EXTRACT_LBL,true);
     		//Insert logic here ... 
     		nok = this.parent(note); //+mediator !!!
+        this.mediator = mediator;
         //this.sendNotification(SjamayeeFacade.RELATION_EXTRACTED,mediator);
-        mediator.setMessageText("Relation extracted.");
+        this.mediator.setMessageText("Relation extracted.");
       }          
   	} catch(error) {
   		Utils.alert("ExtractDataRelationCommand - error: "+error.message,Utils.LOG_LEVEL_ERROR);
@@ -1934,8 +1945,9 @@ var ExtractModelRelationCommand = new Class({
     		//this.setStatusMessage(SjamayeeForm.STATUS_MESSAGE_EXTRACT_LBL,true);
     		//Insert logic here ... 
     		nok = this.parent(note); //+mediator !!!
+    		this.mediator = mediator;
         //this.sendNotification(SjamayeeFacade.RELATION_EXTRACTED,mediator);
-        mediator.setMessageText("Relation extracted.");
+        this.mediator.setMessageText("Relation extracted.");
       }          
   	} catch(error) {
   		Utils.alert("ExtractModelRelationCommand - error: "+error.message,Utils.LOG_LEVEL_ERROR);
@@ -2006,8 +2018,9 @@ var CopyDataRelationCommand = new Class({
     		//this.setStatusMessage(SjamayeeForm.STATUS_MESSAGE_COPY_LBL,true);
     		//Insert logic here ... 
     		this.parent(note); //+mediator !!!
+    		this.mediator = mediator;
         //this.sendNotification(SjamayeeFacade.RELATION_COPIED,mediator);
-        mediator.setMessageText("Relation copied.");
+        this.mediator.setMessageText("Relation copied.");
       }                
   	} catch(error) {
   		Utils.alert("CopyDataRelationCommand - error: "+error.message,Utils.LOG_LEVEL_ERROR);
@@ -2025,8 +2038,9 @@ var CopyModelRelationCommand = new Class({
     		//this.setStatusMessage(SjamayeeForm.STATUS_MESSAGE_COPY_LBL,true);
     		//Insert logic here ... 
     		this.parent(note); //+mediator !!!
+    		this.mediator = mediator;
         //this.sendNotification(SjamayeeFacade.RELATION_COPIED,mediator);
-        mediator.setMessageText("Relation copied.");
+        this.mediator.setMessageText("Relation copied.");
       }                
   	} catch(error) {
   		Utils.alert("CopyModelRelationCommand - error: "+error.message,Utils.LOG_LEVEL_ERROR);
@@ -2224,8 +2238,9 @@ var PasteDataRelationCommand = new Class({
       if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
     		//this.setStatusMessage(SjamayeeForm.STATUS_MESSAGE_PASTE_LBL,true);
     		this.parent(note); //+mediator !!!
+    		this.mediator = mediator;
         //this.sendNotification(SjamayeeFacade.RELATION_PASTED,mediator);
-        mediator.setMessageText("Relation pasted.");
+        this.mediator.setMessageText("Relation pasted.");
       }                
   	} catch(error) {
   		Utils.alert("PasteDataRelationCommand - error: "+error.message,Utils.LOG_LEVEL_ERROR);
@@ -2242,8 +2257,9 @@ var PasteModelRelationCommand = new Class({
       if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
     		//this.setStatusMessage(SjamayeeForm.STATUS_MESSAGE_PASTE_LBL,true);
     		this.parent(note); //+mediator !!!
+    		this.mediator = mediator;
         //this.sendNotification(SjamayeeFacade.RELATION_PASTED,mediator);
-        mediator.setMessageText("Relation pasted.");
+        this.mediator.setMessageText("Relation pasted.");
       }                
   	} catch(error) {
   		Utils.alert("PasteModelRelationCommand - error: "+error.message,Utils.LOG_LEVEL_ERROR);
@@ -2747,10 +2763,8 @@ var ClearRelationBufferCommand = new Class({
   Extends: ClearBufferCommand,
 	execute: function(note) {
 		try {
-      var mediator = null; //parameter !!!
 		  this.parent(note);
-      //this.sendNotification(SjamayeeFacade.RELATION_BUFFER_CLEARED,mediator);
-      mediator.setMessageText("Relation Buffer cleared.");
+      this.mediator.setMessageText("Relation Buffer cleared.");
 		} catch(error) {
 			Utils.alert("ClearRelationBufferCommand - error: "+error.message,Utils.LOG_LEVEL_ERROR);
 		}
@@ -2762,13 +2776,12 @@ var ClearDataRelationBufferCommand = new Class({
   Extends: ClearRelationBufferCommand,
 	execute: function(note) {
 		try {
-      var mediator = this.facade.retrieveMediator(DataRelationsGridMediator.ID);
-		  this.parent(note); //+mediator !!!
-		  mediator.grid.setRootCommand(null);
+		  this.parent(note);
+		  this.mediator.grid.setRootCommand(null);
 			//Reset Counter for Navigation commands.
 			_cNc = 0;                                                 //TODO: global !!!			
-      //this.sendNotification(SjamayeeFacade.RELATION_BUFFER_CLEARED,mediator);
-      mediator.setMessageText("Relation Buffer cleared.");
+      //this.sendNotification(SjamayeeFacade.RELATION_BUFFER_CLEARED,this.mediator);
+      this.mediator.setMessageText("Relation Buffer cleared.");
 		} catch(error) {
 			Utils.alert("ClearDataRelationBufferCommand - error: "+error.message,Utils.LOG_LEVEL_ERROR);
 		}
@@ -2780,13 +2793,12 @@ var ClearModelRelationBufferCommand = new Class({
   Extends: ClearRelationBufferCommand,
 	execute: function(note) {
 		try {
-      var mediator = this.facade.retrieveMediator(ModelRelationsGridMediator.ID);
-		  this.parent(note); //+mediator !!!
-		  mediator.grid.setRootCommand(null);
+		  this.parent(note);
+		  this.mediator.grid.setRootCommand(null);
 			//Reset Counter for Navigation commands.
 			_cNc = 0;                                                 //TODO: global !!!			
-      //this.sendNotification(SjamayeeFacade.RELATION_BUFFER_CLEARED,mediator);
-      mediator.setMessageText("Relation Buffer cleared.");
+      //this.sendNotification(SjamayeeFacade.RELATION_BUFFER_CLEARED,this.mediator);
+      this.mediator.setMessageText("Relation Buffer cleared.");
 		} catch(error) {
 			Utils.alert("ClearModelRelationBufferCommand - error: "+error.message,Utils.LOG_LEVEL_ERROR);
 		}
@@ -2797,8 +2809,7 @@ var ClearModelRelationBufferCommand = new Class({
 var ResetGridCommand = new Class({
   Extends: ResetViewCommand,
 	execute: function(note) {
-    //var mediator = note.getBody();
-    var mediator = this.facade.retrieveMediator(DataRelationsGridMediator.ID); //TODO: SPLIT >>> DATA/MODEL - OBJECT/RELATION !!!
+    var mediator = note.getBody();
 		var grid = mediator.grid;
 		try {
 			var nivo = grid.getCurrentNivo();
@@ -2815,7 +2826,7 @@ var ResetGridCommand = new Class({
 			}
 			this.parent(note);
       //this.sendNotification(SjamayeeFacade.GRID_RESETED,mediator);
-      mediator.setMessageText("Grid reset.");
+      this.mediator.setMessageText("Grid reset.");
 		} catch(error) {
 			Utils.alert("ResetGridCommand - error: "+error.message,Utils.LOG_LEVEL_ERROR);
 		}
@@ -2851,12 +2862,14 @@ var AddDataObjectCommand = new Class({
   Extends: AddObjectCommand,
 	execute: function(note) {
   	try {
-      var mediator = this.facade.retrieveMediator(DataObjectsListMediator.ID);
+      //var mediator = this.facade.retrieveMediator(DataObjectsListMediator.ID);
+      var mediator = SjamayeeFacade.getInstance().retrieveMediator(DataObjectsListMediator.ID);
   		//var objectList = mediator.getList();    //TODO: not viewList but dataList !!!
       if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
         this.parent(note);
-        mediator.setEdit(true);
-        mediator.setMessageText("Add object...");
+        this.mediator = mediator;
+        this.mediator.setEdit(true);
+        this.mediator.setMessageText("Add object...");
   		  this.sendNotification(SjamayeeFacade.OLIST_DATA_RESIZE,SjamayeeFacade.SIZE_NORMAL);
   		  this.sendNotification(SjamayeeFacade.OLIST_DATA_SHOW);
       }
@@ -2871,12 +2884,14 @@ var AddModelObjectCommand = new Class({
   Extends: AddObjectCommand,
 	execute: function(note) {
   	try {
-      var mediator = this.facade.retrieveMediator(ModelObjectsListMediator.ID);
+      //var mediator = this.facade.retrieveMediator(ModelObjectsListMediator.ID);
+      var mediator = SjamayeeFacade.getInstance().retrieveMediator(ModelObjectsListMediator.ID);
   		//var objectList = mediator.getList();    //TODO: not viewList but dataList !!!
       if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
         this.parent(note);
-        mediator.setEdit(true);
-        mediator.setMessageText("Add object...");
+        this.mediator = mediator;
+        this.mediator.setEdit(true);
+        this.mediator.setMessageText("Add object...");
   		  this.sendNotification(SjamayeeFacade.OLIST_MODEL_RESIZE,SjamayeeFacade.SIZE_NORMAL);
   		  this.sendNotification(SjamayeeFacade.OLIST_MODEL_SHOW);
       }
@@ -2912,11 +2927,13 @@ var DeleteDataObjectCommand = new Class({
   Extends: DeleteObjectCommand,
 	execute: function(note) {
   	try {
-      var mediator = this.facade.retrieveMediator(DataObjectsListMediator.ID);
+      //var mediator = this.facade.retrieveMediator(DataObjectsListMediator.ID);
+      var mediator = SjamayeeFacade.getInstance().retrieveMediator(DataObjectsListMediator.ID);
   		//var objectList = mediator.getList();    //TODO: not viewList but dataList !!!
       if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
         this.parent(note);
-        mediator.setMessageText("Object deleted.");
+        this.mediator = mediator;
+        this.mediator.setMessageText("Object deleted.");
         //this.sendNotification(SjamayeeFacade.OBJECT_DELETED,mediator);
   		  this.sendNotification(SjamayeeFacade.OLIST_DATA_SHOW);
       }
@@ -2931,11 +2948,13 @@ var DeleteModelObjectCommand = new Class({
   Extends: DeleteObjectCommand,
 	execute: function(note) {
   	try {
-      var mediator = this.facade.retrieveMediator(ModelObjectsListMediator.ID);
+      //var mediator = this.facade.retrieveMediator(ModelObjectsListMediator.ID);
+      var mediator = SjamayeeFacade.getInstance().retrieveMediator(ModelObjectsListMediator.ID);
   		//var objectList = mediator.getList();    //TODO: not viewList but dataList !!!
       if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
         this.parent(note);
-        mediator.setMessageText("Object deleted.");
+        this.mediator = mediator;
+        this.mediator.setMessageText("Object deleted.");
         //this.sendNotification(SjamayeeFacade.OBJECT_DELETED,mediator);
   		  this.sendNotification(SjamayeeFacade.OLIST_MODEL_SHOW);
       }
@@ -2973,13 +2992,15 @@ var EditDataObjectCommand = new Class({
   Extends: EditObjectCommand,
 	execute: function(note) {
   	try {
-      var mediator = this.facade.retrieveMediator(DataObjectsListMediator.ID);
+      //var mediator = this.facade.retrieveMediator(DataObjectsListMediator.ID);
+      var mediator = SjamayeeFacade.getInstance().retrieveMediator(DataObjectsListMediator.ID);
   		//var objectList = mediator.getList();    //TODO: not viewList but dataList !!!
       if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
   			//Insert logic here ...
         this.parent(note);
-        mediator.setEdit(true);
-        mediator.setMessageText("Edit object...");        
+        this.mediator = mediator;
+        this.mediator.setEdit(true);
+        this.mediator.setMessageText("Edit object...");        
   		  this.sendNotification(SjamayeeFacade.OLIST_DATA_RESIZE,SjamayeeFacade.SIZE_NORMAL);
   		  this.sendNotification(SjamayeeFacade.OLIST_DATA_SHOW);
       }
@@ -2994,13 +3015,15 @@ var EditModelObjectCommand = new Class({
   Extends: EditObjectCommand,
 	execute: function(note) {
   	try {
-      var mediator = this.facade.retrieveMediator(ModelObjectsListMediator.ID);
+      //var mediator = this.facade.retrieveMediator(ModelObjectsListMediator.ID);
+      var mediator = SjamayeeFacade.getInstance().retrieveMediator(ModelObjectsListMediator.ID);
   		//var objectList = mediator.getList();    //TODO: not viewList but dataList !!!
       if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
   			//Insert logic here ...
         this.parent(note);
-        mediator.setEdit(true);
-        mediator.setMessageText("Edit object...");
+        this.mediator = mediator;
+        this.mediator.setEdit(true);
+        this.mediator.setMessageText("Edit object...");
   		  this.sendNotification(SjamayeeFacade.OLIST_MODEL_RESIZE,SjamayeeFacade.SIZE_NORMAL);
   		  this.sendNotification(SjamayeeFacade.OLIST_MODEL_SHOW);
       }
@@ -3050,11 +3073,12 @@ var SaveDataObjectCommand = new Class({
   Extends: SaveObjectCommand,
 	execute: function(note) {
   	try {
-      var mediator = this.facade.retrieveMediator(DataObjectsListMediator.ID);
+      //var mediator = this.facade.retrieveMediator(DataObjectsListMediator.ID);
       this.parent(note);
+      this.mediator = SjamayeeFacade.getInstance().retrieveMediator(DataObjectsListMediator.ID);
       //this.sendNotification(SjamayeeFacade.OBJECT_SAVED,mediator);
-      mediator.setDisplay(true);
-      mediator.setMessageText("Object saved.");
+      this.mediator.setDisplay(true);
+      this.mediator.setMessageText("Object saved.");
 		  this.sendNotification(SjamayeeFacade.OLIST_DATA_SHOW);
   	} catch(error) {
   		Utils.alert("SaveDataObjectCommand Error: "+error.message,Utils.LOG_LEVEL_ERROR);
@@ -3072,11 +3096,12 @@ var SaveModelObjectCommand = new Class({
   Extends: SaveObjectCommand,
 	execute: function(note) {
   	try {
-      var mediator = this.facade.retrieveMediator(ModelObjectsListMediator.ID);
+      //var mediator = this.facade.retrieveMediator(ModelObjectsListMediator.ID);
       this.parent(note);
+      this.mediator = SjamayeeFacade.getInstance().retrieveMediator(ModelObjectsListMediator.ID);
       //this.sendNotification(SjamayeeFacade.OBJECT_SAVED,mediator);
-      mediator.setDisplay(true);
-      mediator.setMessageText("Object saved.");
+      this.mediator.setDisplay(true);
+      this.mediator.setMessageText("Object saved.");
 		  this.sendNotification(SjamayeeFacade.OLIST_MODEL_SHOW);
   	} catch(error) {
   		Utils.alert("SaveModelObjectCommand Error: "+error.message,Utils.LOG_LEVEL_ERROR);
@@ -3102,11 +3127,13 @@ var CancelObjectCommand = new Class({
 var CancelDataObjectCommand = new Class({
   Extends: CancelObjectCommand,
 	execute: function(note) {
-    var mediator = this.facade.retrieveMediator(DataObjectsListMediator.ID);
+    //var mediator = this.facade.retrieveMediator(DataObjectsListMediator.ID);
+    var mediator = SjamayeeFacade.getInstance().retrieveMediator(DataObjectsListMediator.ID);
     if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
       this.parent(note);
+      this.mediator = mediator;
       //this.sendNotification(SjamayeeFacade.OBJECT_CANCELED,mediator);
-      mediator.setMessageText("Object canceled.");
+      this.mediator.setMessageText("Object canceled.");
 		  this.sendNotification(SjamayeeFacade.OLIST_DATA_SHOW);
     }
 	}
@@ -3116,11 +3143,13 @@ var CancelDataObjectCommand = new Class({
 var CancelModelObjectCommand = new Class({
   Extends: CancelObjectCommand,
 	execute: function(note) {
-    var mediator = this.facade.retrieveMediator(ModelObjectsListMediator.ID);
+    //var mediator = this.facade.retrieveMediator(ModelObjectsListMediator.ID);
+    var mediator = SjamayeeFacade.getInstance().retrieveMediator(ModelObjectsListMediator.ID);
     if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
       this.parent(note);
+      this.mediator = mediator;
       //this.sendNotification(SjamayeeFacade.OBJECT_CANCELED,mediator);
-      mediator.setMessageText("Object canceled.");
+      this.mediator.setMessageText("Object canceled.");
 		  this.sendNotification(SjamayeeFacade.OLIST_MODEL_SHOW);
     }
 	}
@@ -3130,7 +3159,8 @@ var CancelModelObjectCommand = new Class({
 var ShowObjectCommand = new Class({
   Extends: SimpleCommand,
 	execute: function(note) {
-    var mediator = this.facade.retrieveMediator(DataObjectsListMediator.ID); //TODO: SPLIT >>> DATA/MODEL - OBJECT/RELATION !!!
+    //var mediator = this.facade.retrieveMediator(DataObjectsListMediator.ID); //TODO: SPLIT >>> DATA/MODEL - OBJECT/RELATION !!!
+    var mediator = SjamayeeFacade.getInstance().retrieveMediator(DataObjectsListMediator.ID);
     //this.sendNotification(SjamayeeFacade.OBJECT_SHOWED,mediator);
 	}
 });
@@ -3271,7 +3301,8 @@ var UndoDataObjectCommand = new Class({
   
 	execute: function(note) {
 		try {
-      this.mediator = this.facade.retrieveMediator(DataObjectsListMediator.ID);
+      //this.mediator = this.facade.retrieveMediator(DataObjectsListMediator.ID);
+      this.mediator = SjamayeeFacade.getInstance().retrieveMediator(DataObjectsListMediator.ID);
       if (this.mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
   			//Insert logic here ... 
     		//var grid = mediator.grid;
@@ -3292,7 +3323,8 @@ var UndoModelObjectCommand = new Class({
   
 	execute: function(note) {
 		try {
-      this.mediator = this.facade.retrieveMediator(ModelObjectsListMediator.ID);
+      //this.mediator = this.facade.retrieveMediator(ModelObjectsListMediator.ID);
+      this.mediator = SjamayeeFacade.getInstance().retrieveMediator(ModelObjectsListMediator.ID);
       if (this.mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
   			//Insert logic here ... 
     		//var grid = mediator.grid;
@@ -3446,7 +3478,8 @@ var RedoDataObjectCommand = new Class({
   
 	execute: function(note) {
 		try {
-      this.mediator = this.facade.retrieveMediator(DataObjectsListMediator.ID);
+      //this.mediator = this.facade.retrieveMediator(DataObjectsListMediator.ID);
+      this.mediator = SjamayeeFacade.getInstance().retrieveMediator(DataObjectsListMediator.ID);
       if (this.mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
   			//Insert logic here ... 
     		//var grid = this.mediator.grid;
@@ -3467,7 +3500,8 @@ var RedoModelObjectCommand = new Class({
   
 	execute: function(note) {
 		try {
-      this.mediator = this.facade.retrieveMediator(ModelObjectsListMediator.ID);
+      //this.mediator = this.facade.retrieveMediator(ModelObjectsListMediator.ID);
+      this.mediator = SjamayeeFacade.getInstance().retrieveMediator(ModelObjectsListMediator.ID);
       if (this.mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
   			//Insert logic here ... 
     		//var grid = this.mediator.grid;
@@ -3489,8 +3523,8 @@ var ClearObjectBufferCommand = new Class({
 	execute: function(note) {
 		try {
 		  this.parent(note);
-      //this.sendNotification(SjamayeeFacade.OLIST_BUFFER_CLEARED,mediator);
-      mediator.setMessageText("Object Buffer cleared.");
+      //this.sendNotification(SjamayeeFacade.OLIST_BUFFER_CLEARED,this.mediator);
+      //this.mediator.setMessageText("Object Buffer cleared.");
 		} catch(error) {
 			Utils.alert("ClearRelationBufferCommand - error: "+error.message,Utils.LOG_LEVEL_ERROR);
 		}
@@ -3502,16 +3536,16 @@ var ClearDataObjectBufferCommand = new Class({
   Extends: ClearObjectBufferCommand,
 	execute: function(note) {
 		try {
-      var mediator = this.facade.retrieveMediator(DataObjectsListMediator.ID);
 		  this.parent(note);
-		  mediator.list.setRootCommand(null);
+		  //this.mediator.list.setRootCommand(null);
+		  
 			//Reset Counter for Navigation commands.
 			//TODO: !!!!!  _cNc = 0;                               //TODO: global !!!			
-      //this.sendNotification(SjamayeeFacade.OLIST_BUFFER_CLEARED,mediator);
-      mediator.setMessageText("Object Buffer cleared.");
+      //this.sendNotification(SjamayeeFacade.OLIST_BUFFER_CLEARED,this.mediator);
+      this.mediator.setMessageText("Object Buffer cleared.");
 		  this.sendNotification(SjamayeeFacade.OLIST_DATA_SHOW);
 		} catch(error) {
-			Utils.alert("ClearDataRelationBufferCommand - error: "+error.message,Utils.LOG_LEVEL_ERROR);
+			Utils.alert("ClearDataObjectBufferCommand - error: "+error.message,Utils.LOG_LEVEL_ERROR);
 		}
 	}
 });
@@ -3521,16 +3555,16 @@ var ClearModelObjectBufferCommand = new Class({
   Extends: ClearObjectBufferCommand,
 	execute: function(note) {
 		try {
-      var mediator = this.facade.retrieveMediator(ModelObjectsListMediator.ID);
 		  this.parent(note);
-		  mediator.list.setRootCommand(null);
+		  //this.mediator.list.setRootCommand(null);
+		  
 			//Reset Counter for Navigation commands.
 			//TODO: !!!!!  _cNc = 0;                               //TODO: global !!!			
-      //this.sendNotification(SjamayeeFacade.OLIST_BUFFER_CLEARED,mediator);
-      mediator.setMessageText("Object Buffer cleared.");
+      //this.sendNotification(SjamayeeFacade.OLIST_BUFFER_CLEARED,this.mediator);
+      this.mediator.setMessageText("Object Buffer cleared.");
 		  this.sendNotification(SjamayeeFacade.OLIST_MODEL_SHOW);
 		} catch(error) {
-			Utils.alert("ClearModelRelationBufferCommand - error: "+error.message,Utils.LOG_LEVEL_ERROR);
+			Utils.alert("ClearModelObjectBufferCommand - error: "+error.message,Utils.LOG_LEVEL_ERROR);
 		}
 	}
 });
@@ -3549,10 +3583,11 @@ var DeleteUnrefObjectsCommand = new Class({
 var DeleteUnrefDataObjectsCommand = new Class({
   Extends: DeleteUnrefObjectsCommand,
 	execute: function(note) {
-    var mediator = this.facade.retrieveMediator(DataObjectsListMediator.ID);
+    //var mediator = this.facade.retrieveMediator(DataObjectsListMediator.ID);
     this.parent(note);
+    this.mediator = SjamayeeFacade.getInstance().retrieveMediator(DataObjectsListMediator.ID);
     //this.sendNotification(SjamayeeFacade.UNREF_OBJECTS_DELETED,mediator);  //NOK NOK NOK !!!
-    mediator.setMessageText("Unreferenced Objects deleted.");
+    this.mediator.setMessageText("Unreferenced Objects deleted.");
 	  this.sendNotification(SjamayeeFacade.OLIST_DATA_SHOW);
 	}
 });
@@ -3561,10 +3596,11 @@ var DeleteUnrefDataObjectsCommand = new Class({
 var DeleteUnrefModelObjectsCommand = new Class({
   Extends: DeleteUnrefObjectsCommand,
 	execute: function(note) {
-    var mediator = this.facade.retrieveMediator(ModelObjectsListMediator.ID);
+    //var mediator = this.facade.retrieveMediator(ModelObjectsListMediator.ID);
     this.parent(note);
+    this.mediator = SjamayeeFacade.getInstance().retrieveMediator(ModelObjectsListMediator.ID);
     //this.sendNotification(SjamayeeFacade.UNREF_OBJECTS_DELETED,mediator);  //NOK NOK NOK !!!
-    mediator.setMessageText("Unreferenced Objects deleted.");
+    this.mediator.setMessageText("Unreferenced Objects deleted.");
 	  this.sendNotification(SjamayeeFacade.OLIST_MODEL_SHOW);
 	}
 });
@@ -3579,7 +3615,8 @@ var ResetListCommand = new Class({
 		try {
 			this.parent(note);
       //this.sendNotification(SjamayeeFacade.LIST_RESETED,mediator);
-      mediator.setMessageText("List reset.");
+      this.mediator = mediator;
+      this.mediator.setMessageText("List reset.");
 		} catch(error) {
 			Utils.alert("ResetListCommand - error: "+error.message,Utils.LOG_LEVEL_ERROR);
 		}
@@ -3604,10 +3641,11 @@ var ShowSFDCDataObjectCommand = new Class({
   Extends: ShowSFDCObjectCommand,
 	execute: function(note) {
 		try {
-      var mediator = this.facade.retrieveMediator(DataObjectsListMediator.ID);
+      //var mediator = this.facade.retrieveMediator(DataObjectsListMediator.ID);
       this.parent(note);
-      mediator.setMessageText("SFDC Object viewed!");
-      mediator.setMessageText("SFDC Object viewed! (or SAP/Oracle/Documentum/...)");
+      this.mediator = SjamayeeFacade.getInstance().retrieveMediator(DataObjectsListMediator.ID);
+      this.mediator.setMessageText("SFDC Object viewed!");
+      this.mediator.setMessageText("SFDC Object viewed! (or SAP/Oracle/Documentum/...)");
 		} catch(error) {
 			Utils.alert("ShowSFDCDataObjectCommand - error: "+error.message,Utils.LOG_LEVEL_ERROR);
 		}
@@ -3619,10 +3657,11 @@ var ShowSFDCDataRelationCommand = new Class({
   Extends: ShowSFDCDataObjectCommand,
 	execute: function(note) {
 		try {
-      var mediator = this.facade.retrieveMediator(DataRelationsGridMediator.ID);
+      //var mediator = this.facade.retrieveMediator(DataRelationsGridMediator.ID);
       this.parent(note);
+      this.mediator = SjamayeeFacade.getInstance().retrieveMediator(DataRelationsGridMediator.ID);
       //mediator.setMessageText("SFDC Relation viewed!");
-      mediator.setMessageText("SFDC Relation viewed! (or SAP/Oracle/Documentum/...)");      
+      this.mediator.setMessageText("SFDC Relation viewed! (or SAP/Oracle/Documentum/...)");      
 		} catch(error) {
 			Utils.alert("ShowSFDCDataRelationCommand - error: "+error.message,Utils.LOG_LEVEL_ERROR);
 		}
@@ -3634,10 +3673,11 @@ var ShowSFDCModelObjectCommand = new Class({
   Extends: ShowSFDCObjectCommand,
 	execute: function(note) {
 		try {
-      var mediator = this.facade.retrieveMediator(ModelObjectsListMediator.ID);
+      //var mediator = this.facade.retrieveMediator(ModelObjectsListMediator.ID);
       this.parent(note);
-      mediator.setMessageText("SFDC Object viewed!");
-      mediator.setMessageText("SFDC Object viewed! (or SAP/Oracle/Documentum/...)");      
+      this.mediator = SjamayeeFacade.getInstance().retrieveMediator(ModelObjectsListMediator.ID);
+      this.mediator.setMessageText("SFDC Object viewed!");
+      this.mediator.setMessageText("SFDC Object viewed! (or SAP/Oracle/Documentum/...)");      
 		} catch(error) {
 			Utils.alert("ShowSFDCModelObjectCommand - error: "+error.message,Utils.LOG_LEVEL_ERROR);
 		}
@@ -3649,10 +3689,11 @@ var ShowSFDCModelRelationCommand = new Class({
   Extends: ShowSFDCModelObjectCommand,
 	execute: function(note) {
 		try {
-      var mediator = this.facade.retrieveMediator(ModelRelationsGridMediator.ID);
+      //var mediator = this.facade.retrieveMediator(ModelRelationsGridMediator.ID);
       this.parent(note);
-      mediator.setMessageText("SFDC Relation viewed!");
-      mediator.setMessageText("SFDC Relation viewed! (or SAP/Oracle/Documentum/...)");      
+      this.mediator = SjamayeeFacade.getInstance().retrieveMediator(ModelRelationsGridMediator.ID);
+      this.mediator.setMessageText("SFDC Relation viewed!");
+      this.mediator.setMessageText("SFDC Relation viewed! (or SAP/Oracle/Documentum/...)");      
 		} catch(error) {
 			Utils.alert("ShowSFDCModelRelationCommand - error: "+error.message,Utils.LOG_LEVEL_ERROR);
 		}
@@ -10628,10 +10669,13 @@ var ObjectsListMediator = new Class({
     this.entityProxy = null;
     this.lastNavigation = null;
     this.messageText = null;
+    
+    this.list = null;
     //List left.
 	  this.listUICLeft = null;
 	  //List right.
   	this.listUICRight = null;
+  	
 		//Initialize list.
 		this.setBeginOfList(0);
 		this.setPageSize(ObjectsListMediator.PAGE_SIZE_MIN);
@@ -10666,6 +10710,18 @@ var ObjectsListMediator = new Class({
     }
     return result;
   },
+  
+  getList: function()                         { return this.list; },
+  setList: function(list)                     { this.list = list; },
+  getTypeProxy: function()                    { return this.typeProxy; },
+	setTypeProxy: function(typeProxy)           { this.typeProxy = typeProxy; },
+  getEntityProxy: function()                  { return this.entityProxy; },
+	setEntityProxy: function(entityProxy)       { this.entityProxy = entityProxy; },
+  getRelationProxy: function()                { return this.relationProxy; },
+	setRelationProxy: function(relationProxy)   { this.relationProxy = relationProxy; },
+  getAttributeProxy: function()               { return this.attributeProxy; },
+	setAttributeProxy: function(attributeProxy) { this.attributeProxy = attributeProxy; },
+  
 	getPageSize: function()         {	return this.pageSize; },
   setPageSize: function(pageSize) { this.pageSize = pageSize; },
 	listResize: function(listSize) {
@@ -17177,10 +17233,8 @@ var ModelRelationsGridMediator = new Class({
   		SjamayeeFacade.GRID_MODEL_RELATION_COPY,
   		SjamayeeFacade.GRID_MODEL_RELATION_PASTE,
   		SjamayeeFacade.GRID_MODEL_RELATION_UNDO,
-  		SjamayeeFacade.GRID_MODEL_RELATION_REDO,
-  		SjamayeeFacade.GRID_MODEL_BUFFER_CLEAR,
-  		SjamayeeFacade.GRID_MODEL_TEXT_EDIT,
-  		SjamayeeFacade.GRID_MODEL_RESET			
+  		SjamayeeFacade.GRID_MODEL_RELATION_REDO
+  		//SjamayeeFacade.GRID_MODEL_TEXT_EDIT
 		]);
 	},
   handleNotification: function(note)	{
@@ -17500,17 +17554,11 @@ var ModelRelationsGridMediator = new Class({
   		case SjamayeeFacade.GRID_MODEL_RELATION_REDO:
     	this.sendNotification(SjamayeeFacade.RELATION_REDO);
   		break;
-  		case SjamayeeFacade.GRID_MODEL_BUFFER_CLEAR:
-    	this.sendNotification(SjamayeeFacade.GRID_BUFFER_CLEAR);
-  		break;
-  		case SjamayeeFacade.GRID_MODEL_TEXT_EDIT:
+  		/*case SjamayeeFacade.GRID_MODEL_TEXT_EDIT:
     	this.setState(SjamayeeMediator.STATE_TEXT);
     	this.sendNotification(SjamayeeFacade.GRID_MODEL_TEXT_SHOW);
     	this.sendNotification(SjamayeeFacade.TEXT_EDIT,this);
-  		break;
-  		case SjamayeeFacade.GRID_MODEL_RESET:
-    	this.sendNotification(SjamayeeFacade.GRID_RESET,this);
-  		break;
+  		break;*/
   		case SjamayeeFacade.MODEL_ROOT_UNDO:
   		break;
   		case SjamayeeFacade.MODEL_ROOT_SELECT:
@@ -17596,9 +17644,7 @@ var ModelObjectsListMediator = new Class({
   		SjamayeeFacade.OLIST_MODEL_OBJECT_EDIT,
   		SjamayeeFacade.OLIST_MODEL_OBJECT_UNDO,
   		SjamayeeFacade.OLIST_MODEL_OBJECT_REDO,
-  		SjamayeeFacade.OLIST_MODEL_BUFFER_CLEAR,
-  		SjamayeeFacade.OLIST_MODEL_TEXT_EDIT,
-  		SjamayeeFacade.OLIST_MODEL_OBJECT_UNREFS_DELETE,  		
+  		//SjamayeeFacade.OLIST_MODEL_TEXT_EDIT,
   		SjamayeeFacade.OLIST_MODEL_REFOP_CHANGE,
 			SjamayeeFacade.OLIST_MODEL_TYPE_CHANGE,
   		SjamayeeFacade.OLIST_MODEL_FILTER_CLICK
@@ -17734,17 +17780,11 @@ var ModelObjectsListMediator = new Class({
   		case SjamayeeFacade.OLIST_MODEL_OBJECT_REDO:
     	this.sendNotification(SjamayeeFacade.OBJECT_MODEL_REDO);
   		break;
-  		case SjamayeeFacade.OLIST_MODEL_BUFFER_CLEAR:
-    	this.sendNotification(SjamayeeFacade.OBJECT_MODEL_BUFFER_CLEAR);
-  		break;
-  		case SjamayeeFacade.OLIST_MODEL_TEXT_EDIT:
+  		/*case SjamayeeFacade.OLIST_MODEL_TEXT_EDIT:
     	this.setState(SjamayeeMediator.STATE_TEXT);
     	this.sendNotification(SjamayeeFacade.OLIST_MODEL_TEXT_SHOW);
     	this.sendNotification(SjamayeeFacade.TEXT_EDIT,this);
-  		break;
-  		case SjamayeeFacade.OLIST_MODEL_OBJECT_UNREFS_DELETE:
-    	this.sendNotification(SjamayeeFacade.OBJECT_MODEL_UNREFS_DELETE);
-  		break;			
+  		break;*/
   		case SjamayeeFacade.OLIST_MODEL_REFOP_CHANGE:
   		this.sendNotification(SjamayeeFacade.FOCUS, ObjectsListRight.ID);
   		break;
@@ -17918,10 +17958,21 @@ var ModelObjectsToolBarMediator = new Class({
   onEditObject: function()	        {	this.sendNotification(SjamayeeFacade.OLIST_MODEL_OBJECT_EDIT); },
   onUndoObject: function()      	  {	this.sendNotification(SjamayeeFacade.OLIST_MODEL_OBJECT_UNDO); },
   onRedoObject: function()	        {	this.sendNotification(SjamayeeFacade.OLIST_MODEL_OBJECT_REDO); },
-  onClearBuffer: function()         {	this.sendNotification(SjamayeeFacade.OLIST_MODEL_BUFFER_CLEAR); },
-  onEditText: function()	          {	this.sendNotification(SjamayeeFacade.OLIST_MODEL_TEXT_EDIT); },
-  onDeleteUnrefObjects: function()	{	this.sendNotification(SjamayeeFacade.OLIST_MODEL_OBJECT_UNREFS_DELETE); },
-
+  onClearBuffer: function() {
+    var mediator = SjamayeeFacade.getInstance().retrieveMediator(ModelObjectsListMediator.ID);
+    //this.sendNotification(SjamayeeFacade.OLIST_MODEL_BUFFER_CLEAR,mediator);
+    this.sendNotification(SjamayeeFacade.OBJECT_MODEL_BUFFER_CLEAR,mediator);    
+  },
+  onEditText: function() {
+    var mediator = SjamayeeFacade.getInstance().retrieveMediator(ModelObjectsListMediator.ID);
+  	mediator.setState(SjamayeeMediator.STATE_TEXT);
+  	mediator.sendNotification(SjamayeeFacade.TEXT_EDIT,mediator);
+    mediator.sendNotification(SjamayeeFacade.OLIST_MODEL_TEXT_SHOW); //OLIST_MODEL_TEXT_EDIT);
+  },
+  onDeleteUnrefObjects: function() {
+    var mediator = SjamayeeFacade.getInstance().retrieveMediator(ModelObjectsListMediator.ID);
+  	this.sendNotification(SjamayeeFacade.OBJECT_MODEL_UNREFS_DELETE,mediator); 
+  },
   listNotificationInterests: function()	{
     var result = this.parent();
     return result.concat([
@@ -17983,10 +18034,20 @@ var ModelRelationsToolBarMediator = new Class({
   onPasteRelation: function()	  { this.sendNotification(SjamayeeFacade.GRID_MODEL_RELATION_PASTE); },
   onUndoRelation: function()	  { this.sendNotification(SjamayeeFacade.GRID_MODEL_RELATION_UNDO); },
   onRedoRelation: function()	  { this.sendNotification(SjamayeeFacade.GRID_MODEL_RELATION_REDO); },
-  onClearBuffer: function()	    { this.sendNotification(SjamayeeFacade.GRID_MODEL_BUFFER_CLEAR); },
-  onEditText: function()	      { this.sendNotification(SjamayeeFacade.GRID_MODEL_TEXT_EDIT); },
-  onResetGrid: function()	      { this.sendNotification(SjamayeeFacade.GRID_MODEL_RESET); },
-		
+  onClearBuffer: function() {
+    var mediator = SjamayeeFacade.getInstance().retrieveMediator(ModelRelationsGridMediator.ID);
+    this.sendNotification(SjamayeeFacade.GRID_MODEL_BUFFER_CLEAR,mediator);
+  },
+  onEditText: function() {
+    var mediator = SjamayeeFacade.getInstance().retrieveMediator(ModelRelationsGridMediator.ID);
+  	mediator.setState(SjamayeeMediator.STATE_TEXT);
+  	mediator.sendNotification(SjamayeeFacade.TEXT_EDIT,mediator);
+    mediator.sendNotification(SjamayeeFacade.GRID_MODEL_TEXT_SHOW); //GRID_MODEL_TEXT_EDIT);
+  },
+  onResetGrid: function()	{ 
+    var mediator = SjamayeeFacade.getInstance().retrieveMediator(ModelRelationsGridMediator.ID);
+  	this.sendNotification(SjamayeeFacade.GRID_RESET,mediator);
+  },
 	listNotificationInterests: function()	{
     var result = this.parent();
     return result.concat([
@@ -20570,10 +20631,21 @@ var DataObjectsToolBarMediator = new Class({
   onEditObject: function()	        {	this.sendNotification(SjamayeeFacade.OLIST_DATA_OBJECT_EDIT); },
   onUndoObject: function()      	  {	this.sendNotification(SjamayeeFacade.OLIST_DATA_OBJECT_UNDO); },
   onRedoObject: function()	        {	this.sendNotification(SjamayeeFacade.OLIST_DATA_OBJECT_REDO); },
-  onClearBuffer: function()         {	this.sendNotification(SjamayeeFacade.OLIST_DATA_BUFFER_CLEAR); },
-	//onEditText: function()	          {	this.sendNotification(SjamayeeFacade.OLIST_DATA_TEXT_EDIT); },
-  onDeleteUnrefObjects: function()	{	this.sendNotification(SjamayeeFacade.OLIST_DATA_OBJECT_UNREFS_DELETE); },
-
+  onClearBuffer: function() {
+    var mediator = SjamayeeFacade.getInstance().retrieveMediator(DataObjectsListMediator.ID);
+    //this.sendNotification(SjamayeeFacade.OLIST_DATA_BUFFER_CLEAR,mediator);
+    this.sendNotification(SjamayeeFacade.OBJECT_DATA_BUFFER_CLEAR,mediator);
+  },
+	/*onEditText: function() {
+    var mediator = SjamayeeFacade.getInstance().retrieveMediator(DataObjectsListMediator.ID);
+	  mediator.setState(SjamayeeMediator.STATE_TEXT);
+	  mediator.sendNotification(SjamayeeFacade.TEXT_EDIT,mediator);
+    mediator.sendNotification(SjamayeeFacade.OLIST_DATA_TEXT_SHOW); //OLIST_DATA_TEXT_EDIT);
+	},*/
+  onDeleteUnrefObjects: function() {
+    var mediator = SjamayeeFacade.getInstance().retrieveMediator(DataObjectsListMediator.ID);
+  	this.sendNotification(SjamayeeFacade.OBJECT_DATA_UNREFS_DELETE,mediator); 
+  },
   listNotificationInterests: function()	{
     var result = this.parent();
     return result.concat([
@@ -20625,10 +20697,20 @@ var DataRelationsToolBarMediator = new Class({
   onPasteRelation: function()	  { this.sendNotification(SjamayeeFacade.GRID_DATA_RELATION_PASTE); },
   onUndoRelation: function()	  { this.sendNotification(SjamayeeFacade.GRID_DATA_RELATION_UNDO); },
   onRedoRelation: function()	  { this.sendNotification(SjamayeeFacade.GRID_DATA_RELATION_REDO); },
-  onClearBuffer: function()	    { this.sendNotification(SjamayeeFacade.GRID_DATA_BUFFER_CLEAR); },
-	//onEditText: function()	      { this.sendNotification(SjamayeeFacade.GRID_DATA_TEXT_EDIT); },
-  onResetGrid: function()	      { this.sendNotification(SjamayeeFacade.GRID_DATA_RESET); },
-
+  onClearBuffer: function()	{
+    var mediator = SjamayeeFacade.getInstance().retrieveMediator(DataRelationsGridMediator.ID);
+    this.sendNotification(SjamayeeFacade.GRID_DATA_BUFFER_CLEAR,mediator);
+  },
+	/*onEditText: function() {
+    var mediator = SjamayeeFacade.getInstance().retrieveMediator(DataRelationsGridMediator.ID);
+	  mediator.setState(SjamayeeMediator.STATE_TEXT);
+	  mediator.sendNotification(SjamayeeFacade.TEXT_EDIT,mediator);
+    mediator.sendNotification(SjamayeeFacade.GRID_DATA_TEXT_SHOW); //GRID_DATA_TEXT_EDIT);
+	},*/
+  onResetGrid: function()	{
+    var mediator = SjamayeeFacade.getInstance().retrieveMediator(DataRelationsGridMediator.ID);
+  	this.sendNotification(SjamayeeFacade.GRID_RESET,mediator);
+  },
   listNotificationInterests: function()	{
     var result = this.parent();
     return result.concat([
@@ -20793,9 +20875,7 @@ var DataRelationsGridMediator = new Class({
   		SjamayeeFacade.GRID_DATA_RELATION_COPY,
   		SjamayeeFacade.GRID_DATA_RELATION_PASTE,
   		SjamayeeFacade.GRID_DATA_RELATION_UNDO,
-  		SjamayeeFacade.GRID_DATA_RELATION_REDO,
-  		SjamayeeFacade.GRID_DATA_BUFFER_CLEAR,
-  		SjamayeeFacade.GRID_DATA_RESET
+  		SjamayeeFacade.GRID_DATA_RELATION_REDO
 		]);
 	},
   handleNotification: function(note)	{
@@ -21083,12 +21163,6 @@ var DataRelationsGridMediator = new Class({
   		case SjamayeeFacade.GRID_DATA_RELATION_REDO:
     	this.sendNotification(SjamayeeFacade.RELATION_REDO);
   		break;
-  		case SjamayeeFacade.GRID_DATA_BUFFER_CLEAR:
-    	this.sendNotification(SjamayeeFacade.GRID_BUFFER_CLEAR);
-  		break;
-  		case SjamayeeFacade.GRID_DATA_RESET:
-    	this.sendNotification(SjamayeeFacade.GRID_RESET);
-  		break;						
   		case SjamayeeFacade.DATA_ROOT_UNDO:
   		break;
   		case SjamayeeFacade.DATA_ROOT_SELECT:
@@ -21175,8 +21249,6 @@ var DataObjectsListMediator = new Class({
   		//SjamayeeFacade.OLIST_DATA_OBJECT_CANCEL,
   		SjamayeeFacade.OLIST_DATA_OBJECT_UNDO,
   		SjamayeeFacade.OLIST_DATA_OBJECT_REDO,
-  		SjamayeeFacade.OLIST_DATA_BUFFER_CLEAR,
-  		SjamayeeFacade.OLIST_DATA_OBJECT_UNREFS_DELETE,
 			SjamayeeFacade.OLIST_DATA_TYPE_CHANGE,
   		SjamayeeFacade.OLIST_DATA_REFOP_CHANGE,
   		SjamayeeFacade.OLIST_DATA_FILTER_CLICK
@@ -21234,12 +21306,6 @@ var DataObjectsListMediator = new Class({
   		break;
   		case SjamayeeFacade.OLIST_DATA_OBJECT_REDO:
     	this.sendNotification(SjamayeeFacade.OBJECT_DATA_REDO);
-  		break;
-  		case SjamayeeFacade.OLIST_DATA_BUFFER_CLEAR:
-    	this.sendNotification(SjamayeeFacade.OBJECT_DATA_BUFFER_CLEAR);
-  		break;
-  		case SjamayeeFacade.OLIST_DATA_OBJECT_UNREFS_DELETE:
-    	this.sendNotification(SjamayeeFacade.OBJECT_DATA_UNREFS_DELETE);
   		break;
   		case SjamayeeFacade.OLIST_DATA_REFOP_CHANGE:
   		this.sendNotification(SjamayeeFacade.FOCUS, ObjectsListRight.ID);
