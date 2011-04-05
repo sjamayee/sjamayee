@@ -1131,11 +1131,6 @@ var EnterCommand = new Class({
 //Class: UndoCommand
 var UndoCommand = new Class({
   Extends: SimpleCommand,
-  
-  /*initialize: function() {
-    this.parent();
-    this.mediator = null;    
-  },*/
 	execute: function(note) {
     this.mediator = note.getBody();
 		try {
@@ -1155,15 +1150,15 @@ var UndoCommand = new Class({
 					case Command.EXT:
 					case Command.PST:
 					case Command.NAV:
-					groupCommands = commandBuffer.getAllCommandsForGroup(previousCommand);
-					if (groupCommands && groupCommands.length > 0) {
+					this.groupCommands = commandBuffer.getAllCommandsForGroup(previousCommand);
+					if (this.groupCommands && this.groupCommands.length > 0) {
 						//Reverse the order of the array, for UNDO !!!
-						groupCommands.reverse();
+						this.groupCommands.reverse();
 						var groupName = null;
 						var groupId = null;
-            for (var i = 0; i < groupCommands.length; i++) {
-							if (groupCommands[i]) {
-								var cmd = groupCommands[i];
+            for (var i = 0; i < this.groupCommands.length; i++) {
+							if (this.groupCommands[i]) {
+								var cmd = this.groupCommands[i];
 								if (cmd.getName() != Command.NAV) {
 									if (cmd.isUnDone() === true) { continue; }
 								}
@@ -1216,9 +1211,9 @@ var RedoCommand = new Class({
 		try {
 			//Insert logic here ... 
 			//Get first UnDone-command from buffer.
+			this.groupCommands = null;
 			var commandBuffer = this.mediator.getCommandBuffer();
 			var previousCommand = commandBuffer.getLastDoneIfNoUnDone();		
-			var groupCommands = null;
 			var sourceName = null;
 			var groupName = null;
 			var groupId = null;
@@ -1233,11 +1228,11 @@ var RedoCommand = new Class({
 					case Command.EXT:
 					case Command.PST:
 					case Command.NAV:
-					groupCommands = commandBuffer.getAllCommandsForGroup(previousCommand);
-					if (groupCommands && groupCommands.length > 0) {
-            for (var i = 0; i < groupCommands.length; i++) {
-							if (groupCommands[i]) {
-								cmd = groupCommands[i];
+					this.groupCommands = commandBuffer.getAllCommandsForGroup(previousCommand);
+					if (this.groupCommands && this.groupCommands.length > 0) {
+            for (var i = 0; i < this.groupCommands.length; i++) {
+							if (this.groupCommands[i]) {
+								cmd = this.groupCommands[i];
 								if (cmd.getName() != Command.NAV) {
 									if (cmd.isDone() === true) { continue; }
 								}							
@@ -1315,7 +1310,6 @@ var ClearBufferCommand = new Class({
 //Class: ResetViewCommand
 var ResetViewCommand = new Class({
   Extends: SimpleCommand,
-
   initialize: function() {
     this.parent();
     this.percent = 35;
@@ -1453,9 +1447,8 @@ var AddDataRelationCommand = new Class({
 	execute: function(note) {
   	try {
       var mediator = this.facade.retrieveMediator(DataRelationsGridMediator.ID);
-      if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
-    		//Mode: INSERT/EDIT!
-    		mediator.setEdit();
+  		//Mode: INSERT/EDIT!
+      if (mediator.setEdit() == GridListMediator.MODE_EDIT) {
     		//Child display
   		  this.sendNotification(SjamayeeFacade.GRID_DATA_CHILD_SHOW);
     		//if (this.getDetailDisplay() == "PARENT") { this.showChild(); }
@@ -1475,9 +1468,8 @@ var AddModelRelationCommand = new Class({
 	execute: function(note) {
   	try {
       var mediator = this.facade.retrieveMediator(ModelRelationsGridMediator.ID);
-      if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
-    		//Mode: INSERT/EDIT!
-    		mediator.setEdit();
+  		//Mode: INSERT/EDIT!
+      if (mediator.setEdit() == GridListMediator.MODE_EDIT) {
     		//Child display
   		  this.sendNotification(SjamayeeFacade.GRID_MODEL_CHILD_SHOW);
     		//if (this.getDetailDisplay() == "PARENT") { this.showChild(); }
@@ -1556,6 +1548,7 @@ var DeleteDataRelationCommand = new Class({
 	execute: function(note) {
   	try {
       var mediator = note.getBody();
+  		//Mode: DISPLAY!
       if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
     		//this.setStatusMessage(SjamayeeForm.STATUS_MESSAGE_DELETE_LBL,true);
     		//Insert logic here ... 
@@ -1575,6 +1568,7 @@ var DeleteModelRelationCommand = new Class({
 	execute: function(note) {
   	try {
       var mediator = note.getBody();
+  		//Mode: DISPLAY!
       if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
     		//if (this.getDetailDisplay() == "PARENT") { this.showChild(); }
     		//this.setStatusMessage(SjamayeeForm.STATUS_MESSAGE_DELETE_LBL,true);
@@ -1641,9 +1635,8 @@ var EditDataRelationCommand = new Class({
 	execute: function(note) {
   	try {
       var mediator = note.getBody();
-      if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
-    		//Mode: EDIT!
-    		mediator.setEdit();
+  		//Mode: EDIT!
+      if (mediator.setEdit() == GridListMediator.MODE_EDIT) {
     		//Child display
   		  this.sendNotification(SjamayeeFacade.GRID_DATA_CHILD_SHOW);
     		//if (this.getDetailDisplay() == "PARENT") { this.showChild(); }
@@ -1664,9 +1657,8 @@ var EditModelRelationCommand = new Class({
 	execute: function(note) {
   	try {
       var mediator = note.getBody();
-      if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
-    		//Mode: EDIT!
-    		mediator.setEdit();
+  		//Mode: EDIT!
+      if (mediator.setEdit() == GridListMediator.MODE_EDIT) {
     		//Child display
   		  this.sendNotification(SjamayeeFacade.GRID_MODEL_CHILD_SHOW);
     		//if (this.getDetailDisplay() == "PARENT") { this.showChild(); }
@@ -1902,6 +1894,7 @@ var ExtractDataRelationCommand = new Class({
   	var nok = false;
   	try {
       var mediator = note.getBody();
+  		//Mode: DISPLAY!
       if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
     		//this.setStatusMessage(SjamayeeForm.STATUS_MESSAGE_EXTRACT_LBL,true);
     		//Insert logic here ... 
@@ -1924,6 +1917,7 @@ var ExtractModelRelationCommand = new Class({
   	var nok = false;
   	try {
       var mediator = note.getBody();
+  		//Mode: DISPLAY!
       if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
     		//this.setStatusMessage(SjamayeeForm.STATUS_MESSAGE_EXTRACT_LBL,true);
     		//Insert logic here ... 
@@ -1996,6 +1990,7 @@ var CopyDataRelationCommand = new Class({
 	execute: function(note) {
   	try {
       var mediator = note.getBody();
+  		//Mode: DISPLAY!
       if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
     		//this.setStatusMessage(SjamayeeForm.STATUS_MESSAGE_COPY_LBL,true);
     		//Insert logic here ... 
@@ -2015,6 +2010,7 @@ var CopyModelRelationCommand = new Class({
 	execute: function(note) {
   	try {
       var mediator = note.getBody();
+  		//Mode: DISPLAY!
       if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
     		//this.setStatusMessage(SjamayeeForm.STATUS_MESSAGE_COPY_LBL,true);
     		//Insert logic here ... 
@@ -2215,6 +2211,7 @@ var PasteDataRelationCommand = new Class({
 	execute: function(note) {
   	try {
       var mediator = this.facade.retrieveMediator(DataRelationsGridMediator.ID);
+  		//Mode: DISPLAY!
       if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
     		//this.setStatusMessage(SjamayeeForm.STATUS_MESSAGE_PASTE_LBL,true);
     		this.parent(note);
@@ -2233,6 +2230,7 @@ var PasteModelRelationCommand = new Class({
 	execute: function(note) {
   	try {
       var mediator = this.facade.retrieveMediator(ModelRelationsGridMediator.ID);
+  		//Mode: DISPLAY!
       if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
     		//this.setStatusMessage(SjamayeeForm.STATUS_MESSAGE_PASTE_LBL,true);
     		this.parent(note);
@@ -2248,14 +2246,7 @@ var PasteModelRelationCommand = new Class({
 //Abstract
 //Class: UndoRelationCommand
 var UndoRelationCommand = new Class({
-  Extends: UndoCommand,
-  
-  initialize: function() {
-    this.parent();
-    this.mediator = null;    
-    this.currentNivo = null;
-    this.position = null;
-  },
+  Extends: UndoCommand,  
 	execute: function(note) {
 		try {
 			this.mediator = null;
@@ -2451,6 +2442,7 @@ var UndoDataRelationCommand = new Class({
 	execute: function(note) {
 		try {
       var mediator = note.getBody();
+  		//Mode: DISPLAY!
       if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
   			this.parent(note);
         //this.sendNotification(SjamayeeFacade.RELATION_UNDONE,this.mediator);
@@ -2467,6 +2459,8 @@ var UndoModelRelationCommand = new Class({
   Extends: UndoRelationCommand,
 	execute: function(note) {
 		try {
+      var mediator = note.getBody();
+  		//Mode: DISPLAY!
       if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
   			this.parent(note);
         //this.sendNotification(SjamayeeFacade.RELATION_UNDONE,this.mediator);
@@ -2482,13 +2476,6 @@ var UndoModelRelationCommand = new Class({
 //Class: RedoRelationCommand
 var RedoRelationCommand = new Class({
   Extends: RedoCommand,
-
-  initialize: function() {
-    this.parent();
-    this.mediator = null;
-    this.currentNivo = null;
-    this.position = null;
-  },
 	execute: function(note) {
 		try {
 			var mediator = note.getBody();
@@ -2498,12 +2485,12 @@ var RedoRelationCommand = new Class({
 			this.position = (gridView.getPosition())?gridView.getPosition().clone():null;
   		this.parent(note);
 			//RESTORE broken links for redone ADDS, some (pid,nid) are still NULL!!!
-      for (var j = 0; j < groupCommands.length; j++) {
-				if (groupCommands[j]) {
-					if ((groupCommands[j].getName() != Command.ADD) &&
-					    (groupCommands[j].getName() != Command.PST)) { continue; }				
+      for (var j = 0; j < this.groupCommands.length; j++) {
+				if (this.groupCommands[j]) {
+					if ((this.groupCommands[j].getName() != Command.ADD) &&
+					    (this.groupCommands[j].getName() != Command.PST)) { continue; }				
 			  	//var r1 = Relation.getById(groupCommands[j].getRelation().getId());
-			  	var r1 = groupCommands[j].getRelation(); //TODO: VERIFY - IS THIS OK ??? ***
+			  	var r1 = this.groupCommands[j].getRelation(); //TODO: VERIFY - IS THIS OK ??? ***
 					if (r1) {
 						this.mediator.previousRelation = null;
 						this.mediator.nextRelation = null;
@@ -2684,6 +2671,7 @@ var RedoDataRelationCommand = new Class({
 	execute: function(note) {
 		try {
       var mediator = note.getBody();
+  		//Mode: DISPLAY!
       if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
         this.parent(note);
         //this.sendNotification(SjamayeeFacade.RELATION_REDONE,this.mediator);
@@ -2701,6 +2689,7 @@ var RedoModelRelationCommand = new Class({
 	execute: function(note) {
 		try {
       var mediator = note.getBody();
+  		//Mode: DISPLAY!
       if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
         this.parent(note);
         //this.sendNotification(SjamayeeFacade.RELATION_REDONE,this.mediator);
@@ -2716,11 +2705,6 @@ var RedoModelRelationCommand = new Class({
 //Class: ClearRelationBufferCommand
 var ClearRelationBufferCommand = new Class({
   Extends: ClearBufferCommand,
-
-  initialize: function() {
-    this.parent();
-    this.mediator = null;    
-  },
 	execute: function(note) {
 		try {
 		  this.parent(note);
@@ -2768,11 +2752,6 @@ var ClearModelRelationBufferCommand = new Class({
 //Class: ResetGridCommand
 var ResetGridCommand = new Class({
   Extends: ResetViewCommand,
-
-  initialize: function() {
-    this.parent();
-    this.mediator = null;    
-  },
 	execute: function(note) {
     this.mediator = note.getBody();
 		var grid = this.mediator.grid;
@@ -2830,9 +2809,10 @@ var AddDataObjectCommand = new Class({
   	try {
       var mediator = SjamayeeFacade.getInstance().retrieveMediator(DataObjectsListMediator.ID);
   		//var objectList = mediator.getList();    //TODO: not viewList but dataList !!!
-      if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
+  		//Mode: EDIT!
+      if (mediator.setEdit() == GridListMediator.MODE_EDIT) {
         this.parent(note);
-        this.mediator.setEdit(true);
+        //this.mediator.setEdit(true);
         this.mediator.setMessageText("Add object...");
   		  this.sendNotification(SjamayeeFacade.OLIST_DATA_RESIZE,SjamayeeFacade.SIZE_NORMAL);
   		  this.sendNotification(SjamayeeFacade.OLIST_DATA_SHOW);
@@ -2850,9 +2830,10 @@ var AddModelObjectCommand = new Class({
   	try {
       var mediator = SjamayeeFacade.getInstance().retrieveMediator(ModelObjectsListMediator.ID);
   		//var objectList = mediator.getList();    //TODO: not viewList but dataList !!!
-      if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
+  		//Mode: EDIT!
+      if (mediator.setEdit() == GridListMediator.MODE_EDIT) {
         this.parent(note);
-        this.mediator.setEdit(true);
+        //this.mediator.setEdit(true);
         this.mediator.setMessageText("Add object...");
   		  this.sendNotification(SjamayeeFacade.OLIST_MODEL_RESIZE,SjamayeeFacade.SIZE_NORMAL);
   		  this.sendNotification(SjamayeeFacade.OLIST_MODEL_SHOW);
@@ -2892,6 +2873,7 @@ var DeleteDataObjectCommand = new Class({
   	try {
       var mediator = note.getBody();
   		//var objectList = mediator.getList();    //TODO: not viewList but dataList !!!
+  		//Mode: DISPLAY!
       if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
         this.parent(note);
         this.mediator.setMessageText("Object deleted.");
@@ -2911,6 +2893,7 @@ var DeleteModelObjectCommand = new Class({
   	try {
       var mediator = note.getBody();
   		//var objectList = mediator.getList();    //TODO: not viewList but dataList !!!
+  		//Mode: DISPLAY!
       if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
         this.parent(note);
         this.mediator.setMessageText("Object deleted.");
@@ -2954,10 +2937,11 @@ var EditDataObjectCommand = new Class({
   	try {
       var mediator = note.getBody();
   		//var objectList = mediator.getList();    //TODO: not viewList but dataList !!!
-      if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
+  		//Mode: EDIT!
+      if (mediator.setEdit() == GridListMediator.MODE_EDIT) {
   			//Insert logic here ...
         this.parent(note);
-        this.mediator.setEdit(true);
+        //this.mediator.setEdit(true);
         this.mediator.setMessageText("Edit object...");        
   		  this.sendNotification(SjamayeeFacade.OLIST_DATA_RESIZE,SjamayeeFacade.SIZE_NORMAL);
   		  this.sendNotification(SjamayeeFacade.OLIST_DATA_SHOW);
@@ -2975,10 +2959,11 @@ var EditModelObjectCommand = new Class({
   	try {
       var mediator = note.getBody();
   		//var objectList = mediator.getList();    //TODO: not viewList but dataList !!!
-      if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
+  		//Mode: EDIT!
+      if (mediator.setEdit() == GridListMediator.MODE_EDIT) {
   			//Insert logic here ...
         this.parent(note);
-        this.mediator.setEdit(true);
+        //this.mediator.setEdit(true);
         this.mediator.setMessageText("Edit object...");
   		  this.sendNotification(SjamayeeFacade.OLIST_MODEL_RESIZE,SjamayeeFacade.SIZE_NORMAL);
   		  this.sendNotification(SjamayeeFacade.OLIST_MODEL_SHOW);
@@ -3083,6 +3068,7 @@ var CancelDataObjectCommand = new Class({
   Extends: CancelObjectCommand,
 	execute: function(note) {
     var mediator = note.getBody();
+		//Mode: DISPLAY!
     if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
       this.parent(note);
       //this.sendNotification(SjamayeeFacade.OBJECT_CANCELED,this.mediator);
@@ -3097,6 +3083,7 @@ var CancelModelObjectCommand = new Class({
   Extends: CancelObjectCommand,
 	execute: function(note) {
     var mediator = note.getBody();
+		//Mode: DISPLAY!
     if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
       this.parent(note);
       //this.sendNotification(SjamayeeFacade.OBJECT_CANCELED,this.mediator);
@@ -3249,10 +3236,10 @@ var UndoObjectCommand = new Class({
 //Class: UndoDataObjectCommand
 var UndoDataObjectCommand = new Class({
   Extends: UndoObjectCommand,
-  
 	execute: function(note) {
 		try {
       var mediator = note.getBody();
+  		//Mode: DISPLAY!
       if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
   			//Insert logic here ... 
     		var grid = mediator.grid;
@@ -3270,10 +3257,10 @@ var UndoDataObjectCommand = new Class({
 //Class: UndoModelObjectCommand
 var UndoModelObjectCommand = new Class({
   Extends: UndoObjectCommand,
-  
 	execute: function(note) {
 		try {
       var mediator = note.getBody();
+  		//Mode: DISPLAY!
       if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
   			//Insert logic here ... 
     		var grid = mediator.grid;
@@ -3292,7 +3279,6 @@ var UndoModelObjectCommand = new Class({
 //Class: RedoObjectCommand
 var RedoObjectCommand = new Class({
   Extends: RedoCommand,
-  
 	execute: function(note) {
 		try {
 		  var mediator = note.getBody();
@@ -3425,10 +3411,10 @@ var RedoObjectCommand = new Class({
 //Class: RedoDataObjectCommand
 var RedoDataObjectCommand = new Class({
   Extends: RedoObjectCommand,
-  
 	execute: function(note) {
 		try {
       var mediator = note.getBody();
+  		//Mode: DISPLAY!
       if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
   			//Insert logic here ... 
     		var grid = mediator.grid;
@@ -3446,10 +3432,10 @@ var RedoDataObjectCommand = new Class({
 //Class: RedoModelObjectCommand
 var RedoModelObjectCommand = new Class({
   Extends: RedoObjectCommand,
-  
 	execute: function(note) {
 		try {
       var mediator = note.getBody();
+  		//Mode: DISPLAY!
       if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
   			//Insert logic here ... 
     		var grid = mediator.grid;
@@ -3574,7 +3560,8 @@ var ShowSFDCObjectCommand = new Class({
   Extends: SimpleCommand,
 	execute: function(note) {
 		try {
-      //mediator.setMessageText("SFDC Object viewed!");
+		  this.mediator = note.getBody();
+      //this.mediator.setMessageText("SFDC Object viewed!");
 		} catch(error) {
 			Utils.alert("ShowSFDCObjectCommand - error: "+error.message,Utils.LOG_LEVEL_ERROR);
 		}
@@ -3587,7 +3574,7 @@ var ShowSFDCDataObjectCommand = new Class({
 	execute: function(note) {
 		try {
       this.parent(note);
-      this.mediator.setMessageText("SFDC Object viewed!");
+      //this.mediator.setMessageText("SFDC Object viewed!");
       this.mediator.setMessageText("SFDC Object viewed! (or SAP/Oracle/Documentum/...)");
 		} catch(error) {
 			Utils.alert("ShowSFDCDataObjectCommand - error: "+error.message,Utils.LOG_LEVEL_ERROR);
@@ -3713,7 +3700,6 @@ var CancelTextCommand = new Class({
 //Class: DataGrid
 var DataGrid = new Class({
 	Extends: Grid,
-	
 	initialize: function() {
 	  try {
 			this.parent(DataGrid.ID);
@@ -3732,7 +3718,6 @@ DataGrid.ID = "DataGrid";
 //Class: ModelGrid
 var ModelGrid = new Class({
 	Extends: Grid,
-	
 	initialize: function() {
 	  try {
 			this.parent(ModelGrid.ID);
@@ -4022,7 +4007,6 @@ var CachedObjectVO = new Class({
 //Class: CachingProxy
 var CachingProxy = new Class({
   Extends: Proxy,
-
 	initialize: function(name) {
   	this.topOid = null;
   	this.bottomOid = null;
@@ -4360,7 +4344,6 @@ CachingProxy.getSHA2Id = function(id) {
 //Class: AttributeVO
 var AttributeVO = new Class({
   Extends: CachedObjectVO,
-
 	initialize: function(id,name,value,txi) {
   	//this.name = "";
   	//this.value = "";
@@ -4378,7 +4361,6 @@ var AttributeVO = new Class({
 //Class: AttributeProxy
 var AttributeProxy = new Class({
   Extends: CachingProxy,
-
 	initialize: function(name) {
 		this.parent(name);
 	}
@@ -4388,7 +4370,6 @@ var AttributeProxy = new Class({
 //Class: EntityVO
 var EntityVO = new Class({
   Extends: CachedObjectVO,
-
 	initialize: function(id,ver,name,desc,txi,exi,oid,firstAttributes,references) {
   	//this.name = "";
   	//this.desc = "";
@@ -4413,7 +4394,6 @@ var EntityVO = new Class({
 //Class: EntityProxy
 var EntityProxy = new Class({
   Extends: CachingProxy,
-
 	initialize: function(name) {
 		this.parent(name);
 	},
@@ -4479,7 +4459,6 @@ EntityProxy.sortName = function(a,b) {
 //Class: RelationVO
 var RelationVO = new Class({
   Extends: CachedObjectVO,
-
 	initialize: function(id,ver,val,pei,cei,pid,nid,txi,exi,vir,vnv) {
 		try {
 			this.parent(id,ver,txi,exi,vir,vnv);
@@ -4502,7 +4481,6 @@ var RelationVO = new Class({
 //Class: RelationProxy
 var RelationProxy = new Class({
   Extends: CachingProxy,
-
 	initialize: function(name) {
 		this.parent(name);
 	},
@@ -4692,7 +4670,6 @@ RelationProxy.sortValue = function(a,b) {
 //Class: SettingVO
 var SettingVO = new Class({
   Extends: CachedObjectVO,
-
 	initialize: function(id,name,desc) {
   	//this.name = "";
   	//this.desc = "";
@@ -4709,7 +4686,6 @@ var SettingVO = new Class({
 //Class: SettingProxy
 var SettingProxy = new Class({
   Extends: CachingProxy,
-
 	initialize: function() {
 		this.parent(SettingProxy.ID);
 		this.addItem(new SettingVO("1","Setting1", "Setting1 Description"));
@@ -4964,7 +4940,6 @@ BusinessObject.test = function() {
 //Class: Attribute
 var AttributeB = new Class({
   Extends: BusinessObject,
-
 	initialize: function(vo) {
 		try {
 			this.parent(vo);
@@ -5008,7 +4983,6 @@ var AttributeB = new Class({
 //Class: EntityB
 var EntityB = new Class({
 	Extends: BusinessObject,
-	
 	initialize: function(vo) {
 		try {
 			this.parent(vo);
@@ -5222,16 +5196,15 @@ EntityB.SELECTION_ID = "ENTITY_SELECTION_ID";
 //Class: Relation
 var RelationB = new Class({
   Extends: BusinessObject,
-
 	initialize: function(vo) {
 		this.parent(vo);
-	  this.setSequence(0);
 		if (vo) {
 		  this.setVal(vo.val);
 		  this.setPei(vo.pei);
 		  this.setCei(vo.cei);
 		  this.setPid(vo.pid);
 		  this.setNid(vo.nid);
+  	  this.setSequence(0);
 		}
 	},
 	//Getters & Setters
@@ -5785,8 +5758,6 @@ RelationB.getFirstChildForEntity = function(entity) {
 //Class: Setting
 var Setting = new Class({
 	Extends: BusinessObject, //CachedObject,
-	
-	//initialize: function(id,name,desc) {
 	initialize: function(vo) {
 		try {
 			this.parent(vo);
@@ -5803,7 +5774,6 @@ var Setting = new Class({
     //return new SettingVO(this.getId(),this.getName(),this.getDesc());
     return this.vo;
 	},
-
 	getName: function() {
 		if (this.vo.name === undefined) {
 			this.vo.name = '';
@@ -5999,7 +5969,6 @@ var UIComponent = new Class({
 //Class: Sjamayee
 var Sjamayee = new Class({
   Extends: UIComponent,
-
   initialize: function(element, properties) {
   	this.appName = "Sjamayee!";
   	this.header = null;
@@ -6012,7 +5981,6 @@ var Sjamayee = new Class({
 		this.facade = SjamayeeFacade.getInstance();
 		this.parent(Sjamayee.FORM);	
   },
-
   initializeChildren: function() {
 		//this.parent();
 	  this.header = new Header();
@@ -6024,7 +5992,6 @@ var Sjamayee = new Class({
 		this.detail = new Detail();
 		this.addChild(this.detail);
   },
-
   initializationComplete: function() {
 		this.facade.startup(this);
   }
@@ -6036,7 +6003,6 @@ Sjamayee.ID_PAD_SIZE = 3;
 //Class: SjamayeeUIComponent
 var SjamayeeUIComponent = new Class({
   Extends: UIComponent,
-	
 	initialize: function(name,properties) {
 		this.parent(name,properties);
     this.id = name;
@@ -6051,7 +6017,6 @@ var SjamayeeUIComponent = new Class({
 //Class: Header
 var Header = new Class({
   Extends: SjamayeeUIComponent,
-	
 	initialize: function(properties) {
     this.dataModelSelect = null;
     this.dataObjectsHeader = null;
@@ -6159,7 +6124,6 @@ Header.HELP_BUTTON_LABEL = "Help";
 //Class: ObjectsHeader
 var ObjectsHeader = new Class({
   Extends: SjamayeeUIComponent,
-
 	initialize: function(name,properties) {
   	this.referenceOperatorSelect = null;
   	this.referenceFilter = null;
@@ -6261,7 +6225,6 @@ ObjectsHeader.REFERENCE_OPERATOR_LT_CHAR  = "<";
 //Class: RelationsHeader
 var RelationsHeader = new Class({
   Extends: SjamayeeUIComponent,
-
 	initialize: function(name,properties) {
   	this.entitySelect = null;
   	this.typeSelect = null;
@@ -6445,7 +6408,6 @@ RelationsHeader.TYPE_SELECT_PREFIX_LENGTH = 2;
 //Class: TextsHeader
 var TextsHeader = new Class({
   Extends: SjamayeeUIComponent,
-
 	initialize: function(name,properties) {
 		this.parent(name,properties);
 	}
@@ -6455,7 +6417,6 @@ var TextsHeader = new Class({
 //Class: ObjectsTextsHeader
 var ObjectsTextsHeader = new Class({
   Extends: TextsHeader,
-
 	initialize: function(name,properties) {
   	this.objectName = null;
   	this.typeName = null;
@@ -6487,7 +6448,6 @@ ObjectsTextsHeader.TYPE_NAME_LABEL = "&nbsp;Type&nbsp;";
 //Class: RelationsTextsHeader
 var RelationsTextsHeader = new Class({
   Extends: TextsHeader,
-
 	initialize: function(name,properties) {
   	this.relationText = null;
 	  var html = '<div id="'+name+RelationsTextsHeader.SPECIAL_HEADER_ID+'">'+
@@ -6514,7 +6474,6 @@ RelationsTextsHeader.RELATION_TEXT_LABEL = "&nbsp;Relation&nbsp;";
 //Class: ListUIComponent
 var ListUIComponent = new Class({
   Extends: SjamayeeUIComponent,
-
 	initialize: function(name,properties) {
 		this.parent(name,properties);		
   	this.cells = [];
@@ -6638,7 +6597,6 @@ var ListUIComponent = new Class({
 //Class: AttributeListUIComponent
 var AttributeListUIComponent = new Class({
   Extends: ListUIComponent,
-
 	initialize: function(name,properties) {
   	this.attribute01Name = null;
   	this.attribute01Value = null;
@@ -7024,7 +6982,6 @@ TextsEditorUIComponent.COMPONENT_ID = "textsEditorUICBody";
 //Class: TextsEditor
 var TextsEditor = new Class({
   Extends: TextsEditorUIComponent,
-
 	initialize: function(name,properties) {
 		this.parent(name,properties);
     this.keyup_Handler = this.keyup_Handler.bindWithEvent(this);
@@ -7066,7 +7023,6 @@ this.addChild(this.modelRelationsTextsEditor);
 //Class: ModelObjectsTextsEditorLeft
 var ModelObjectsTextsEditorLeft = new Class({
   Extends: SjamayeeUIComponent,
-
 	initialize: function(name,properties) {
     var html = this.buildHtml();
 		this.parent(ModelObjectsTextsEditorLeft.ID, {html: html});
@@ -7086,7 +7042,6 @@ ModelObjectsTextsEditorLeft.LABEL = "TEXT EDITOR";
 //Class: ModelRelationsTextsEditorLeft
 var ModelRelationsTextsEditorLeft = new Class({
   Extends: SjamayeeUIComponent,
-
 	initialize: function(name,properties) {
     var html = this.buildHtml();
 		this.parent(ModelRelationsTextsEditorLeft.ID, {html: html});
@@ -7138,7 +7093,6 @@ ModelRelationsTextsEditorLeft.CHILD_TEXT_BUTTON_VALUE = "Child";
 //Class: ModelObjectsTextsEditorRight
 var ModelObjectsTextsEditorRight = new Class({
   Extends: TextsEditor,
-
 	initialize: function(name,properties) {
     var html = this.buildHtml();
 		this.parent(ModelObjectsTextsEditorRight.ID, {html: html});		
@@ -7255,7 +7209,6 @@ ModelObjectsTextsEditorRight.ID = "modelObjectsTextsEditorRight";
 //Class: ModelRelationsTextsEditorRight
 var ModelRelationsTextsEditorRight = new Class({
   Extends: TextsEditor,
-  
 	initialize: function(name,properties) {
     var html = this.buildHtml();
 		this.parent(ModelRelationsTextsEditorRight.ID, {html: html});		
@@ -7309,7 +7262,6 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 //Class: GridList
 var GridList = new Class({
   Extends: SjamayeeUIComponent,
-
 	initialize: function(name,properties) {
 		this.parent(GridList.ID);
   	this.gridListSplitter = null;
@@ -7328,7 +7280,6 @@ GridList.MAXIMUM_SIZE = 437;
 //Class: GridListSplitter
 var GridListSplitter = new Class({
   Extends: SjamayeeUIComponent,
-
 	initialize: function(name,properties) {
 		this.parent(GridListSplitter.ID);
   	this.left = null;
@@ -7346,7 +7297,6 @@ GridListSplitter.ID = "listSplitter";
 //Class: GridListLeft
 var GridListLeft = new Class({
   Extends: SjamayeeUIComponent,
-
 	initialize: function(name,properties) {
 		var html = '<div id="'+DataObjectsListLeft.ID+'" class="'+GridListLeft.CLASS_ID+'"></div>'+
 		           '<div id="'+DataRelationsGridLeft.ID+'" class="'+GridListLeft.CLASS_ID+'"></div>'+
@@ -7383,7 +7333,6 @@ GridListLeft.CLASS_ID = "listLeft";
 //Class: GridListRight
 var GridListRight = new Class({
   Extends: SjamayeeUIComponent,
-
 	initialize: function(name,properties) {
 		var html = '<div id="'+DataObjectsListRight.ID+'" class="'+GridListRight.CLASS_ID+'"></div>'+
 		           '<div id="'+DataRelationsGridRight.ID+'" class="'+GridListRight.CLASS_ID+'"></div>'+
@@ -7422,7 +7371,6 @@ GridListRight.CLASS_ID = "listRight";
 //Class: ObjectsListLeft
 var ObjectsListLeft = new Class({
   Extends: ListUIComponent,
-
 	initialize: function(name,properties) {
     var html = this.buildHtml(name);
 		this.parent(name,{html:html});
@@ -7549,7 +7497,6 @@ ObjectsListLeft.COLUMN_HEADER_DESC_CLASS_ID = "listColumnHeaderDescription";
 //Class: DataObjectsListLeft
 var DataObjectsListLeft = new Class({
   Extends: ObjectsListLeft,
-
 	initialize: function(name,properties) {
 		this.parent(DataObjectsListLeft.ID, properties);
 		//Extend keyboard.
@@ -7563,7 +7510,6 @@ DataObjectsListLeft.ID = "dataObjectsListLeft";
 //Class: ModelObjectsListLeft
 var ModelObjectsListLeft = new Class({
   Extends: ObjectsListLeft,
-
 	initialize: function(name,properties) {
 		this.parent(ModelObjectsListLeft.ID, properties);
 		//Extend keyboard.
@@ -7578,7 +7524,6 @@ ModelObjectsListLeft.ID = "modelObjectsListLeft";
 //Class: ObjectsListRight
 var ObjectsListRight = new Class({
   Extends: ListUIComponent,
-
 	initialize: function(name,properties) {
     var html = this.buildHtml(name);
 		this.parent(name,{html:html});
@@ -7635,7 +7580,6 @@ ObjectsListRight.COLUMN_DESC_CLASS_ID = "listColumnDescription";
 //Class: DataObjectsListRight
 var DataObjectsListRight = new Class({
   Extends: ObjectsListRight,
-
 	initialize: function(name,properties) {
 		this.parent(DataObjectsListRight.ID, properties);
 	}
@@ -7645,7 +7589,6 @@ DataObjectsListRight.ID = "dataObjectsListRight";
 //Class: ModelObjectsListRight
 var ModelObjectsListRight = new Class({
   Extends: ObjectsListRight,
-
 	initialize: function(name,properties) {
 		this.parent(ModelObjectsListRight.ID, properties);
 	}
@@ -7656,7 +7599,6 @@ ModelObjectsListRight.ID = "modelObjectsListRight";
 //Class: GridUIComponent
 var GridUIComponent = new Class({
   Extends: ListUIComponent,
-
 	initialize: function(name,properties) {
 		this.parent(name,properties);
 		this.grid_clickHandler = this.grid_clickHandler.bindWithEvent(this);			
@@ -7745,7 +7687,6 @@ var GridUIComponent = new Class({
 //Class: RelationsGridLeft
 var RelationsGridLeft = new Class({
   Extends: GridUIComponent,
-
 	initialize: function(name,properties) {
 		var html = this.buildHtml(name);
 		this.parent(name,{html:html});
@@ -7893,7 +7834,6 @@ RelationsGridLeft.getColumnId = function(columnNumber) {
 //Class: DataRelationsGridLeft
 var DataRelationsGridLeft = new Class({
   Extends: RelationsGridLeft,
-
 	initialize: function(name,properties) {
 		this.parent(DataRelationsGridLeft.ID, properties);
 		//Extend keyboard.
@@ -7907,7 +7847,6 @@ DataRelationsGridLeft.ID = "dataRelationsGridLeft";
 //Class: ModelRelationsGridLeft
 var ModelRelationsGridLeft = new Class({
   Extends: RelationsGridLeft,
-
 	initialize: function(name,properties) {
 		this.parent(ModelRelationsGridLeft.ID, properties);
 		//Extend keyboard.
@@ -7922,7 +7861,6 @@ ModelRelationsGridLeft.ID = "modelRelationsGridLeft";
 //Class: RelationsGridRight
 var RelationsGridRight = new Class({
   Extends: GridUIComponent,
-
 	initialize: function(name,properties) {
     var html = this.buildHtml(name);
 		this.parent(name,{html:html});
@@ -8027,7 +7965,6 @@ RelationsGridRight.CELL_CLASS_ID = "relationsGridRightCell";
 //Class: DataRelationsGridRight
 var DataRelationsGridRight = new Class({
   Extends: RelationsGridRight,
-
 	initialize: function(name,properties) {
 		this.parent(DataRelationsGridRight.ID, properties);
 	}
@@ -8037,7 +7974,6 @@ DataRelationsGridRight.ID = "dataRelationsGridRight";
 //Class: ModelRelationsGridRight
 var ModelRelationsGridRight = new Class({
   Extends: RelationsGridRight,
-
 	initialize: function(name,properties) {
 		this.parent(ModelRelationsGridRight.ID, properties);
 	}
@@ -8047,7 +7983,6 @@ ModelRelationsGridRight.ID = "modelRelationsGridRight";
 //Class: ToolBar
 var ToolBar = new Class({
   Extends: SjamayeeUIComponent,
-  
 	initialize: function(name,properties) {
     var html = '<div id="'+DataObjectsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>'+
                '<div id="'+DataRelationsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>';
@@ -8097,7 +8032,6 @@ ToolBar.BUTTON_CLASS_ID = "toolBarButton";
 //Class: ObjectsToolBar
 var ObjectsToolBar = new Class({
   Extends: SjamayeeUIComponent,
-
 	initialize: function(name,properties) {
     var html = '<div id="'+name+ToolBar.COMMON_TOOLBAR_ID+'" class="'+ToolBar.COMMON_TOOLBAR_CLASS_ID+'">'+
   		         '<input type="text" id="'+name+ToolBar.MESSAGE_TEXT_ID+'" class="'+ToolBar.MESSAGE_TEXT_CLASS_ID+'" value=""/>'+
@@ -8276,7 +8210,6 @@ ObjectsToolBar.DELETE_UNREFOBS_BUTTON_CLASS_ID = "deleteUnreferencedObjectsButto
 //Class: RelationsToolBar
 var RelationsToolBar = new Class({
   Extends: SjamayeeUIComponent,
-
 	initialize: function(name,properties) {
     var html = '<div id="'+name+ToolBar.COMMON_TOOLBAR_ID+'" class="'+ToolBar.COMMON_TOOLBAR_CLASS_ID+'">'+
   		         '<input type="text" id="'+name+ToolBar.MESSAGE_TEXT_ID+'" class="'+ToolBar.MESSAGE_TEXT_CLASS_ID+'" value=""/>'+
@@ -8452,7 +8385,6 @@ RelationsToolBar.RESET_GRID_BUTTON_CLASS_ID = "relationsToolBarResetButton";
 //Class: TextsToolBar
 var TextsToolBar = new Class({
   Extends: SjamayeeUIComponent,
-
 	initialize: function(name,properties) {
     var html = '<div id="'+name+ToolBar.COMMON_TOOLBAR_ID+'" class="'+ToolBar.COMMON_TOOLBAR_CLASS_ID+'">'+
   		         '<input type="text" id="'+name+ToolBar.MESSAGE_TEXT_ID+'" class="'+ToolBar.MESSAGE_TEXT_CLASS_ID+'" value=""/>'+
@@ -8515,7 +8447,6 @@ TextsToolBar.CANCEL_BUTTON_VALUE = "Cancel";
 //Class: Detail
 var Detail = new Class({
   Extends: SjamayeeUIComponent,
-
 	initialize: function() {
 		this.parent(Detail.ID);
   	this.splitter = null;
@@ -8538,7 +8469,6 @@ Detail.NORMAL_SIZE = 217;
 //Class: DetailSplitter
 var DetailSplitter = new Class({
   Extends: SjamayeeUIComponent,
-
 	initialize: function() {
 		this.parent(DetailSplitter.ID);
   	this.left = null;
@@ -8556,7 +8486,6 @@ DetailSplitter.ID = "detailSplitter";
 //Class: DetailLeft
 var DetailLeft = new Class({
   Extends: SjamayeeUIComponent,
-
 	initialize: function() {
 		var html = '<div id="'+DataObjectNTD.ID+'" class="'+ObjectNTD.CLASS_ID+'"></div>'+
 							 '<div id="'+DataParentDetail.ID+'" class="'+ParentDetail.CLASS_ID+'"></div>'+
@@ -8585,7 +8514,6 @@ DetailLeft.ID = "detailPaneLeft";
 //Class: DetailRight
 var DetailRight = new Class({
   Extends: SjamayeeUIComponent,
-
 	initialize: function() {
 		var html = '<div id="'+DataObjectProperties.ID+'" class="'+ObjectProperties.CLASS_ID+'"></div>'+
 							 '<div id="'+DataChildDetail.ID+'" class="'+ChildDetail.CLASS_ID+'"></div>'+
@@ -8615,7 +8543,6 @@ DetailRight.ID = "detailPaneRight";
 //Class: DetailNTD
 var DetailNTD = new Class({
   Extends: SjamayeeUIComponent,
-
 	initialize: function(name,properties) {
 		this.parent(name,properties);
   	this.header = null;
@@ -8726,7 +8653,6 @@ DetailNTD.CANCEL_BUTTON_LABEL = "Cancel";
 //Class: ObjectNTD
 var ObjectNTD = new Class({
   Extends: DetailNTD,
-
 	initialize: function(name,properties) {
 		var html = '<div id="'+name+ObjectNTD.HEADER_ID+'" class="'+DetailNTD.HEADER_CLASS_ID+'">'+ObjectNTD.HEADER_VALUE+'</div>'+
 						 	 '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
@@ -8789,7 +8715,6 @@ ObjectNTD.NOGO_BUTTON_ID = "NTDNogoButton";
 //Class: DataObjectNTD
 var DataObjectNTD = new Class({
   Extends: ObjectNTD,
-
 	initialize: function() {
 	  this.parent(DataObjectNTD.ID);
   }
@@ -8800,7 +8725,6 @@ DataObjectNTD.ID = "dataObjectNTD";
 //Class: ModelObjectNTD
 var ModelObjectNTD = new Class({
   Extends: ObjectNTD,
-
 	initialize: function() {
 	  this.parent(ModelObjectNTD.ID);
   }
@@ -8812,7 +8736,6 @@ ModelObjectNTD.ID = "modelObjectNTD";
 //Class: ObjectProperties
 var ObjectProperties = new Class({
   Extends: AttributeListUIComponent,
-
 	initialize: function(name,properties) {
 		this.parent(name,{header_value: ObjectProperties.HEADER_VALUE});
 	}
@@ -8823,7 +8746,6 @@ ObjectProperties.HEADER_VALUE = "Properties";
 //Class: DataObjectProperties
 var DataObjectProperties = new Class({
   Extends: ObjectProperties,
-
 	initialize: function() {
 		this.parent(DataObjectProperties.ID);
 	}
@@ -8841,7 +8763,6 @@ DataObjectProperties.ID = "dataObjectProperties";
 //Class: ModelObjectProperties
 var ModelObjectProperties = new Class({
   Extends: ObjectProperties,
-
 	initialize: function() {
 		this.parent(ModelObjectProperties.ID);
 	}
@@ -8860,7 +8781,6 @@ ModelObjectProperties.ID = "modelObjectProperties";
 //Class: ParentDetail
 var ParentDetail = new Class({
   Extends: SjamayeeUIComponent,
-
 	initialize: function(name,properties) {
 		/*var html = '<div id="'+name+ParentNTD.ID+'" class="'+ParentNTD.CLASS_ID+'"></div>'+
 							 '<div id="'+name+ParentProperties.ID+'" class="'+ParentProperties.CLASS_ID+'"></div>';*/
@@ -8922,7 +8842,6 @@ ModelParentDetail.ID = "modelParentDetail";
 //Class: ParentNTD
 var ParentNTD = new Class({
   Extends: DetailNTD,
-
 	initialize: function(name,properties) {
 		var html = '<div id="'+name+ParentNTD.HEADER_ID+'" class="'+DetailNTD.HEADER_CLASS_ID+'">'+ParentNTD.HEADER_VALUE+'</div>'+
 						 	 '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
@@ -8981,7 +8900,6 @@ ParentNTD.NOGO_BUTTON_ID = "NTDNoGoButton";
 //Class: DataParentNTD
 var DataParentNTD = new Class({
   Extends: ParentNTD,
-
 	initialize: function() {
 	  this.parent(DataParentNTD.ID);
 	}
@@ -8992,7 +8910,6 @@ DataParentNTD.ID = "dataParentNTD";
 //Class: ModelParentNTD
 var ModelParentNTD = new Class({
   Extends: ParentNTD,
-
 	initialize: function() {
 	  this.parent(ModelParentNTD.ID);
 	}
@@ -9004,7 +8921,6 @@ ModelParentNTD.ID = "modelParentNTD";
 //Class: ParentProperties
 var ParentProperties = new Class({
   Extends: AttributeListUIComponent,
-
 	initialize: function(name,properties) {
 		this.parent(name,{header_value: ParentProperties.HEADER_VALUE});
 	}
@@ -9016,7 +8932,6 @@ ParentProperties.HEADER_VALUE = "Properties";
 //Class: DataParentProperties
 var DataParentProperties = new Class({
   Extends: ParentProperties,
-
 	initialize: function() {
 		this.parent(DataParentProperties.ID);
 	}
@@ -9034,7 +8949,6 @@ DataParentProperties.ID = "dataParentProperties";
 //Class: ModelParentProperties
 var ModelParentProperties = new Class({
   Extends: ParentProperties,
-
 	initialize: function() {
 		this.parent(ModelParentProperties.ID);
 	}
@@ -9053,7 +8967,6 @@ ModelParentProperties.ID = "modelParentProperties";
 //Class: ChildDetail
 var ChildDetail = new Class({
   Extends: SjamayeeUIComponent,
-
 	initialize: function(name,properties) {
 		/*var html = '<div id="'+name+ChildNTD.ID+'" class="'+ChildNTD.CLASS_ID+'"></div>'+
 							 '<div id="'+name+ChildProperties.ID+'" class="'+ChildProperties.CLASS_ID+'"></div>';*/
@@ -9067,7 +8980,6 @@ ChildDetail.CLASS_ID = "childDetail";
 //Class: DataChildDetail
 var DataChildDetail = new Class({
   Extends: ChildDetail,
-
   initialize: function() {
 	  var html = '<div id="'+DataChildNTD.ID+'" class="'+ChildNTD.CLASS_ID+'"></div>'+
 						   '<div id="'+DataChildProperties.ID+'" class="'+ChildProperties.CLASS_ID+'"></div>';
@@ -9108,7 +9020,6 @@ ModelChildDetail.ID = "modelChildDetail";
 //Class: ChildNTD
 var ChildNTD = new Class({
   Extends: DetailNTD,
-
 	initialize: function(name,properties) {
 		var html = '<div id="'+name+ChildNTD.HEADER_ID+'" class="'+DetailNTD.HEADER_CLASS_ID+'">'+ChildNTD.HEADER_VALUE+'</div>'+
 						 	 '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
@@ -9167,7 +9078,6 @@ ChildNTD.NOGO_BUTTON_ID = "NTDNoGoButton";
 //Class: DataChildNTD
 var DataChildNTD = new Class({
   Extends: ChildNTD,
-
 	initialize: function() {
 	  this.parent(DataChildNTD.ID);
     this.buttons = null;
@@ -9179,7 +9089,6 @@ DataChildNTD.HEADER_ID = DataChildNTD.ID+ChildNTD.HEADER_ID;
 //Class: ModelChildNTD
 var ModelChildNTD = new Class({
   Extends: ChildNTD,
-
 	initialize: function() {
 	  this.parent(ModelChildNTD.ID);
     this.buttons = null;
@@ -9192,7 +9101,6 @@ ModelChildNTD.HEADER_ID = ModelChildNTD.ID+ChildNTD.HEADER_ID;
 //Class: ChildProperties
 var ChildProperties = new Class({
   Extends: AttributeListUIComponent,
-
 	initialize: function(name,properties) {
 		this.parent(name,{header_value: ChildProperties.HEADER_VALUE});
 	}
@@ -9204,7 +9112,6 @@ ChildProperties.HEADER_VALUE = "Properties";
 //Class: DataChildProperties
 var DataChildProperties = new Class({
   Extends: ChildProperties,
-
 	initialize: function() {
 		this.parent(DataChildProperties.ID);
 	}
@@ -9222,7 +9129,6 @@ DataChildProperties.HEADER_ID = DataChildProperties.ID+AttributeListUIComponent.
 //Class: ModelChildProperties
 var ModelChildProperties = new Class({
   Extends: ChildProperties,
-
 	initialize: function() {
 		this.parent(ModelChildProperties.ID);
 	}
@@ -9244,7 +9150,6 @@ ModelChildProperties.HEADER_ID = ModelChildProperties.ID+AttributeListUIComponen
 //Class: SjamayeeMediator
 var SjamayeeMediator = new Class({
 	Extends: Mediator,
-
 	initialize: function(name,viewComponent)	{
 		this.parent(name,viewComponent);
   	this.state = SjamayeeMediator.STATE_LIST;
@@ -9309,7 +9214,6 @@ SjamayeeMediator.STATE_TEXT = "TEXT";
 //Class: HeaderMediator
 var HeaderMediator = new Class({
 	Extends: SjamayeeMediator,
-
 	initialize: function(viewComponent)	{
 		this.parent(HeaderMediator.ID,viewComponent);
   	var header = this.getViewComponent();
@@ -9476,7 +9380,6 @@ HeaderMediator.ID = "HeaderMediator";
 //Class: ObjectsHeaderMediator
 var ObjectsHeaderMediator = new Class({
 	Extends: SjamayeeMediator,
-
 	initialize: function(name,viewComponent)	{
 		this.parent(name,viewComponent);
 		this.listMediator = null;
@@ -9502,9 +9405,7 @@ var ObjectsHeaderMediator = new Class({
 	onObjectsRefOpChange: function()  { alert("ObjectsHeaderMediator/onObjectsRefOpChange"); },
 	onObjectsTypeChange: function()	  { alert("ObjectsHeaderMediator/onObjectsTypeChange"); },
 	onObjectsFilterClick: function()  { alert("ObjectsHeaderMediator/onObjectsFilterClick"); },
-  onObjectsFilterChange: function() {
-	  this.onObjectsFilterClick();
-	},
+  onObjectsFilterChange: function() { this.onObjectsFilterClick(); },
 	onObjectsFilterCaseClick: function() {
     if (this.getViewComponent().filter.value.length > 0) {
 	    this.onObjectsFilterClick();
@@ -9558,7 +9459,6 @@ var ObjectsHeaderMediator = new Class({
 //Class: RelationsHeaderMediator
 var RelationsHeaderMediator = new Class({
 	Extends: SjamayeeMediator,
-
 	initialize: function(name,viewComponent)	{
 		this.parent(name,viewComponent);
     this.gridMediator = null;
@@ -9597,9 +9497,7 @@ var RelationsHeaderMediator = new Class({
 		//var relationsGridMediator = this.facade.retrieveMediator(RelationsGridMediator.ID);
 		//relationsGridMediator.setCurrentNivo(nivo);
 	},
-	onRelationsFilterChange: function() {
-    this.onRelationsFilterClick();
-	},
+	onRelationsFilterChange: function() { this.onRelationsFilterClick(); },
 	onRelationsFilterCaseClick: function() {
     if (this.getViewComponent().filter.value.length > 0) {
       this.onRelationsFilterClick();
@@ -9677,7 +9575,6 @@ var RelationsHeaderMediator = new Class({
 //Class: TextsHeaderMediator
 var TextsHeaderMediator = new Class({
 	Extends: SjamayeeMediator,
-
 	initialize: function(name,viewComponent)	{
 		this.parent(name,viewComponent);
 	},
@@ -9701,7 +9598,6 @@ var TextsHeaderMediator = new Class({
 //Class: PagingMediator
 var PagingMediator = new Class({
 	Extends: SjamayeeMediator,
-
 	initialize: function(name,viewComponent)	{
 		this.parent(name,viewComponent);
   	this.paging = null;
@@ -9905,7 +9801,6 @@ PagingMediator.PAGE_LAST = "PAGE_LAST";
 //Class: ListMediator
 var ListMediator = new Class({
 	Extends: PagingMediator,
-
 	initialize: function(name,viewComponent)	{
 		this.parent(name,viewComponent);
   	this.setPointerEvent(null);
@@ -9995,7 +9890,6 @@ var ListMediator = new Class({
 //Class: AttributeListMediator
 var AttributeListMediator = new Class({
 	Extends: ListMediator,
-
 	initialize: function(name,viewComponent)	{
 		this.parent(name,viewComponent);
 		this.onNameClick = this.onNameClick.bindWithEvent(this);
@@ -10013,15 +9907,9 @@ var AttributeListMediator = new Class({
 		this.setEndOfList(AttributeListUIComponent.PAGE_SIZE);
 		this.home();
 	},
-  onListClick: function()	  {
-    this.listUIC.keyboard.activate();
-  },
-	onNameClick: function()	 {
-		this.sendNotification(SjamayeeFacade.ATTRIBUTE_NAME_CLICK);
-	},
-	onValueClick: function() {
-		this.sendNotification(SjamayeeFacade.ATTRIBUTE_VALUE_CLICK);
-	},
+  onListClick: function()	 { this.listUIC.keyboard.activate(); },
+	onNameClick: function()	 { this.sendNotification(SjamayeeFacade.ATTRIBUTE_NAME_CLICK); },
+	onValueClick: function() { this.sendNotification(SjamayeeFacade.ATTRIBUTE_VALUE_CLICK); },
   onLineMouseOver: function(evt,color) {
   	this.setPointerEvent(evt);
     var id = evt.target.id;
@@ -10111,7 +9999,6 @@ break;
 //Class: GridListMediator
 var GridListMediator = new Class({
 	Extends: ListMediator,
-
 	initialize: function(name,viewComponent)	{
 		this.parent(name,viewComponent);
   },
@@ -10165,7 +10052,7 @@ var GridListMediator = new Class({
   },
 	getMode: function() {
 	  if ((this.mode === undefined) || (this.mode === null)) {
-	    this.setMode(GridListMediator.MODE_DISPLAY);
+	    this.mode = GridListMediator.MODE_DISPLAY;
 	  }
 		return this.mode;
 	},
@@ -10173,8 +10060,9 @@ var GridListMediator = new Class({
     var _forced = (forced !== undefined && forced !== null)?forced:false;
     var response = null;
     if (_forced === false) {
-      if (this.mode) {
-        if (this.mode == GridListMediator.MODE_EDIT) {
+      var currentMode = this.getMode();
+      if (currentMode) {
+        if (currentMode == GridListMediator.MODE_EDIT) {
     		  response = confirm("Updates will be lost!\n\nAre you sure?");
         }
       }
@@ -10182,7 +10070,7 @@ var GridListMediator = new Class({
     if (response === null || response === true) {
       this.mode = mode;
     }
-    return this.mode;
+    return this.getMode();
   },
   setEdit: function(forced) {
     return this.setMode(GridListMediator.MODE_EDIT,forced);
@@ -10601,7 +10489,6 @@ GridListMediator.MODE_EDIT = "EDIT";
 //Class: ObjectsListMediator
 var ObjectsListMediator = new Class({
 	Extends: GridListMediator,
-
 	initialize: function(name,viewComponent)	{
 		this.parent(name,viewComponent);
     this.pageSize = null;
@@ -10803,9 +10690,7 @@ var ObjectsListMediator = new Class({
 			Utils.alert("ObjectsListMediator/clearOneLine Error: "+error.message,Utils.LOG_LEVEL_ERROR);
 		}
 	},
-  onListClick: function()	  {
-    this.listUICLeft.keyboard.activate();
-  },
+  onListClick: function()	  { this.listUICLeft.keyboard.activate(); },
   onLineMouseOver: function(evt,color) {
     var id = evt.target.id;
   	var line = id.substr(id.length-Sjamayee.ID_PAD_SIZE);
@@ -10880,7 +10765,6 @@ ObjectsListMediator.END_MESSAGE_TEXT = "Last page.";
 //Class: RelationsGridMediator
 var RelationsGridMediator = new Class({
 	Extends: GridListMediator,
-
 	initialize: function(name,viewComponent)	{
 		this.parent(name,viewComponent);
   	this.firstTime = true;
@@ -10972,9 +10856,7 @@ var RelationsGridMediator = new Class({
 		var gridColumn = this.getGrid().getColumnByIndex(this.getColumnFromCellId(cellId));
 		this.setCurrentNivo(gridColumn.getNivo());
   }, 
-  onCurrentCellId: function(cellId) {
-    return (this.getCurrentCellId() == cellId);
-  },
+  onCurrentCellId: function(cellId) { return (this.getCurrentCellId() == cellId); },
   isCurrentCellIdOnColumn: function(column) {
     var result = false;
     var cellId = this.getCurrentCellId();
@@ -12535,7 +12417,6 @@ RelationsGridMediator.PAGE_SIZE_MAX = 21;
 //Class: ToolBarMediator
 var ToolBarMediator = new Class({
 	Extends: SjamayeeMediator,
-
 	initialize: function(viewComponent)	{
 		this.parent(ToolBarMediator.ID,viewComponent);
 		var toolBar = this.getViewComponent();
@@ -12573,7 +12454,6 @@ ToolBarMediator.ID = "ToolBarMediator";
 //Class: ObjectsToolBarMediator
 var ObjectsToolBarMediator = new Class({
 	Extends: SjamayeeMediator,
-
 	initialize: function(name,viewComponent)	{
 		this.parent(name,viewComponent);
 		this.listMediator = null;
@@ -12679,7 +12559,6 @@ var ObjectsToolBarMediator = new Class({
 //Class: RelationsToolBarMediator
 var RelationsToolBarMediator = new Class({
 	Extends: SjamayeeMediator,
-
 	initialize: function(name,viewComponent)	{
 		this.parent(name,viewComponent);
 		this.gridMediator = null;
@@ -12790,7 +12669,6 @@ RelationsToolBarMediator.ID = "RelationsToolBarMediator";
 //Class: TextsToolBarMediator
 var TextsToolBarMediator = new Class({
 	Extends: SjamayeeMediator,
-
 	initialize: function(name,viewComponent)	{
 		this.parent(name,viewComponent);
 		this.onSave = this.onSave.bindWithEvent(this);
@@ -12801,11 +12679,9 @@ var TextsToolBarMediator = new Class({
 		toolBar.addEvent(SjamayeeFacade.TEXT_CANCEL, this.onCancel);
     toolBar.addEvent(SjamayeeFacade.TEXT_RESIZE, this.onResize);
 	},
-
   onSave: function()   { alert("TextsToolBarMediator/onSave"); },
 	onCancel: function() { alert("TextsToolBarMediator/onCancel"); },
   onResize: function() { alert("TextsToolBarMediator/onResize"); },
-
   hide: function() {
 		var dataObjectsToolBar = this.facade.retrieveMediator(DataObjectsToolBarMediator.ID).getViewComponent();
 		dataObjectsToolBar.setAttribute("style","display:none;");
@@ -12826,9 +12702,6 @@ var TextsToolBarMediator = new Class({
 //Class: DetailMediator
 var DetailMediator = new Class({
 	Extends: SjamayeeMediator,
-
-	//initialize: function(name,viewComponent)	{
-		//this.parent(name,viewComponent);
 	initialize: function(name,viewComponent)	{
 		this.parent(name,viewComponent);
   	this.state = null;
@@ -12949,7 +12822,6 @@ DetailMediator.STATE_PARENT_CHILD = "PARENT_CHILD";
 //Class: DataDetailMediator
 var DataDetailMediator = new Class({
 	Extends: DetailMediator,
-
 	initialize: function(name,viewComponent)	{
 		this.parent(name,viewComponent);
 		var detail = this.getViewComponent();
@@ -13034,7 +12906,6 @@ var DataDetailMediator = new Class({
 //Class: ModelDetailMediator
 var ModelDetailMediator = new Class({
 	Extends: DetailMediator,
-
 	initialize: function(name,viewComponent)	{
 		this.parent(name,viewComponent);
 		var detail = this.getViewComponent();
@@ -13116,7 +12987,6 @@ var ModelDetailMediator = new Class({
 //Class: DetailNTDMediator
 var DetailNTDMediator = new Class({
 	Extends: SjamayeeMediator,
-
 	initialize: function(name,viewComponent)	{
 		this.parent(name,viewComponent);
 		this.onNTDClick = this.onNTDClick.bindWithEvent(this);
@@ -13154,7 +13024,6 @@ var DetailNTDMediator = new Class({
 //Class: ObjectNTDMediator
 var ObjectNTDMediator = new Class({
 	Extends: DetailNTDMediator,
-
 	initialize: function(name,viewComponent)	{
 		this.parent(name,viewComponent);
 	},
@@ -13167,7 +13036,6 @@ var ObjectNTDMediator = new Class({
 	onNameClick: function() 		{	this.sendNotification(SjamayeeFacade.OBJECT_NAME_CLICK); },
 	onNameKeypress: function() 	{	this.sendNotification(SjamayeeFacade.OBJECT_NAME_KEYPRESS); },
 	onNameKeydown: function() 	{	this.sendNotification(SjamayeeFacade.OBJECT_NAME_KEYDOWN); },
-
   listNotificationInterests: function()	{
     var result = this.parent();
     return result.concat([
@@ -13203,26 +13071,25 @@ var ObjectNTDMediator = new Class({
 //Class: DataObjectNTDMediator
 var DataObjectNTDMediator = new Class({
 	Extends: ObjectNTDMediator,
-
 	initialize: function(viewComponent)	{
 		this.parent(DataObjectNTDMediator.ID,viewComponent);
 	},
   onGoClick: function() {
-    var objectsMediator = this.facade.retrieveMediator(DataObjectsListMediator.ID);
-    if (objectsMediator.isEdit()) {
-      //objectsMediator.saveObject();
-      this.sendNotification(SjamayeeFacade.OBJECT_DATA_SAVE);
+    var mediator = this.facade.retrieveMediator(DataObjectsListMediator.ID);
+    if (mediator.isEdit()) {
+      //mediator.saveObject();
+      this.sendNotification(SjamayeeFacade.OBJECT_DATA_SAVE, mediator);
     } else {
-      //objectsMediator.showSFDCObject();
-      this.sendNotification(SjamayeeFacade.OBJECT_DATA_SFDC_SHOW);
+      //mediator.showSFDCObject();
+      this.sendNotification(SjamayeeFacade.OBJECT_DATA_SFDC_SHOW, mediator);
     }
 	  //objectsMediator.setDisplay();
 	},
 	onNoGoClick: function() {
-    var objectsMediator = this.facade.retrieveMediator(DataObjectsListMediator.ID);
-    //objectsMediator.cancelObject();
-    this.sendNotification(SjamayeeFacade.OBJECT_DATA_CANCEL);
-	  //objectsMediator.setDisplay();
+    var mediator = this.facade.retrieveMediator(DataObjectsListMediator.ID);
+    //mediator.cancelObject();
+    this.sendNotification(SjamayeeFacade.OBJECT_DATA_CANCEL, mediator);
+	  //mediator.setDisplay();
 	},
   listNotificationInterests: function()	{
     var result = this.parent();
@@ -13262,26 +13129,25 @@ DataObjectNTDMediator.ID = "DataObjectNTDMediator";
 //Class: ModelObjectNTDMediator
 var ModelObjectNTDMediator = new Class({
 	Extends: ObjectNTDMediator,
-
 	initialize: function(viewComponent)	{
 		this.parent(ModelObjectNTDMediator.ID,viewComponent);
 	},
 	onGoClick: function() {
-    var objectsMediator = this.facade.retrieveMediator(ModelObjectsListMediator.ID);
-    if (objectsMediator.isEdit()) {
-      //objectsMediator.saveObject();
-      this.sendNotification(SjamayeeFacade.OBJECT_MODEL_SAVE);
+    var mediator = this.facade.retrieveMediator(ModelObjectsListMediator.ID);
+    if (mediator.isEdit()) {
+      //mediator.saveObject();
+      this.sendNotification(SjamayeeFacade.OBJECT_MODEL_SAVE, mediator);
     } else {
-      //objectsMediator.showSFDCObject();
-      this.sendNotification(SjamayeeFacade.OBJECT_MODEL_SFDC_SHOW);
+      //mediator.showSFDCObject();
+      this.sendNotification(SjamayeeFacade.OBJECT_MODEL_SFDC_SHOW, mediator);
     }
 	  //objectsMediator.setDisplay();
 	},
 	onNoGoClick: function() {
-    var objectsMediator = this.facade.retrieveMediator(ModelObjectsListMediator.ID);
-    //objectsMediator.cancelObject();
-    this.sendNotification(SjamayeeFacade.OBJECT_MODEL_CANCEL);
-	  //objectsMediator.setDisplay();
+    var mediator = this.facade.retrieveMediator(ModelObjectsListMediator.ID);
+    //mediator.cancelObject();
+    this.sendNotification(SjamayeeFacade.OBJECT_MODEL_CANCEL, mediator);
+	  //mediator.setDisplay();
 	},
   listNotificationInterests: function()	{
     var result = this.parent();
@@ -13323,7 +13189,6 @@ ModelObjectNTDMediator.BACKGROUND_HIGHLITE_COLOR = "#FAE4DB;";
 //Class: ObjectPropertiesMediator
 var ObjectPropertiesMediator = new Class({
 	Extends: AttributeListMediator,
-
 	initialize: function(name,viewComponent)	{
 		this.parent(name,viewComponent);
   	this.type = null;
@@ -13806,7 +13671,6 @@ ObjectPropertiesMediator.BACKGROUND_HIGHLITE_COLOR = "lightgray;";
 //Class: DataObjectPropertiesMediator
 var DataObjectPropertiesMediator = new Class({
 	Extends: ObjectPropertiesMediator,
-
 	initialize: function(viewComponent)	{
     this.parent(DataObjectPropertiesMediator.ID,viewComponent);
 	},
@@ -13845,7 +13709,6 @@ DataObjectPropertiesMediator.ID = "DataObjectPropertiesMediator";
 //Class: ModelObjectPropertiesMediator
 var ModelObjectPropertiesMediator = new Class({
 	Extends: ObjectPropertiesMediator,
-
 	initialize: function(viewComponent)	{
     this.parent(ModelObjectPropertiesMediator.ID,viewComponent);
 	},
@@ -13885,15 +13748,12 @@ ModelObjectPropertiesMediator.ID = "ModelObjectPropertiesMediator";
 //Class: EntityDetailMediator
 var EntityDetailMediator = new Class({
 	Extends: SjamayeeMediator,
-
 	initialize: function(name,viewComponent)	{
 		this.parent(name,viewComponent);
 	},
-
 	getNTD: function() {
 		return this.getViewComponent().ntd;
 	},
-
 	getProperties: function() {
 		return this.getViewComponent().properties;
 	}
@@ -13903,7 +13763,6 @@ var EntityDetailMediator = new Class({
 //Class: ParentDetailMediator
 var ParentDetailMediator = new Class({
 	Extends: EntityDetailMediator,
-
 	initialize: function(name,viewComponent)	{
 		this.parent(name,viewComponent);
 	}
@@ -13914,7 +13773,6 @@ var ParentDetailMediator = new Class({
 //Class: DataObjectDetailMediator
 var DataObjectDetailMediator = new Class({
 	Extends: DataDetailMediator,
-
 	initialize: function(viewComponent)	{
 		this.parent(DataObjectDetailMediator.ID,viewComponent);
 		var detail = this.getViewComponent();
@@ -13927,7 +13785,6 @@ DataObjectDetailMediator.ID = "DataObjectDetailMediator";
 //Class: ModelObjectDetailMediator
 var ModelObjectDetailMediator = new Class({
 	Extends: ModelDetailMediator,
-
 	initialize: function(viewComponent)	{
 		this.parent(ModelObjectDetailMediator.ID,viewComponent);
 		var detail = this.getViewComponent();
@@ -13941,7 +13798,6 @@ ModelObjectDetailMediator.ID = "ModelObjectDetailMediator";
 //Class: DataParentDetailMediator
 var DataParentDetailMediator = new Class({
 	Extends: DataDetailMediator,
-
 	initialize: function(viewComponent)	{
 		this.parent(DataParentDetailMediator.ID,viewComponent);
 		var detail = this.getViewComponent();
@@ -13954,7 +13810,6 @@ DataParentDetailMediator.ID = "DataParentDetailMediator";
 //Class: ModelParentDetailMediator
 var ModelParentDetailMediator = new Class({
 	Extends: ModelDetailMediator,
-
 	initialize: function(viewComponent)	{
 		this.parent(ModelParentDetailMediator.ID,viewComponent);
 		var detail = this.getViewComponent();
@@ -13968,11 +13823,9 @@ ModelParentDetailMediator.ID = "ModelParentDetailMediator";
 //Class: ParentNTDMediator
 var ParentNTDMediator = new Class({
 	Extends: DetailNTDMediator,
-
 	initialize: function(name,viewComponent)	{
 		this.parent(name,viewComponent);
 	},
-
   onNTDClick: function() 		{	this.sendNotification(SjamayeeFacade.PARENT_NTD_CLICK); },
 	onNTDKeypress: function()	{	this.sendNotification(SjamayeeFacade.PARENT_NTD_KEYPRESS); },
 	onNTDKeydown: function()  {
@@ -13982,7 +13835,6 @@ var ParentNTDMediator = new Class({
 	onNameClick: function() 		{	this.sendNotification(SjamayeeFacade.PARENT_NAME_CLICK); },
 	onNameKeypress: function() 	{	this.sendNotification(SjamayeeFacade.PARENT_NAME_KEYPRESS); },
 	onNameKeydown: function() 	{	this.sendNotification(SjamayeeFacade.PARENT_NAME_KEYDOWN); },
-
   listNotificationInterests: function()	{
     var result = this.parent();
     return result.concat([
@@ -14034,16 +13886,14 @@ var ParentNTDMediator = new Class({
 //Class: DataParentNTDMediator
 var DataParentNTDMediator = new Class({
 	Extends: ParentNTDMediator,
-
 	initialize: function(viewComponent)	{
 		this.parent(DataParentNTDMediator.ID,viewComponent);
 	},
-	
 	onGoClick: function() {
-    var relationsMediator = this.facade.retrieveMediator(DataRelationsGridMediator.ID);
-    //relationsMediator.showSFDCObject();
-	  relationsMediator.setDisplay(true); //FORCED!!! OK !!!
-    this.sendNotification(SjamayeeFacade.RELATION_DATA_SFDC_SHOW);
+    var mediator = this.facade.retrieveMediator(DataRelationsGridMediator.ID);
+    //mediator.showSFDCObject();
+	  mediator.setDisplay(true); //FORCED!!! OK !!!
+    this.sendNotification(SjamayeeFacade.RELATION_DATA_SFDC_SHOW, mediator);
 	}
 });
 DataParentNTDMediator.ID = "DataParentNTDMediator";
@@ -14051,16 +13901,14 @@ DataParentNTDMediator.ID = "DataParentNTDMediator";
 //Class: ModelParentNTDMediator
 var ModelParentNTDMediator = new Class({
 	Extends: ParentNTDMediator,
-
 	initialize: function(viewComponent)	{
 		this.parent(ModelParentNTDMediator.ID,viewComponent);
 	},
-	
 	onGoClick: function() {
-    var relationsMediator = this.facade.retrieveMediator(ModelRelationsGridMediator.ID);
-    //relationsMediator.showSFDCObject();
-	  relationsMediator.setDisplay(true); //FORCED !!! OK !!!
-    this.sendNotification(SjamayeeFacade.RELATION_MODEL_SFDC_SHOW);
+    var mediator = this.facade.retrieveMediator(ModelRelationsGridMediator.ID);
+    //mediator.showSFDCObject();
+	  mediator.setDisplay(true); //FORCED !!! OK !!!
+    this.sendNotification(SjamayeeFacade.RELATION_MODEL_SFDC_SHOW, mediator);
 	}
 });
 ModelParentNTDMediator.ID = "ModelParentNTDMediator";
@@ -14069,7 +13917,6 @@ ModelParentNTDMediator.ID = "ModelParentNTDMediator";
 //Class: ParentPropertiesMediator
 var ParentPropertiesMediator = new Class({
 	Extends: AttributeListMediator,
-	
 	initialize: function(name,viewComponent)	{
 		this.parent(name,viewComponent);
 	},
@@ -14083,12 +13930,8 @@ var ParentPropertiesMediator = new Class({
 			//$(this.getViewComponent().getValueCellId(4)).focus();
 		}
 	},
-	onNameClick: function()	{
-		this.sendNotification(SjamayeeFacade.PARENT_ATTRIBUTE_NAME_CLICK);
-	},
-	onValueClick: function() {
-		this.sendNotification(SjamayeeFacade.PARENT_ATTRIBUTE_VALUE_CLICK);
-	},
+	onNameClick: function()	       { this.sendNotification(SjamayeeFacade.PARENT_ATTRIBUTE_NAME_CLICK); },
+	onValueClick: function()       { this.sendNotification(SjamayeeFacade.PARENT_ATTRIBUTE_VALUE_CLICK); },
 	onLineMouseOver: function(evt) {
     //this.setPointerEvent(evt);
 		this.parent(evt,this.getBackgroundHighliteColor());
@@ -14163,7 +14006,6 @@ ParentPropertiesMediator.BACKGROUND_HIGHLITE_COLOR = "lightgray;";
 //Class: DataParentPropertiesMediator
 var DataParentPropertiesMediator = new Class({
 	Extends: ParentPropertiesMediator,
-	
 	initialize: function(viewComponent)	{
 		this.parent(DataParentPropertiesMediator.ID,viewComponent);
 	}
@@ -14173,7 +14015,6 @@ DataParentPropertiesMediator.ID = "DataParentPropertiesMediator";
 //Class: ModelParentPropertiesMediator
 var ModelParentPropertiesMediator = new Class({
 	Extends: ParentPropertiesMediator,
-	
 	initialize: function(viewComponent)	{
 		this.parent(ModelParentPropertiesMediator.ID,viewComponent);
 	}
@@ -14184,7 +14025,6 @@ ModelParentPropertiesMediator.ID = "ModelParentPropertiesMediator";
 //Class: ChildDetailMediator
 var ChildDetailMediator = new Class({
 	Extends: EntityDetailMediator,
-
 	initialize: function(name,viewComponent)	{
 		this.parent(name,viewComponent);
 	}
@@ -14193,7 +14033,6 @@ var ChildDetailMediator = new Class({
 //Class: DataChildDetailMediator
 var DataChildDetailMediator = new Class({
 	Extends: DataDetailMediator,
-
 	initialize: function(viewComponent)	{
 		this.parent(DataChildDetailMediator.ID,viewComponent);
 		var detail = this.getViewComponent();
@@ -14206,7 +14045,6 @@ DataChildDetailMediator.ID = "DataChildDetailMediator";
 //Class: ModelChildDetailMediator
 var ModelChildDetailMediator = new Class({
 	Extends: ModelDetailMediator,
-
 	initialize: function(viewComponent)	{
 		this.parent(ModelChildDetailMediator.ID,viewComponent);
 		var detail = this.getViewComponent();
@@ -14220,11 +14058,9 @@ ModelChildDetailMediator.ID = "ModelChildDetailMediator";
 //Class: ChildNTDMediator
 var ChildNTDMediator = new Class({
 	Extends: DetailNTDMediator,
-
 	initialize: function(name,viewComponent)	{
 		this.parent(name,viewComponent);
 	},
-
   onNTDClick: function() 		{	this.sendNotification(SjamayeeFacade.CHILD_NTD_CLICK); },
 	onNTDKeypress: function()	{	this.sendNotification(SjamayeeFacade.CHILD_NTD_KEYPRESS); },
 	onNTDKeydown: function()  {
@@ -14234,7 +14070,6 @@ var ChildNTDMediator = new Class({
 	onNameClick: function() 		{	this.sendNotification(SjamayeeFacade.CHILD_NAME_CLICK); },
 	onNameKeypress: function() 	{	this.sendNotification(SjamayeeFacade.CHILD_NAME_KEYPRESS); },
 	onNameKeydown: function() 	{	this.sendNotification(SjamayeeFacade.CHILD_NAME_KEYDOWN); },
-
   listNotificationInterests: function()	{
     var result = this.parent();
     return result.concat([
@@ -14286,16 +14121,14 @@ var ChildNTDMediator = new Class({
 //Class: DataChildNTDMediator
 var DataChildNTDMediator = new Class({
 	Extends: ChildNTDMediator,
-
 	initialize: function(viewComponent)	{
 		this.parent(DataChildNTDMediator.ID,viewComponent);
 	},
-	
 	onGoClick: function() {
-    var relationsMediator = this.facade.retrieveMediator(DataRelationsGridMediator.ID);
-    //relationsMediator.showSFDCObject();
-	  relationsMediator.setDisplay(true); //Forced !!! OK !!!
-    this.sendNotification(SjamayeeFacade.RELATION_DATA_SFDC_SHOW);
+    var mediator = this.facade.retrieveMediator(DataRelationsGridMediator.ID);
+    //mediator.showSFDCObject();
+	  mediator.setDisplay(true); //Forced !!! OK !!!
+    this.sendNotification(SjamayeeFacade.RELATION_DATA_SFDC_SHOW, mediator);
 	}
 });
 DataChildNTDMediator.ID = "DataChildNTDMediator";
@@ -14303,16 +14136,14 @@ DataChildNTDMediator.ID = "DataChildNTDMediator";
 //Class: ModelChildNTDMediator
 var ModelChildNTDMediator = new Class({
 	Extends: ChildNTDMediator,
-
 	initialize: function(viewComponent)	{
 		this.parent(ModelChildNTDMediator.ID,viewComponent);
 	},
-
   onGoClick: function() {
-    var relationsMediator = this.facade.retrieveMediator(ModelRelationsGridMediator.ID);
-    //relationsMediator.showSFDCObject();
-	  relationsMediator.setDisplay(true); //FORCED !!! OK !!!
-    this.sendNotification(SjamayeeFacade.RELATION_MODEL_SFDC_SHOW);
+    var mediator = this.facade.retrieveMediator(ModelRelationsGridMediator.ID);
+    //mediator.showSFDCObject();
+	  mediator.setDisplay(true); //FORCED !!! OK !!!
+    this.sendNotification(SjamayeeFacade.RELATION_MODEL_SFDC_SHOW, mediator);
 	}
 });
 ModelChildNTDMediator.ID = "ModelChildNTDMediator";
@@ -14321,7 +14152,6 @@ ModelChildNTDMediator.ID = "ModelChildNTDMediator";
 //Class: ChildPropertiesMediator
 var ChildPropertiesMediator = new Class({
 	Extends: AttributeListMediator,
-	
 	initialize: function(name,viewComponent)	{
 		this.parent(name,viewComponent);
 	},
@@ -14416,7 +14246,6 @@ ChildPropertiesMediator.BACKGROUND_HIGHLITE_COLOR = "lightgray;";
 //Class: DataChildPropertiesMediator
 var DataChildPropertiesMediator = new Class({
 	Extends: ChildPropertiesMediator,
-	
 	initialize: function(viewComponent)	{
 		this.parent(DataChildPropertiesMediator.ID,viewComponent);
 	}
@@ -14426,7 +14255,6 @@ DataChildPropertiesMediator.ID = "DataChildPropertiesMediator";
 //Class: ModelChildPropertiesMediator
 var ModelChildPropertiesMediator = new Class({
 	Extends: ChildPropertiesMediator,
-	
 	initialize: function(viewComponent)	{
 		this.parent(ModelChildPropertiesMediator.ID,viewComponent);
 	}
@@ -14441,7 +14269,6 @@ ModelChildPropertiesMediator.ID = "ModelChildPropertiesMediator";
 //Class: TypeVO
 var TypeVO = new Class({
   Extends: CachedObjectVO,
-    
 	initialize: function(id,type,code,name,desc,objekt,inUse,txi,top) {
   	//this.type = "";
     //this.code = "";
@@ -14470,7 +14297,6 @@ var TypeVO = new Class({
 //Class: TypeProxy
 var TypeProxy = new Class({
   Extends: CachingProxy,
-
 	initialize: function(name) {
 	  var _name = (name !== undefined)?name:TypeProxy.ID;
 		this.parent(_name);
@@ -14685,7 +14511,6 @@ TypeProxy.sortName = function(a,b) {
 //Class: ModelAttributeVO
 var ModelAttributeVO = new Class({
   Extends: AttributeVO,
-
 	initialize: function(id,name,value,txi) {
 		try {
 			this.parent(id,name,value,txi);
@@ -14698,7 +14523,6 @@ var ModelAttributeVO = new Class({
 //Class: ModelAttributeProxy
 var ModelAttributeProxy = new Class({
   Extends: AttributeProxy,
-
 	initialize: function() {
 		this.parent(ModelAttributeProxy.ID);
 		this.addItem(new ModelAttributeVO("1","name1", "value1"));
@@ -14715,7 +14539,6 @@ ModelAttributeProxy.ID = "ModelAttributeProxy";
 //Class: ModelEntityVO
 var ModelEntityVO = new Class({
   Extends: EntityVO,
-
   initialize: function(id,ver,name,code,desc,tid,txi,exi,oid,firstAttributes,references) {
     //this.tid = null;
 		try {
@@ -14732,7 +14555,6 @@ var ModelEntityVO = new Class({
 //Class: ModelEntityProxy
 var ModelEntityProxy = new Class({
   Extends: EntityProxy,
-
 	initialize: function() {
 		this.parent(ModelEntityProxy.ID);
     this.headerMediator = null;  
@@ -14893,7 +14715,6 @@ ModelEntityProxy.sortName = function(a,b) {
 //Class: ModelRelationVO
 var ModelRelationVO = new Class({
   Extends: RelationVO,
-
 	initialize: function(id,ver,val,pei,cei,pid,nid,txi,exi,vir,vnv) {
 		try {
 			this.parent(id,ver,val,pei,cei,pid,nid,txi,exi,vir,vnv);
@@ -14906,7 +14727,6 @@ var ModelRelationVO = new Class({
 //Class: ModelRelationProxy
 var ModelRelationProxy = new Class({
   Extends: RelationProxy,
-
 	initialize: function() {
 		this.parent(ModelRelationProxy.ID);
 		//this.addItem(new ModelRelationVO("1","val1", "pei1", "cei1", "pid1", "nid1"));
@@ -15102,7 +14922,6 @@ ModelRelationProxy.ID = "ModelRelationProxy";
 //Class: ModelListObjectProxy
 var ModelListObjectProxy = new Class({
   Extends: CachingProxy,
-
 	initialize: function() {
 		this.parent(ModelListObjectProxy.ID, new Array());
 		this.addItem(new ModelListObjectVO("object1"));
@@ -15114,7 +14933,7 @@ ModelListObjectProxy.ID = "ModelListObjectProxy";
 var ModelListObjectVO = new Class({
   Extends: CachedObjectVO,
 
-	this.object = null;
+	this.object = null,
 
 	initialize: function(object) {
 		try {
@@ -15134,7 +14953,6 @@ var ModelListObjectVO = new Class({
 //Class: Type
 var Type = new Class({
   Extends: BusinessObject,
-
 	initialize: function(vo) {
 		this.parent(vo);
 		this.proxy = SjamayeeFacade.getInstance().retrieveProxy(TypeProxy.ID);		
@@ -15509,7 +15327,6 @@ Type.getSjamayeeOptions = function(sort) {
 //Class: ModelAttribute
 var ModelAttribute = new Class({
 	Extends: AttributeB,
-	
 	initialize: function(vo) {
 		try {
 			this.parent(vo);
@@ -15558,7 +15375,6 @@ var ModelAttribute = new Class({
 //Class: ModelEntity
 var ModelEntity = new Class({
 	Extends: EntityB,
-	
 	initialize: function(vo) {
 		try {
 			this.parent(vo);
@@ -15919,7 +15735,6 @@ ModelEntity.getEntityOptions = function(type_code_name,currentEntityName,filterV
 //Class: ModelRelation
 var ModelRelation = new Class({
 	Extends: RelationB,
-
 	initialize: function(vo) {
 		try {
 			this.parent(vo);
@@ -16412,7 +16227,6 @@ ModelRelation.getParentRelationsForEntity = function(entity,number,sort) {
 //Class: ModelObjectsHeader
 var ModelObjectsHeader = new Class({
   Extends: ObjectsHeader,
-
 	initialize: function() {
 		this.parent(ModelObjectsHeader.ID);
 	}
@@ -16422,7 +16236,6 @@ ModelObjectsHeader.ID = "modelObjectsHeader";
 //Class: ModelObjectsTextsHeader
 var ModelObjectsTextsHeader = new Class({
   Extends: ObjectsTextsHeader,
-
 	initialize: function() {
 		this.parent(ModelObjectsTextsHeader.ID);
 	}
@@ -16432,7 +16245,6 @@ ModelObjectsTextsHeader.ID = "modelObjectsTextsHeader";
 //Class: ModelRelationsHeader
 var ModelRelationsHeader = new Class({
   Extends: RelationsHeader,
-
 	initialize: function() {
 		this.parent(ModelRelationsHeader.ID,{tlbl:ModelRelationsHeader.TYPE_SELECT_LABEL,elbl:ModelRelationsHeader.ENTITY_SELECT_LABEL});
 	},
@@ -16451,7 +16263,6 @@ ModelRelationsHeader.ENTITY_SELECT_LABEL = "Class&nbsp;";
 //Class: ModelRelationsTextsHeader
 var ModelRelationsTextsHeader = new Class({
   Extends: RelationsTextsHeader,
-
 	initialize: function() {
 		this.parent(ModelRelationsTextsHeader.ID);
 	}
@@ -16464,7 +16275,6 @@ ModelRelationsTextsHeader.ID = "modelRelationsTextsHeader";
 //Class: ModelObjectsToolBar
 var ModelObjectsToolBar = new Class({
   Extends: ObjectsToolBar,
-
 	initialize: function() {
 		this.parent(ModelObjectsToolBar.ID);
 	}
@@ -16474,7 +16284,6 @@ ModelObjectsToolBar.ID = "modelObjectsToolBar";
 //Class: ModelRelationsToolBar
 var ModelRelationsToolBar = new Class({
   Extends: RelationsToolBar,
-
 	initialize: function() {
 		this.parent(ModelRelationsToolBar.ID);
 	}
@@ -16485,7 +16294,6 @@ ModelRelationsToolBar.ID = "modelRelationsToolBar";
 //Class: ModelTextsToolBar
 var ModelTextsToolBar = new Class({
   Extends: TextsToolBar,
-
 	initialize: function(name,properties) {
 		this.parent(name);
 	}
@@ -16495,7 +16303,6 @@ ModelTextsToolBar.ID = "modelTextsToolBar";
 //Class: ModelObjectsTextsToolBar
 var ModelObjectsTextsToolBar = new Class({
   Extends: ModelTextsToolBar,
-
 	initialize: function() {
 		this.parent(ModelObjectsTextsToolBar.ID);
 	}
@@ -16505,7 +16312,6 @@ ModelObjectsTextsToolBar.ID = "modelObjectsTextsToolBar";
 //Class: ModelRelationsTextsToolBar
 var ModelRelationsTextsToolBar = new Class({
   Extends: ModelTextsToolBar,
-
 	initialize: function() {
 		this.parent(ModelRelationsTextsToolBar.ID);
 	}
@@ -16518,13 +16324,11 @@ ModelRelationsTextsToolBar.ID = "modelRelationsTextsToolBar";
 //Class: ModelObjectsHeaderMediator
 var ModelObjectsHeaderMediator = new Class({
 	Extends: ObjectsHeaderMediator,
-
 	initialize: function(viewComponent)	{
 		this.parent(ModelObjectsHeaderMediator.ID,viewComponent);
     this.listMediator = this.facade.retrieveMediator(ModelObjectsListMediator.ID);		
 		var header = this.getViewComponent();
 	},
-
   onObjectsRefOpChange: function()	{
 	  this.sendNotification(SjamayeeFacade.OLIST_REFOP_CHANGE);
 	  this.sendNotification(SjamayeeFacade.OLIST_MODEL_REFOP_CHANGE);
@@ -16537,7 +16341,6 @@ var ModelObjectsHeaderMediator = new Class({
 	  this.onObjectsTypeChange();
 	  this.sendNotification(SjamayeeFacade.OLIST_MODEL_FILTER_CLICK);
 	},
-
   listNotificationInterests: function()	{
 	  var result = this.parent();
 		return result.concat([
@@ -16545,7 +16348,6 @@ var ModelObjectsHeaderMediator = new Class({
 			SjamayeeFacade.OLIST_MODEL_TYPE_CHANGE
 		]);
 	},
-
   handleNotification: function(note)	{
     this.parent(note);
 		var app = this.facade.getApplication();
@@ -16567,18 +16369,15 @@ ModelObjectsHeaderMediator.ID = "ModelObjectsHeaderMediator";
 //Class: ModelObjectsTextsHeaderMediator
 var ModelObjectsTextsHeaderMediator = new Class({
 	Extends: TextsHeaderMediator,
-  
 	initialize: function(viewComponent)	{
 		this.parent(ModelObjectsTextsHeaderMediator.ID,viewComponent);
 	},
-
   listNotificationInterests: function()	{
 	  var result = this.parent();
 		return result.concat([
       SjamayeeFacade.OLIST_MODEL_TEXT_HEADER_SHOW
 		]);
 	},
-
   handleNotification: function(note)	{
     this.parent(note);
 		var app = this.facade.getApplication();
@@ -16598,7 +16397,6 @@ ModelObjectsTextsHeaderMediator.ID = "ModelObjectsTextsHeaderMediator";
 //Class: ModelRelationsHeaderMediator
 var ModelRelationsHeaderMediator = new Class({
 	Extends: RelationsHeaderMediator,
-
 	initialize: function(viewComponent)	{
 		this.parent(ModelRelationsHeaderMediator.ID,viewComponent);
     this.gridMediator = this.facade.retrieveMediator(ModelRelationsGridMediator.ID);		
@@ -16619,7 +16417,6 @@ var ModelRelationsHeaderMediator = new Class({
     //Initialize Select Lists.
 		header.entitySelect.innerHTML = ModelEntity.getEntityOptions();
 	},
-
   onRelationsEntityChange: function() {
 	  this.getViewComponent().filter.style.background = "white";
     //var entityName = this.getViewComponent().entitySelect.value;
@@ -16644,7 +16441,6 @@ var ModelRelationsHeaderMediator = new Class({
 	onRootUndoClick: function()   { this.sendNotification(SjamayeeFacade.MODEL_ROOT_UNDO); },        //>> Command !!!
 	onRootSelectClick: function()	{ this.sendNotification(SjamayeeFacade.MODEL_ROOT_SELECT); },
 	onRootRedoClick: function()   { this.sendNotification(SjamayeeFacade.MODEL_ROOT_REDO);	},
-
   listNotificationInterests: function()	{
 	  var result = this.parent();
 		return result.concat([
@@ -16708,18 +16504,15 @@ ModelRelationsHeaderMediator.ID = "ModelRelationsHeaderMediator";
 //Class: ModelRelationsTextsHeaderMediator
 var ModelRelationsTextsHeaderMediator = new Class({
 	Extends: TextsHeaderMediator,
-  
 	initialize: function(viewComponent)	{
 		this.parent(ModelRelationsTextsHeaderMediator.ID,viewComponent);
 	},
-
   listNotificationInterests: function()	{
 	  var result = this.parent();
 		return result.concat([
       SjamayeeFacade.GRID_MODEL_TEXT_HEADER_SHOW
 		]);
 	},
-
   handleNotification: function(note)	{
     this.parent(note);
 		var app = this.facade.getApplication();
@@ -16738,7 +16531,6 @@ ModelRelationsTextsHeaderMediator.ID = "ModelRelationsTextsHeaderMediator";
 //Class: ModelGridListMediator
 var ModelGridListMediator = new Class({
 	Extends: GridListMediator,
-
 	initialize: function(viewComponent)	{
 		this.parent(ModelGridListMediator.ID,viewComponent);
 		var gridList = this.getViewComponent();
@@ -16769,7 +16561,6 @@ ModelGridListMediator.ID = "ModelGridListMediator";
 //Class: ModelTextsEditorMediator
 var ModelTextsEditorMediator = new Class({
 	Extends: GridListMediator,
-  
 	initialize: function(name,viewComponent)	{
 		this.parent(name,viewComponent);
   	this.initialTextHash = null;
@@ -16826,7 +16617,6 @@ var ModelTextsEditorMediator = new Class({
 //Class: ModelObjectsTextsEditorMediator
 var ModelObjectsTextsEditorMediator = new Class({
 	Extends: ModelTextsEditorMediator,
-
 	initialize: function(viewComponent)	{
 		this.parent(ModelObjectsTextsEditorMediator.ID,viewComponent);
 		var textEditorLeft = this.getViewComponent().gridListSplitter.left.modelObjectsTextsEditor;
@@ -16917,7 +16707,6 @@ ModelObjectsTextsEditorMediator.ID = "ModelObjectsTextsEditorMediator";
 //Class: ModelRelationsTextsEditorMediator
 var ModelRelationsTextsEditorMediator = new Class({
 	Extends: ModelTextsEditorMediator,
-
 	initialize: function(viewComponent)	{
 		this.parent(ModelRelationsTextsEditorMediator.ID,viewComponent);
   	this.onRelationEdit = this.onRelationEdit.bindWithEvent(this);
@@ -17120,7 +16909,6 @@ ModelRelationsTextsEditorMediator.ID = "ModelRelationsTextsEditorMediator";
 //Class: ModelRelationsGridMediator
 var ModelRelationsGridMediator = new Class({
 	Extends: RelationsGridMediator,
-
 	initialize: function(viewComponent)	{
 		this.parent(ModelRelationsGridMediator.ID,viewComponent);
 	  var gridList = this.getViewComponent();
@@ -17145,15 +16933,9 @@ var ModelRelationsGridMediator = new Class({
   	this.setRelationProxy(SjamayeeFacade.getInstance().retrieveProxy(ModelRelationProxy.ID));
   	this.setAttributeProxy(SjamayeeFacade.getInstance().retrieveProxy(ModelAttributeProxy.ID));
 	},
-  onGridClick: function(evt) {
-    this.parent(evt);
-  },  
-  onCellClick: function(evt) {
-    this.parent(evt);
-  },  
-  onCellMouseOver: function(evt) {
-    this.parent(evt,this.getBackgroundHighliteColor());
-  },
+  onGridClick: function(evt)     { this.parent(evt); },  
+  onCellClick: function(evt)     { this.parent(evt); },  
+  onCellMouseOver: function(evt) { this.parent(evt,this.getBackgroundHighliteColor()); },
 	listNotificationInterests: function()	{
 	  var result = this.parent();
 	  return result.concat([
@@ -17165,13 +16947,6 @@ var ModelRelationsGridMediator = new Class({
 			SjamayeeFacade.GRID_MODEL_FILTER_CLICK,
 			SjamayeeFacade.FOCUS,
   		SjamayeeFacade.GRID_MODEL_RESIZE
-  		//SjamayeeFacade.GRID_MODEL_RELATION_ADD,
-  		//SjamayeeFacade.GRID_MODEL_RELATION_DELETE,
-  		//SjamayeeFacade.GRID_MODEL_RELATION_EXTRACT,
-  		//SjamayeeFacade.GRID_MODEL_RELATION_COPY,
-  		//SjamayeeFacade.GRID_MODEL_RELATION_PASTE,
-  		//SjamayeeFacade.GRID_MODEL_RELATION_UNDO
-  		//SjamayeeFacade.GRID_MODEL_RELATION_REDO
 		]);
 	},
   handleNotification: function(note)	{
@@ -17463,29 +17238,6 @@ var ModelRelationsGridMediator = new Class({
       var relationsEntityName = relationsHeaderMediator.getViewComponent().entitySelect.value;
 	    this.sendNotification(SjamayeeFacade.GRID_MODEL_ENTITY_CHANGE,relationsEntityName);
 			break;			
-  		/*case SjamayeeFacade.GRID_MODEL_RELATION_ADD:
-  		this.setEdit();
-    	this.sendNotification(SjamayeeFacade.RELATION_ADD);
-    	this.sendNotification(SjamayeeFacade.GRID_SHOW);    	
-  		break;
-  		case SjamayeeFacade.GRID_MODEL_RELATION_DELETE:
-    	this.sendNotification(SjamayeeFacade.RELATION_DELETE);
-  		break;*/
-  		/*case SjamayeeFacade.GRID_MODEL_RELATION_EXTRACT:
-    	this.sendNotification(SjamayeeFacade.RELATION_EXTRACT);
-  		break;
-  		case SjamayeeFacade.GRID_MODEL_RELATION_COPY:
-    	this.sendNotification(SjamayeeFacade.RELATION_COPY);
-  		break;
-  		case SjamayeeFacade.GRID_MODEL_RELATION_PASTE:
-    	this.sendNotification(SjamayeeFacade.RELATION_PASTE);
-  		break;*/
-  		/*case SjamayeeFacade.GRID_MODEL_RELATION_UNDO:
-    	this.sendNotification(SjamayeeFacade.RELATION_UNDO);
-  		break;
-  		case SjamayeeFacade.GRID_MODEL_RELATION_REDO:
-    	this.sendNotification(SjamayeeFacade.RELATION_REDO);
-  		break;*/
     }
     this.parent(note);
   },
@@ -17529,7 +17281,6 @@ ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR = "#FAE4DB;";
 //Class: ModelObjectsListMediator
 var ModelObjectsListMediator = new Class({
 	Extends: ObjectsListMediator,
-  
 	initialize: function(viewComponent)	{
 		this.parent(ModelObjectsListMediator.ID,viewComponent);
 	  var gridList = this.getViewComponent();
@@ -17547,23 +17298,16 @@ var ModelObjectsListMediator = new Class({
     this.listUICRight.addEvent(SjamayeeFacade.LINE_MOUSEOVER, this.onLineMouseOver);
     this.listUICRight.addEvent(SjamayeeFacade.LINE_MOUSEOUT, this.onLineMouseOut);
 		this.listUICRight.addEvent(SjamayeeFacade.LIST_KEYDOWN, this.onKeydown);
-
 		//Initialize list.
   	this.entityProxy = SjamayeeFacade.getInstance().retrieveProxy(ModelEntityProxy.ID);
 	},
-  onLineMouseOver: function(evt) {
-  	this.parent(evt,this.getBackgroundHighliteColor());
-	},
+  onLineMouseOver: function(evt) { this.parent(evt,this.getBackgroundHighliteColor()); },
   listNotificationInterests: function()	{
 	  var result = this.parent();
 	  return result.concat([
   	  SjamayeeFacade.OLIST_MODEL_SHOW,
   	  SjamayeeFacade.OLIST_MODEL_REFRESH,
   		SjamayeeFacade.OLIST_MODEL_RESIZE,
-  		//SjamayeeFacade.OLIST_MODEL_OBJECT_ADD,
-  		//SjamayeeFacade.OLIST_MODEL_OBJECT_DELETE,
-  		//SjamayeeFacade.OLIST_MODEL_OBJECT_UNDO,
-  		//SjamayeeFacade.OLIST_MODEL_OBJECT_REDO,
   		SjamayeeFacade.OLIST_MODEL_REFOP_CHANGE,
 			SjamayeeFacade.OLIST_MODEL_TYPE_CHANGE,
   		SjamayeeFacade.OLIST_MODEL_FILTER_CLICK
@@ -17681,20 +17425,6 @@ var ModelObjectsListMediator = new Class({
   		//this.home(); //TODO !!!
     	this.sendNotification(SjamayeeFacade.OLIST_MODEL_REFRESH);
 			break;
-  		/*case SjamayeeFacade.OLIST_MODEL_OBJECT_ADD:
-  		//this.setEdit();
-    	this.sendNotification(SjamayeeFacade.OBJECT_MODEL_ADD);
-  		break;*/
-  		/*case SjamayeeFacade.OLIST_MODEL_OBJECT_DELETE:
-  		//this.setDisplay();  		  		
-    	this.sendNotification(SjamayeeFacade.OBJECT_MODEL_DELETE);
-  		break;*/
-  		/*case SjamayeeFacade.OLIST_MODEL_OBJECT_UNDO:
-    	this.sendNotification(SjamayeeFacade.OBJECT_MODEL_UNDO);
-  		break;
-  		case SjamayeeFacade.OLIST_MODEL_OBJECT_REDO:
-    	this.sendNotification(SjamayeeFacade.OBJECT_MODEL_REDO);
-  		break;*/
   		case SjamayeeFacade.OLIST_MODEL_REFOP_CHANGE:
   		this.sendNotification(SjamayeeFacade.FOCUS, ObjectsListRight.ID);
   		break;
@@ -17852,47 +17582,28 @@ ModelObjectsListMediator.BACKGROUND_HIGHLITE_COLOR = "#FAE4DB;";
 //Class: ModelObjectsToolBarMediator
 var ModelObjectsToolBarMediator = new Class({
 	Extends: ObjectsToolBarMediator,
-
 	initialize: function(viewComponent)	{
 		this.parent(ModelObjectsToolBarMediator.ID,viewComponent);
     this.listMediator = this.facade.retrieveMediator(ModelObjectsListMediator.ID);
 		var toolBar = this.getViewComponent();
 	},
-  onFirst: function()	              {	this.sendNotification(SjamayeeFacade.OLIST_MODEL_HOME,ObjectsListMediator.HOME_MESSAGE_TEXT); },
-  onPrevious: function()	          {	this.sendNotification(SjamayeeFacade.OLIST_MODEL_PREVIOUS,ObjectsListMediator.PREVIOUS_MESSAGE_TEXT); },
-  onNext: function()	              {	this.sendNotification(SjamayeeFacade.OLIST_MODEL_NEXT,ObjectsListMediator.NEXT_MESSAGE_TEXT); },
-  onLast: function()	              {	this.sendNotification(SjamayeeFacade.OLIST_MODEL_END,ObjectsListMediator.END_MESSAGE_TEXT); },
-	onResizeList: function()	        {	this.sendNotification(SjamayeeFacade.OLIST_MODEL_RESIZE); },
-  onAddObject: function()   	      {
-		this.listMediator.setEdit();
-  	this.sendNotification(SjamayeeFacade.OBJECT_MODEL_ADD,this.listMediator);
-  },
-  onDeleteObject: function() {
-		this.listMediator.setDisplay();  		  		
-  	this.sendNotification(SjamayeeFacade.OBJECT_MODEL_DELETE,this.listMediator);
-		break;
-  },
-  onEditObject: function() {
-		this.listMediator.setEdit();
-  	this.sendNotification(SjamayeeFacade.OBJECT_MODEL_EDIT,this.listMediator);
-  },
-  onUndoObject: function() {
-  	this.sendNotification(SjamayeeFacade.OBJECT_MODEL_UNDO,this.listMediator);
-  },
-  onRedoObject: function() {
-  	this.sendNotification(SjamayeeFacade.OBJECT_MODEL_REDO,this.listMediator);
-  },
-  onClearBuffer: function() {
-    this.sendNotification(SjamayeeFacade.OBJECT_MODEL_BUFFER_CLEAR,this.listMediator);
-  },
+  onFirst: function()	       { this.sendNotification(SjamayeeFacade.OLIST_MODEL_HOME,ObjectsListMediator.HOME_MESSAGE_TEXT); },
+  onPrevious: function()	   { this.sendNotification(SjamayeeFacade.OLIST_MODEL_PREVIOUS,ObjectsListMediator.PREVIOUS_MESSAGE_TEXT); },
+  onNext: function()	       { this.sendNotification(SjamayeeFacade.OLIST_MODEL_NEXT,ObjectsListMediator.NEXT_MESSAGE_TEXT); },
+  onLast: function()	       { this.sendNotification(SjamayeeFacade.OLIST_MODEL_END,ObjectsListMediator.END_MESSAGE_TEXT); },
+	onResizeList: function()	 { this.sendNotification(SjamayeeFacade.OLIST_MODEL_RESIZE); },
+  onAddObject: function()    { this.sendNotification(SjamayeeFacade.OBJECT_MODEL_ADD,this.listMediator); },
+  onDeleteObject: function() { this.sendNotification(SjamayeeFacade.OBJECT_MODEL_DELETE,this.listMediator); },
+  onEditObject: function()   { this.sendNotification(SjamayeeFacade.OBJECT_MODEL_EDIT,this.listMediator); },
+  onUndoObject: function()   { this.sendNotification(SjamayeeFacade.OBJECT_MODEL_UNDO,this.listMediator); },
+  onRedoObject: function()   { this.sendNotification(SjamayeeFacade.OBJECT_MODEL_REDO,this.listMediator); },
+  onClearBuffer: function()  { this.sendNotification(SjamayeeFacade.OBJECT_MODEL_BUFFER_CLEAR,this.listMediator); },
   onEditText: function() {
   	this.listMediator.setState(SjamayeeMediator.STATE_TEXT);
   	this.listMediator.sendNotification(SjamayeeFacade.TEXT_EDIT,this.listMediator);
     this.listMediator.sendNotification(SjamayeeFacade.OLIST_MODEL_TEXT_SHOW); //OLIST_MODEL_TEXT_EDIT);
   },
-  onDeleteUnrefObjects: function() {
-  	this.sendNotification(SjamayeeFacade.OBJECT_MODEL_UNREFS_DELETE,this.listMediator); 
-  },
+  onDeleteUnrefObjects: function() { this.sendNotification(SjamayeeFacade.OBJECT_MODEL_UNREFS_DELETE,this.listMediator); },
   listNotificationInterests: function()	{
     var result = this.parent();
     return result.concat([
@@ -17928,7 +17639,6 @@ ModelObjectsToolBarMediator.ID = "ModelObjectsToolBarMediator";
 //Class: ModelRelationsToolBarMediator
 var ModelRelationsToolBarMediator = new Class({
 	Extends: RelationsToolBarMediator,
-
 	initialize: function(viewComponent)	{
 		this.parent(ModelRelationsToolBarMediator.ID,viewComponent);
     this.gridMediator = this.facade.retrieveMediator(ModelRelationsGridMediator.ID);
@@ -17937,15 +17647,13 @@ var ModelRelationsToolBarMediator = new Class({
   onShowParent: function()         { this.sendNotification(SjamayeeFacade.GRID_MODEL_PARENT_SHOW); },
   onShowParentAndChild: function() { this.sendNotification(SjamayeeFacade.GRID_MODEL_PARENTANDCHILD_SHOW); },
   onShowChild: function()          { this.sendNotification(SjamayeeFacade.GRID_MODEL_CHILD_SHOW); },
-  onResizeGrid: function()	       { this.sendNotification(SjamayeeFacade.GRID_MODEL_RESIZE,this.gridMediator); },
+  onResizeGrid: function()	       { this.sendNotification(SjamayeeFacade.GRID_MODEL_RESIZE); },
   onAddRelation: function() {
-		this.gridMediator.setEdit();
   	this.sendNotification(SjamayeeFacade.RELATION_MODEL_ADD,this.gridMediator);
   	this.sendNotification(SjamayeeFacade.GRID_SHOW);    	
   },
   onDeleteRelation: function()  {	this.sendNotification(SjamayeeFacade.RELATION_MODEL_DELETE,this.gridMediator); },
   onEditRelation: function() {
-		this.gridMediator.setEdit();
   	this.sendNotification(SjamayeeFacade.RELATION_MODEL_EDIT,this.gridMediator);
   	this.sendNotification(SjamayeeFacade.GRID_SHOW);    	
   },
@@ -18067,7 +17775,6 @@ ModelRelationsTextsToolBarMediator.ID = "ModelRelationsTextsToolBarMediator";
 //Class: DataTypeVO
 var DataTypeVO = new Class({
   Extends: ModelTypeVO,
-
 	initialize: function(id,type,name,desc,objekt,inUse) {
 		try {
 			this.parent(id,type,name,desc,objekt,inUse);
@@ -18970,18 +18677,15 @@ DataRelationProxy.sortValue = function(a,b) {
 //Class: DataListObjectProxy
 var DataListObjectProxy = new Class({
   Extends: CachingProxy,
-
 	initialize: function() {
 		this.parent(DataListObjectProxy.ID, new Array());
 		this.addItem(new DataListObjectVO("object1"));
-	}
-	
+	},
 	initialize: function() {
 		this.parent(DataEntityProxy.ID, new Array());
 		//this.addItem(new DataEntityVO("1","name1","desc1","mei1","oid1","firstAttributes1","references1"));
 		this.loadListObjects();
 	},
-
 	loadListObjects: function() {
 		var objectsText = sforce.apex.execute('sja.DataEntityService','getEntities',{});
 		var objects = Utils.eval(objectsText,true);
@@ -19022,9 +18726,9 @@ DataListObjectProxy.ID = "DataListObjectProxy";
 //Class: DataListObjectVO
 var DataListObjectVO = new Class({
   Extends: CachedObjectVO,
-
-	this.object = null;
-
+	
+	this.object = null,
+	
 	initialize: function(object) {
 		try {
 			this.parent(object.getId()); //TODO: garantie object !== null !!!
@@ -20514,40 +20218,23 @@ var DataObjectsToolBarMediator = new Class({
     this.listMediator = this.facade.retrieveMediator(DataObjectsListMediator.ID);
 		var toolBar = this.getViewComponent();
 	},
-  onFirst: function()	     { this.sendNotification(SjamayeeFacade.OLIST_DATA_HOME,ObjectsListMediator.HOME_MESSAGE_TEXT); },
-  onPrevious: function()	 { this.sendNotification(SjamayeeFacade.OLIST_DATA_PREVIOUS,ObjectsListMediator.PREVIOUS_MESSAGE_TEXT); },
-  onNext: function()	     { this.sendNotification(SjamayeeFacade.OLIST_DATA_NEXT,ObjectsListMediator.NEXT_MESSAGE_TEXT); },
-  onLast: function()	     { this.sendNotification(SjamayeeFacade.OLIST_DATA_END,ObjectsListMediator.END_MESSAGE_TEXT); },
-	onResizeList: function() { this.sendNotification(SjamayeeFacade.OLIST_DATA_RESIZE); },
-  onAddObject: function() {
-		this.listMediator.setEdit();
-  	this.sendNotification(SjamayeeFacade.OBJECT_DATA_ADD,this.listMediator);
-  },
-  onDeleteObject: function() {
-		this.listMediator.setEdit();
-  	this.sendNotification(SjamayeeFacade.OBJECT_MODEL_DELETE,this.listMediator);
-  },
-  onEditObject: function() {
-		this.listMediator.setEdit();
-  	this.sendNotification(SjamayeeFacade.OBJECT_DATA_EDIT,this.listMediator);
-  },
-  onUndoObject: function() {
-    this.sendNotification(SjamayeeFacade.OBJECT_DATA_UNDO,this.listMediator);
-  },
-  onRedoObject: function() {
-    this.sendNotification(SjamayeeFacade.OBJECT_DATA_REDO,this.listMediator);
-  },
-  onClearBuffer: function() {
-    this.sendNotification(SjamayeeFacade.OBJECT_DATA_BUFFER_CLEAR,this.listMediator);
-  },
+  onFirst: function()	       { this.sendNotification(SjamayeeFacade.OLIST_DATA_HOME,ObjectsListMediator.HOME_MESSAGE_TEXT); },
+  onPrevious: function()	   { this.sendNotification(SjamayeeFacade.OLIST_DATA_PREVIOUS,ObjectsListMediator.PREVIOUS_MESSAGE_TEXT); },
+  onNext: function()	       { this.sendNotification(SjamayeeFacade.OLIST_DATA_NEXT,ObjectsListMediator.NEXT_MESSAGE_TEXT); },
+  onLast: function()	       { this.sendNotification(SjamayeeFacade.OLIST_DATA_END,ObjectsListMediator.END_MESSAGE_TEXT); },
+	onResizeList: function()   { this.sendNotification(SjamayeeFacade.OLIST_DATA_RESIZE); },
+  onAddObject: function()    { this.sendNotification(SjamayeeFacade.OBJECT_DATA_ADD,this.listMediator); },
+  onDeleteObject: function() { this.sendNotification(SjamayeeFacade.OBJECT_DATA_DELETE,this.listMediator); },
+  onEditObject: function()   { this.sendNotification(SjamayeeFacade.OBJECT_DATA_EDIT,this.listMediator); },
+  onUndoObject: function()   { this.sendNotification(SjamayeeFacade.OBJECT_DATA_UNDO,this.listMediator); },
+  onRedoObject: function()   { this.sendNotification(SjamayeeFacade.OBJECT_DATA_REDO,this.listMediator); },
+  onClearBuffer: function()  { this.sendNotification(SjamayeeFacade.OBJECT_DATA_BUFFER_CLEAR,this.listMediator); },
 	/*onEditText: function() {
 	  this.listMediator.setState(SjamayeeMediator.STATE_TEXT);
 	  this.sendNotification(SjamayeeFacade.TEXT_EDIT,this.listMediator);
     this.sendNotification(SjamayeeFacade.OLIST_DATA_TEXT_SHOW); //OLIST_DATA_TEXT_EDIT);
 	},*/
-  onDeleteUnrefObjects: function() {
-  	this.sendNotification(SjamayeeFacade.OBJECT_DATA_UNREFS_DELETE,this.listMediator); 
-  },
+  onDeleteUnrefObjects: function() { this.sendNotification(SjamayeeFacade.OBJECT_DATA_UNREFS_DELETE,this.listMediator); },
   listNotificationInterests: function()	{
     var result = this.parent();
     return result.concat([
@@ -20582,18 +20269,14 @@ var DataRelationsToolBarMediator = new Class({
   onShowChild: function()          { this.sendNotification(SjamayeeFacade.GRID_DATA_CHILD_SHOW); },
 	onResizeGrid: function()         { this.sendNotification(SjamayeeFacade.GRID_DATA_RESIZE); },
   onAddRelation: function() {
-		this.gridMediator.setEdit();
   	this.sendNotification(SjamayeeFacade.RELATION_DATA_ADD,this.gridMediator);
   	this.sendNotification(SjamayeeFacade.GRID_SHOW);
   },
   onDeleteRelation: function() {
-		this.gridMediator.setDisplay();  		
   	this.sendNotification(SjamayeeFacade.RELATION_DATA_DELETE,this.gridMediator);
   	this.sendNotification(SjamayeeFacade.GRID_SHOW);
-		break;
   },
   onEditRelation: function() {
-		this.gridMediator.setEdit();
   	this.sendNotification(SjamayeeFacade.RELATION_DATA_EDIT,this.gridMediator);
   	this.sendNotification(SjamayeeFacade.GRID_SHOW);
   },
@@ -20739,15 +20422,9 @@ var DataRelationsGridMediator = new Class({
   	this.setRelationProxy(SjamayeeFacade.getInstance().retrieveProxy(DataRelationProxy.ID));
   	this.setAttributeProxy(SjamayeeFacade.getInstance().retrieveProxy(DataAttributeProxy.ID));
 	},
-  onGridClick: function(evt) {
-    this.parent(evt);
-  },
-  onCellClick: function(evt) {
-    this.parent(evt);
-  },
-  onCellMouseOver: function(evt) {
-    this.parent(evt,this.getBackgroundHighliteColor());
-  },
+  onGridClick: function(evt)     { this.parent(evt); },
+  onCellClick: function(evt)     { this.parent(evt); },
+  onCellMouseOver: function(evt) { this.parent(evt,this.getBackgroundHighliteColor()); },
 	listNotificationInterests: function()	{
 	  var result = this.parent();
 	  return result.concat([
@@ -20759,9 +20436,6 @@ var DataRelationsGridMediator = new Class({
 			SjamayeeFacade.GRID_DATA_FILTER_CLICK,
 			SjamayeeFacade.FOCUS,
   		SjamayeeFacade.GRID_DATA_RESIZE
-  		//SjamayeeFacade.GRID_DATA_RELATION_EXTRACT,
-  		//SjamayeeFacade.GRID_DATA_RELATION_COPY,
-  		//SjamayeeFacade.GRID_DATA_RELATION_PASTE
 		]);
 	},
   handleNotification: function(note)	{
@@ -21019,15 +20693,6 @@ var DataRelationsGridMediator = new Class({
       var relationsEntityName = relationsHeaderMediator.getViewComponent().getEntitySelectValue();
 	    this.sendNotification(SjamayeeFacade.GRID_DATA_ENTITY_CHANGE,relationsEntityName);
 			break;
-  		/*case SjamayeeFacade.GRID_DATA_RELATION_EXTRACT:
-    	this.sendNotification(SjamayeeFacade.RELATION_EXTRACT);
-  		break;
-  		case SjamayeeFacade.GRID_DATA_RELATION_COPY:
-    	this.sendNotification(SjamayeeFacade.RELATION_COPY);
-  		break;
-  		case SjamayeeFacade.GRID_DATA_RELATION_PASTE:
-    	this.sendNotification(SjamayeeFacade.RELATION_PASTE);
-  		break;*/
     }
     this.parent(note);
   },
@@ -21091,19 +20756,13 @@ var DataObjectsListMediator = new Class({
 		//Initialize list.
   	this.entityProxy = SjamayeeFacade.getInstance().retrieveProxy(DataEntityProxy.ID);
 	},
-  onLineMouseOver: function(evt) {
-  	this.parent(evt,this.getBackgroundHighliteColor());
-	},
+  onLineMouseOver: function(evt)        { this.parent(evt,this.getBackgroundHighliteColor()); },
   listNotificationInterests: function()	{
 	  var result = this.parent();
 	  return result.concat([
 		  SjamayeeFacade.OLIST_DATA_SHOW,
 		  SjamayeeFacade.OLIST_DATA_REFRESH,
   		SjamayeeFacade.OLIST_DATA_RESIZE,
-  		//SjamayeeFacade.OLIST_DATA_OBJECT_SAVE,
-  		//SjamayeeFacade.OLIST_DATA_OBJECT_CANCEL,
-  		SjamayeeFacade.OLIST_DATA_OBJECT_UNDO,
-  		SjamayeeFacade.OLIST_DATA_OBJECT_REDO,
 			SjamayeeFacade.OLIST_DATA_TYPE_CHANGE,
   		SjamayeeFacade.OLIST_DATA_REFOP_CHANGE,
   		SjamayeeFacade.OLIST_DATA_FILTER_CLICK
@@ -21138,18 +20797,6 @@ var DataObjectsListMediator = new Class({
   		//this.home(); //TODO !!!
     	this.sendNotification(SjamayeeFacade.OLIST_DATA_REFRESH);
 			break;
-  		/*case SjamayeeFacade.OLIST_DATA_OBJECT_SAVE:
-  		this.setDisplay(true);
-  		break;
-  		case SjamayeeFacade.OLIST_DATA_OBJECT_CANCEL:
-  		this.setDisplay();
-  		break;*/
-  		case SjamayeeFacade.OLIST_DATA_OBJECT_UNDO:
-    	this.sendNotification(SjamayeeFacade.OBJECT_DATA_UNDO);
-  		break;
-  		case SjamayeeFacade.OLIST_DATA_OBJECT_REDO:
-    	this.sendNotification(SjamayeeFacade.OBJECT_DATA_REDO);
-  		break;
   		case SjamayeeFacade.OLIST_DATA_REFOP_CHANGE:
   		this.sendNotification(SjamayeeFacade.FOCUS, ObjectsListRight.ID);
   		break;
