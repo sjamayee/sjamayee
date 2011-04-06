@@ -1358,7 +1358,7 @@ var AddRelationCommand = new Class({
   		if (this instanceof AddModelRelationCommand) {
   		  this.mediator.childRelation = new ModelRelation(null,"",null,null,null,null);
   		}
-  		var grid = this.mediator.grid;
+  		var grid = this.mediator.getGrid();
 			var gridView = grid.getGridView();
   		var currentNivo = grid.getCurrentNivo();			
 			var gridColumn = grid.getColumnByNivo(currentNivo);
@@ -1493,7 +1493,7 @@ var DeleteRelationCommand = new Class({
   		this.mediator.currentRelation = null;
   		this.mediator.previousRelation = null;
   		this.mediator.nextRelation = null;
-  		var grid = this.mediator.grid;
+  		var grid = this.mediator.getGrid();
 			var gridView = grid.getGridView();
 			var cell = gridView.getCurrentCell();
   		if (cell) {
@@ -1590,7 +1590,7 @@ var EditRelationCommand = new Class({
 	execute: function(note) {
   	try {
       this.mediator = note.getBody();
-  		var grid = this.mediator.grid;
+  		var grid = this.mediator.getGrid();
   		var gridView = grid.getGridView();
 			var cell = gridView.getCurrentCell();
 			if (cell) {
@@ -1680,7 +1680,7 @@ var SaveRelationCommand = new Class({
 	execute: function(note) {
   	try {
       this.mediator = note.getBody();
-  		var grid = this.mediator.grid;
+  		var grid = this.mediator.getGrid();
   		var gridView = grid.getGridView();
   		var originalEntityValues = null;
   		var commandName = Command.EDT;
@@ -1837,7 +1837,7 @@ var ExtractRelationCommand = new Class({
   	var nok = false;
   	try {
       this.mediator = note.getBody();
-  		var grid = this.mediator.grid;
+  		var grid = this.mediator.getGrid();
   		var gridView = grid.getGridView();
 			var cell = gridView.getCurrentCell();
 			if (cell) {
@@ -1940,7 +1940,7 @@ var CopyRelationCommand = new Class({
 	execute: function(note) {
   	try {
       this.mediator = note.getBody();
-  		var grid = this.mediator.grid;
+  		var grid = this.mediator.getGrid();
   		var gridView = grid.getGridView();
 			var cell = gridView.getCurrentCell();
   		if (cell) {
@@ -2034,7 +2034,7 @@ var PasteRelationCommand = new Class({
   		this.mediator.currentRelation = null;
   		this.mediator.previousRelation = null;
   		this.mediator.nextRelation = null;
-  		var grid = this.mediator.grid;
+  		var grid = this.mediator.getGrid();
   		var gridView = grid.getGridView();
 		//var position = Position.clone(gridView.getPosition());
 			var position = (gridView.getPosition())?gridView.getPosition().clone():null;
@@ -2249,49 +2249,52 @@ var UndoRelationCommand = new Class({
   Extends: UndoCommand,  
 	execute: function(note) {
 		try {
-			this.mediator = null;
+  		this.parent(note);
+			this.mediator = note.getBody();
 			this.mediator.currentRelation = null;
 			this.mediator.previousRelation = null;
 			this.mediator.nextRelation = null;
-  		var grid = this.mediator.grid;
+  		var grid = this.mediator.getGrid();
   		var gridView = grid.getGridView();
 			this.currentNivo = gridView.getCurrentNivo();
 			this.position = (gridView.getPosition())?gridView.getPosition().clone():null;  		
-  		this.parent(note);
+  		//this.parent(note);
 			//RESTORE broken links for undone DELETES, some (pid,nid) are still NULL!!!
-      for (var j = 0; j < groupCommands.length; j++) {
-				if (groupCommands[j]) {
-					if (groupCommands[j].getName() != Command.DEL) { continue; }				
-			  	//var r1 = Relation.getById(groupCommands[j].getRelation().getId());
-			  	var r1 = groupCommands[j].getRelation(); //TOD/ VERIFY - IS THIS OK ???
-					if (r1) {
-						this.mediator.previousRelation = null;
-						this.mediator.nextRelation = null;
-						if (this.mediator.previousRelation === null) {
-							if (r1.getPid()) {
-								this.mediator.previousRelation = r1.getPreviousRelation();
-							}
-						}
-						if (this.mediator.previousRelation) {
-							//r1.setPid(this.mediator.previousRelation.getId());
-							r1.setPreviousRelationid(this.mediator.previousRelation);
-							//this.mediator.previousRelation.setNid(r1.getId());
-							this.mediator.previousRelation.setNextRelation(r1);
-						}
-						if (this.mediator.nextRelation === null) {
-							if (r1.getNid()) {
-								this.mediator.nextRelation = r1.getNextRelation();
-							}
-						}
-						if (this.mediator.nextRelation) {
-							//r1.setNid(this.mediator.nextRelation.getId());
-							r1.setNextRelation(this.mediator.nextRelation);
-							//this.mediator.nextRelation.setPid(r1.getId());
-							this.mediator.nextRelation.setPreviousRelation(r1);
-						}
-					}
-				}
-			}
+			if (this.groupCommands && this.groupCommands.length > 0) {
+        for (var j = 0; j < this.groupCommands.length; j++) {
+  				if (this.groupCommands[j]) {
+  					if (this.groupCommands[j].getName() != Command.DEL) { continue; }				
+  			  	//var r1 = Relation.getById(this.groupCommands[j].getRelation().getId());
+  			  	var r1 = this.groupCommands[j].getRelation(); //TOD/ VERIFY - IS THIS OK ???
+  					if (r1) {
+  						this.mediator.previousRelation = null;
+  						this.mediator.nextRelation = null;
+  						if (this.mediator.previousRelation === null) {
+  							if (r1.getPid()) {
+  								this.mediator.previousRelation = r1.getPreviousRelation();
+  							}
+  						}
+  						if (this.mediator.previousRelation) {
+  							//r1.setPid(this.mediator.previousRelation.getId());
+  							r1.setPreviousRelationid(this.mediator.previousRelation);
+  							//this.mediator.previousRelation.setNid(r1.getId());
+  							this.mediator.previousRelation.setNextRelation(r1);
+  						}
+  						if (this.mediator.nextRelation === null) {
+  							if (r1.getNid()) {
+  								this.mediator.nextRelation = r1.getNextRelation();
+  							}
+  						}
+  						if (this.mediator.nextRelation) {
+  							//r1.setNid(this.mediator.nextRelation.getId());
+  							r1.setNextRelation(this.mediator.nextRelation);
+  							//this.mediator.nextRelation.setPid(r1.getId());
+  							this.mediator.nextRelation.setPreviousRelation(r1);
+  						}
+  					}
+  				}
+  			}
+  		}
 			gridView.setCurrentNivo(this.currentNivo);
 			var p_gvw = gridView.getPosition();
 			p_gvw.setRow(this.position.getRow());
@@ -2478,47 +2481,52 @@ var RedoRelationCommand = new Class({
   Extends: RedoCommand,
 	execute: function(note) {
 		try {
-			var mediator = note.getBody();
-  		var grid = mediator.grid;
+  		this.parent(note);
+			//var mediator = note.getBody();
+  		//var grid = mediator.getGrid();
+			this.mediator = note.getBody();
+  		var grid = this.mediator.getGrid();
   		var gridView = grid.getGridView();
 			this.currentNivo = gridView.getCurrentNivo();
 			this.position = (gridView.getPosition())?gridView.getPosition().clone():null;
-  		this.parent(note);
+  		//this.parent(note);
 			//RESTORE broken links for redone ADDS, some (pid,nid) are still NULL!!!
-      for (var j = 0; j < this.groupCommands.length; j++) {
-				if (this.groupCommands[j]) {
-					if ((this.groupCommands[j].getName() != Command.ADD) &&
-					    (this.groupCommands[j].getName() != Command.PST)) { continue; }				
-			  	//var r1 = Relation.getById(groupCommands[j].getRelation().getId());
-			  	var r1 = this.groupCommands[j].getRelation(); //TODO: VERIFY - IS THIS OK ??? ***
-					if (r1) {
-						this.mediator.previousRelation = null;
-						this.mediator.nextRelation = null;
-						if (this.mediator.previousRelation === null) {
-							if (r1.getPid()) {
-								this.mediator.previousRelation = r1.getPreviousRelation();
-							}
-						}
-						if (this.mediator.previousRelation) {
-							//r1.setPid(this.mediator.previousRelation.getId());
-							r1.setPreviousRelation(this.mediator.previousRelation);
-							//this.mediator.previousRelation.setNid(r1.getId());
-							this.mediator.previousRelation.setNextRelation(r1);
-						}
-						if (this.mediator.nextRelation === null) {
-							if (r1.getNid()) {
-								this.mediator.nextRelation = r1.getNextRelation();
-							}
-						}
-						if (this.mediator.nextRelation) {
-							//r1.setNid(this.mediator.nextRelation.getId());
-							r1.setNextRelation(this.mediator.nextRelation);
-							//this.mediator.nextRelation.setPid(r1.getId());
-							this.mediator.nextRelation.setPreviousRelation(r1);
-						}
-					}
-				}
-			}
+			if (this.groupCommands && this.groupCommands.length > 0) {
+        for (var j = 0; j < this.groupCommands.length; j++) {
+  				if (this.groupCommands[j]) {
+  					if ((this.groupCommands[j].getName() != Command.ADD) &&
+  					    (this.groupCommands[j].getName() != Command.PST)) { continue; }				
+  			  	//var r1 = Relation.getById(this.groupCommands[j].getRelation().getId());
+  			  	var r1 = this.groupCommands[j].getRelation(); //TODO: VERIFY - IS THIS OK ??? ***
+  					if (r1) {
+  						this.mediator.previousRelation = null;
+  						this.mediator.nextRelation = null;
+  						if (this.mediator.previousRelation === null) {
+  							if (r1.getPid()) {
+  								this.mediator.previousRelation = r1.getPreviousRelation();
+  							}
+  						}
+  						if (this.mediator.previousRelation) {
+  							//r1.setPid(this.mediator.previousRelation.getId());
+  							r1.setPreviousRelation(this.mediator.previousRelation);
+  							//this.mediator.previousRelation.setNid(r1.getId());
+  							this.mediator.previousRelation.setNextRelation(r1);
+  						}
+  						if (this.mediator.nextRelation === null) {
+  							if (r1.getNid()) {
+  								this.mediator.nextRelation = r1.getNextRelation();
+  							}
+  						}
+  						if (this.mediator.nextRelation) {
+  							//r1.setNid(this.mediator.nextRelation.getId());
+  							r1.setNextRelation(this.mediator.nextRelation);
+  							//this.mediator.nextRelation.setPid(r1.getId());
+  							this.mediator.nextRelation.setPreviousRelation(r1);
+  						}
+  					}
+  				}
+  			}
+  		}
 			gridView.setCurrentNivo(this.currentNivo);
 			var p_gvw = gridView.getPosition();
 			p_gvw.setRow(this.position.getRow());
@@ -2721,7 +2729,7 @@ var ClearDataRelationBufferCommand = new Class({
 	execute: function(note) {
 		try {
 		  this.parent(note);
-		  this.mediator.grid.setRootCommand(null);
+		  this.mediator.getGrid().setRootCommand(null);
 			//Reset Counter for Navigation commands.
 			_cNc = 0;                                                 //TODO: global !!!			
       //this.sendNotification(SjamayeeFacade.RELATION_BUFFER_CLEARED,this.mediator);
@@ -2738,7 +2746,7 @@ var ClearModelRelationBufferCommand = new Class({
 	execute: function(note) {
 		try {
 		  this.parent(note);
-		  this.mediator.grid.setRootCommand(null);
+		  this.mediator.getGrid().setRootCommand(null);
 			//Reset Counter for Navigation commands.
 			_cNc = 0;                                                 //TODO: global !!!			
       //this.sendNotification(SjamayeeFacade.RELATION_BUFFER_CLEARED,this.mediator);
@@ -2754,7 +2762,7 @@ var ResetGridCommand = new Class({
   Extends: ResetViewCommand,
 	execute: function(note) {
     this.mediator = note.getBody();
-		var grid = this.mediator.grid;
+		var grid = this.mediator.getGrid();
 		try {
 			var nivo = grid.getCurrentNivo();
 			if (nivo < Position.NIVO_COLUMN_FIRST()) {
@@ -2807,12 +2815,11 @@ var AddDataObjectCommand = new Class({
   Extends: AddObjectCommand,
 	execute: function(note) {
   	try {
-      var mediator = SjamayeeFacade.getInstance().retrieveMediator(DataObjectsListMediator.ID);
+      var mediator = note.getBody(); //SjamayeeFacade.getInstance().retrieveMediator(DataObjectsListMediator.ID);
   		//var objectList = mediator.getList();    //TODO: not viewList but dataList !!!
   		//Mode: EDIT!
       if (mediator.setEdit() == GridListMediator.MODE_EDIT) {
         this.parent(note);
-        //this.mediator.setEdit(true);
         this.mediator.setMessageText("Add object...");
   		  this.sendNotification(SjamayeeFacade.OLIST_DATA_RESIZE,SjamayeeFacade.SIZE_NORMAL);
   		  this.sendNotification(SjamayeeFacade.OLIST_DATA_SHOW);
@@ -2828,12 +2835,11 @@ var AddModelObjectCommand = new Class({
   Extends: AddObjectCommand,
 	execute: function(note) {
   	try {
-      var mediator = SjamayeeFacade.getInstance().retrieveMediator(ModelObjectsListMediator.ID);
+      var mediator = note.getBody(); //SjamayeeFacade.getInstance().retrieveMediator(ModelObjectsListMediator.ID);
   		//var objectList = mediator.getList();    //TODO: not viewList but dataList !!!
   		//Mode: EDIT!
       if (mediator.setEdit() == GridListMediator.MODE_EDIT) {
         this.parent(note);
-        //this.mediator.setEdit(true);
         this.mediator.setMessageText("Add object...");
   		  this.sendNotification(SjamayeeFacade.OLIST_MODEL_RESIZE,SjamayeeFacade.SIZE_NORMAL);
   		  this.sendNotification(SjamayeeFacade.OLIST_MODEL_SHOW);
@@ -2941,7 +2947,6 @@ var EditDataObjectCommand = new Class({
       if (mediator.setEdit() == GridListMediator.MODE_EDIT) {
   			//Insert logic here ...
         this.parent(note);
-        //this.mediator.setEdit(true);
         this.mediator.setMessageText("Edit object...");        
   		  this.sendNotification(SjamayeeFacade.OLIST_DATA_RESIZE,SjamayeeFacade.SIZE_NORMAL);
   		  this.sendNotification(SjamayeeFacade.OLIST_DATA_SHOW);
@@ -2963,7 +2968,6 @@ var EditModelObjectCommand = new Class({
       if (mediator.setEdit() == GridListMediator.MODE_EDIT) {
   			//Insert logic here ...
         this.parent(note);
-        //this.mediator.setEdit(true);
         this.mediator.setMessageText("Edit object...");
   		  this.sendNotification(SjamayeeFacade.OLIST_MODEL_RESIZE,SjamayeeFacade.SIZE_NORMAL);
   		  this.sendNotification(SjamayeeFacade.OLIST_MODEL_SHOW);
@@ -3109,9 +3113,10 @@ var UndoObjectCommand = new Class({
   Extends: UndoCommand,  
 	execute: function(note) {
 		try {
-			//Insert logic here ... 
-  		//var grid = mediator.grid;
-  		this.parent(note);
+		  var mediator = note.getBody();
+		  //Insert logic here ... 
+		  //var grid = mediator.getGrid();
+		  this.parent(note);
       //this.sendNotification(SjamayeeFacade.OBJECT_UNDONE,this.mediator);
 		} catch(error) {
 			Utils.alert("UndoObjectCommand - error: "+error.message,Utils.LOG_LEVEL_ERROR);
@@ -3242,7 +3247,7 @@ var UndoDataObjectCommand = new Class({
   		//Mode: DISPLAY!
       if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
   			//Insert logic here ... 
-    		var grid = mediator.grid;
+    		//var grid = mediator.getGrid();
     		this.parent(note);
         //this.sendNotification(SjamayeeFacade.OBJECT_UNDONE,this.mediator);
         this.mediator.setMessageText("Object undone.");
@@ -3263,7 +3268,7 @@ var UndoModelObjectCommand = new Class({
   		//Mode: DISPLAY!
       if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
   			//Insert logic here ... 
-    		var grid = mediator.grid;
+    		//var grid = mediator.getGrid();
     		this.parent(note);
         //this.sendNotification(SjamayeeFacade.OBJECT_UNDONE,this.mediator);
         this.mediator.setMessageText("Object undone.");
@@ -3283,7 +3288,7 @@ var RedoObjectCommand = new Class({
 		try {
 		  var mediator = note.getBody();
 			//Insert logic here ... 
-  		var grid = mediator.grid;
+  		var grid = mediator.getGrid();
   		this.parent(note);
       //this.sendNotification(SjamayeeFacade.OBJECT_REDONE,this.mediator);
 		} catch(error) {
@@ -3417,7 +3422,7 @@ var RedoDataObjectCommand = new Class({
   		//Mode: DISPLAY!
       if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
   			//Insert logic here ... 
-    		var grid = mediator.grid;
+    		var grid = mediator.getGrid();
     		this.parent(note);
         //this.sendNotification(SjamayeeFacade.OBJECT_REDONE,this.mediator);
         this.mediator.setMessageText("Object redone.");
@@ -3438,7 +3443,7 @@ var RedoModelObjectCommand = new Class({
   		//Mode: DISPLAY!
       if (mediator.setDisplay() == GridListMediator.MODE_DISPLAY) {
   			//Insert logic here ... 
-    		var grid = mediator.grid;
+    		var grid = mediator.getGrid();
     		this.parent(note);
         //this.sendNotification(SjamayeeFacade.OBJECT_REDONE,this.mediator);
         this.mediator.setMessageText("Object redone.");
@@ -3471,7 +3476,7 @@ var ClearDataObjectBufferCommand = new Class({
 	execute: function(note) {
 		try {
 		  this.parent(note);
-		  //this.mediator.list.setRootCommand(null);
+		  //this.mediator.getList().setRootCommand(null);
 		  
 			//Reset Counter for Navigation commands.
 			//TODO: !!!!!  _cNc = 0;                               //TODO: global !!!			
@@ -3490,7 +3495,7 @@ var ClearModelObjectBufferCommand = new Class({
 	execute: function(note) {
 		try {
 		  this.parent(note);
-		  //this.mediator.list.setRootCommand(null);
+		  //this.mediator.getList().setRootCommand(null);
 		  
 			//Reset Counter for Navigation commands.
 			//TODO: !!!!!  _cNc = 0;                               //TODO: global !!!			
@@ -3542,7 +3547,7 @@ var ResetListCommand = new Class({
   Extends: ResetViewCommand,
 	execute: function(note) {
     var mediator = note.getBody();
-		var list = mediator.list;
+		var list = mediator.getList();
 		try {
 			this.parent(note);
       //this.sendNotification(SjamayeeFacade.LIST_RESETED,mediator);
@@ -5603,7 +5608,7 @@ var RelationB = new Class({
   		//Insert new relation!
   		//_rc.put(this);		                     _rc  !!!!!!!
   		if (isNew) {
-  			var gridView = mediator.grid.getGridView();
+  			var gridView = mediator.getGrid().getGridView();
 				var position = gridView.getPosition();
   			if (position) { position.down(); }
   		}
@@ -5664,7 +5669,8 @@ var RelationB = new Class({
   			//mediator.nextRelation.setPid((mediator.previousRelation)?mediator.previousRelation.getId():null);
   			mediator.nextRelation.setPreviousRelation((mediator.previousRelation)?mediator.previousRelation:null);
   		}
-  		_rc.remove(this.getKey());  //TODO: _rc !!!!!
+  		//_rc.remove(this.getKey());  //TODO: _rc !!!!!
+  		_rc.remove(this.getId());  //TODO: _rc !!!!!
   		//////////////////
   		if (mediator.previousRelation) {
   			after_pr = mediator.previousRelation.print();
@@ -15329,6 +15335,7 @@ var ModelAttribute = new Class({
 	Extends: AttributeB,
 	initialize: function(vo) {
 		try {
+		  if (vo === undefined) { vo = new ModelAttributeVO(); }
 			this.parent(vo);
 			this.proxy = SjamayeeFacade.getInstance().retrieveProxy(ModelAttributeProxy.ID);
 		} catch(error) {
@@ -15377,6 +15384,7 @@ var ModelEntity = new Class({
 	Extends: EntityB,
 	initialize: function(vo) {
 		try {
+		  if (vo === undefined) { vo = new ModelEntityVO(); }
 			this.parent(vo);
 			this.proxy = SjamayeeFacade.getInstance().retrieveProxy(ModelEntityProxy.ID);			
 			if (vo) {
@@ -15737,6 +15745,7 @@ var ModelRelation = new Class({
 	Extends: RelationB,
 	initialize: function(vo) {
 		try {
+		  if (vo === undefined) { vo = new ModelRelationVO(); }
 			this.parent(vo);
 			this.proxy = SjamayeeFacade.getInstance().retrieveProxy(ModelRelationProxy.ID);
 		} catch(error) {
@@ -16747,7 +16756,8 @@ var ModelRelationsTextsEditorMediator = new Class({
 			case SjamayeeFacade.GRID_MODEL_TEXT_RESIZE:
 		  this.textResize();
 		  this.sendNotification(SjamayeeFacade.GRID_MODEL_TEXT_RESIZED, this.isTextNormal());
-  	  var detail = this.facade.retrieveMediator(ModelDetailMediator.ID).getViewComponent(); //TODO: ??????????????????????????
+  	  //var detail = this.facade.retrieveMediator(ModelDetailMediator.ID).getViewComponent(); //TODO: ??????????????????????????
+  	  var detail = this.facade.retrieveMediator(ModelObjectDetailMediator.ID).getViewComponent();		  
       if (this.isTextFull() === true) {
   		  detail.setAttribute("style","display:none;");
   		  gridList.setAttribute("style","width:100%;height:"+GridList.MAXIMUM_SIZE+"px;display:block;");
@@ -16932,6 +16942,8 @@ var ModelRelationsGridMediator = new Class({
   	this.setEntityProxy(SjamayeeFacade.getInstance().retrieveProxy(ModelEntityProxy.ID));
   	this.setRelationProxy(SjamayeeFacade.getInstance().retrieveProxy(ModelRelationProxy.ID));
   	this.setAttributeProxy(SjamayeeFacade.getInstance().retrieveProxy(ModelAttributeProxy.ID));
+  	//Initialize CommandBuffer.
+		this.sendNotification(SjamayeeFacade.GRID_MODEL_BUFFER_CLEAR,this);
 	},
   onGridClick: function(evt)     { this.parent(evt); },  
   onCellClick: function(evt)     { this.parent(evt); },  
@@ -17300,6 +17312,8 @@ var ModelObjectsListMediator = new Class({
 		this.listUICRight.addEvent(SjamayeeFacade.LIST_KEYDOWN, this.onKeydown);
 		//Initialize list.
   	this.entityProxy = SjamayeeFacade.getInstance().retrieveProxy(ModelEntityProxy.ID);
+  	//Initialize CommandBuffer.
+		this.sendNotification(SjamayeeFacade.OBJECT_MODEL_BUFFER_CLEAR,this);
 	},
   onLineMouseOver: function(evt) { this.parent(evt,this.getBackgroundHighliteColor()); },
   listNotificationInterests: function()	{
@@ -18902,6 +18916,7 @@ var DataAttribute = new Class({
 	Extends: AttributeB,
 	initialize: function(vo) {
 		try {
+		  if (vo === undefined) { vo = new DataAttributeVO(); }
 			this.parent(vo);
 			this.proxy = SjamayeeFacade.getInstance().retrieveProxy(DataAttributeProxy.ID);
 		} catch(error) {
@@ -18950,6 +18965,7 @@ var DataEntity = new Class({
 	Extends: EntityB,
 	initialize: function(vo) {
 		try {
+		  if (vo === undefined) { vo = new DataEntityVO(); }
 			this.parent(vo);
 			this.proxy = SjamayeeFacade.getInstance().retrieveProxy(DataEntityProxy.ID);
 			if (vo) {
@@ -19387,6 +19403,7 @@ var DataRelation = new Class({
 	Extends: RelationB,
 	initialize: function(vo) {
 		try {
+		  if (vo === undefined) { vo = new DataRelationVO(); }
 			this.parent(vo);
 			this.proxy = SjamayeeFacade.getInstance().retrieveProxy(DataRelationProxy.ID);
 			if (vo) {
@@ -20421,6 +20438,8 @@ var DataRelationsGridMediator = new Class({
   	this.setEntityProxy(SjamayeeFacade.getInstance().retrieveProxy(DataEntityProxy.ID));
   	this.setRelationProxy(SjamayeeFacade.getInstance().retrieveProxy(DataRelationProxy.ID));
   	this.setAttributeProxy(SjamayeeFacade.getInstance().retrieveProxy(DataAttributeProxy.ID));
+  	//Initialize CommandBuffer.
+		this.sendNotification(SjamayeeFacade.GRID_DATA_BUFFER_CLEAR,this);
 	},
   onGridClick: function(evt)     { this.parent(evt); },
   onCellClick: function(evt)     { this.parent(evt); },
@@ -20755,6 +20774,8 @@ var DataObjectsListMediator = new Class({
 		this.listUICRight.addEvent(SjamayeeFacade.LIST_KEYDOWN, this.onKeydown);
 		//Initialize list.
   	this.entityProxy = SjamayeeFacade.getInstance().retrieveProxy(DataEntityProxy.ID);
+  	//Initialize CommandBuffer.
+		this.sendNotification(SjamayeeFacade.OBJECT_DATA_BUFFER_CLEAR,this);
 	},
   onLineMouseOver: function(evt)        { this.parent(evt,this.getBackgroundHighliteColor()); },
   listNotificationInterests: function()	{
