@@ -878,13 +878,13 @@ var PrepViewCommand = new Class({
           "\napp.header.modelRelationsHeader: "+app.header.modelRelationsHeader);*/
     //this.facade.registerMediator(new HeaderMediator(app.header));
     //this.facade.registerMediator(new DataDetailMediator(app.detail));
-    this.facade.registerMediator(new DataObjectNTDMediator(app.detail.splitter.left.dataObjectNTD));
-    this.facade.registerMediator(new DataObjectPropertiesMediator(app.detail.splitter.right.dataObjectProperties));
+    this.facade.registerMediator(new DataObjectNTDMediator(app.detail.hsplitter.left.dataObjectNTD));
+    this.facade.registerMediator(new DataObjectPropertiesMediator(app.detail.hsplitter.right.dataObjectProperties));
     this.facade.registerMediator(new DataParentDetailMediator(app.detail));
     this.facade.registerMediator(new DataChildDetailMediator(app.detail));
     //this.facade.registerMediator(new ModelDetailMediator(app.detail));    
-    this.facade.registerMediator(new ModelObjectNTDMediator(app.detail.splitter.left.modelObjectNTD));
-    this.facade.registerMediator(new ModelObjectPropertiesMediator(app.detail.splitter.right.modelObjectProperties));
+    this.facade.registerMediator(new ModelObjectNTDMediator(app.detail.hsplitter.left.modelObjectNTD));
+    this.facade.registerMediator(new ModelObjectPropertiesMediator(app.detail.hsplitter.right.modelObjectProperties));
     this.facade.registerMediator(new ModelParentDetailMediator(app.detail));    
     this.facade.registerMediator(new ModelChildDetailMediator(app.detail));   
     //this.facade.registerMediator(new ToolBarMediator(app.toolBar));
@@ -1324,8 +1324,9 @@ var ResetViewCommand = new Class({
         gridSplitter = dijit.byId(GridListSplitter.ID);
         listPaneLeft = dijit.byId(GridListLeft.ID);
         if (listPaneLeft) {
-          listPaneLeft.attr("style","width:"+this.percent+"%;");
-          listPaneLeft.attr("sizeShare",this.percent);
+          //listPaneLeft.attr("style","width:"+this.percent+"%;");
+          //listPaneLeft.attr("sizeShare",this.percent);
+          listPaneLeft.attr("style","width:100%;");
         }
       }
       this.mediator.setMessageText("View reset.");
@@ -3978,6 +3979,349 @@ HashGenerator.getInstance = function() {
   return HashGenerator.instance;
 };
 
+/*******************************************************************/
+/* Splitter                                                        */
+/* copied from http://verens.com/2007/07/08/splitter-for-mootools/ */
+/*******************************************************************/
+var Splitter = new Class({
+	initialize: function(parent,parameters) {
+		if (!parameters) parameters = {};
+
+		var wrapper_orientation = parameters['orientation']?parameters['orientation']:0; // 0 is horizontal. otherwise, vertical
+		var wrapper_handleWidth = parameters['handleWidth']?parameters['handleWidth']:0; //1;
+		var wrapper_handleColor = parameters['handleColor']?parameters['handleColor']:'lightgray';
+		var wrapper_handleBorder = parameters['handleBorder']?parameters['handleBorder']:'none';
+		var wrapper_minimumSize = parameters['minimumSize']?parameters['minimumSize']:0; //40;
+		var wrapper_maximumSize = parameters['maximumSize']?parameters['maximumSize']:h; //800;
+		var wrapper_initialSize = parameters['initialSize']?parameters['initialSize']:(wrapper_minimumSize + wrapper_maximumSize)/2; //40;
+		var wrapper_opaqueResize = parameters['opaqueResize']?parameters['opaqueResize']:0;
+    
+		if (parent) {
+			//$(parent).setStyles({'margin': 0,	'padding': 0});
+			var w = parent.offsetWidth, h = parent.offsetHeight;
+			if (wrapper_orientation === 0) {
+			  h = wrapper_initialSize;
+			} else {
+			  w = wrapper_initialSize;
+			}
+			if (parent === document.body || !parent.tagName) {
+				//w = $pick(window.innerWidth,document.body.clientWidth); //TEST!!!
+				//h = $pick(window.innerHeight,document.body.clientHeight);
+				//document.body.setStyle('overflow','hidden');
+				
+				//TEST !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+				w = $pick(window.getWidth(),document.body.clientWidth); //TEST!!!
+				h = $pick(window.getHeight(),document.body.clientHeight);
+			}
+		  //h = h - (parseInt(parent.getStyle('border-top-width')) - parseInt(parent.getStyle('border-bottom-width')));
+      //h = h - (parseInt(parent.getStyle('border-top-height')) - parseInt(parent.getStyle('border-bottom-height')));			
+		  //w = w - (parseInt(parent.getStyle('border-left-width')) - parseInt(parent.getStyle('border-right-width')));
+
+    	//h = h - parseInt(parent.getStyle('border-top-height')) - parseInt(parent.getStyle('border-bottom-height'));
+    	//w = w - parseInt(parent.getStyle('border-left-width')) - parseInt(parent.getStyle('border-right-width'));
+		} else {
+			var w = 0, h = 0;
+		}
+		var wrapperId = parameters['id']?parameters['id']:null;
+		var wrapper = null;
+		if (wrapperId) {
+		  wrapper = $(wrapperId);
+		} else {
+		  wrapper = new Element('div');
+		}
+    if (wrapper_orientation && wrapper_orientation === 1) {
+  		wrapper.setStyles({'position':'relative', 'top':'0px', 'width':w, 'height':h}); //, 'overflow':'hidden'}
+    } else {
+  		wrapper.setStyles({'position':'relative', 'left':'0px', 'width':w, 'height':h}); //, 'overflow':'hidden'}      
+    }
+		//wrapper.setStyles({'width':w, 'height':h}); //, 'overflow':'hidden'});
+		/*,{
+		  //'class': 'tundra gridSplitter',
+			'styles': {'position':'relative',	'width':w, 'height':h} //, 'overflow':'hidden'}
+		});*/
+		$extend(wrapper,{addWidget:Splitter__addWidget,	parentResized:Splitter__parentResized, setSizes:Splitter__setSizes,	getSizes:Splitter__getSizes});
+		wrapper.orientation = wrapper_orientation;
+		wrapper.handleWidth = wrapper_handleWidth;
+		wrapper.handleColor = wrapper_handleColor;
+		wrapper.handleBorder = wrapper_handleBorder;
+		wrapper.minimumSize = wrapper_minimumSize;
+		wrapper.maximumSize = wrapper_maximumSize;
+		wrapper.initialSize = wrapper_initialSize;
+		wrapper.opaqueResize = wrapper_opaqueResize;
+		wrapper.widgets=[];
+		wrapper.handles=[];
+		wrapper.addClass('splitter');
+		/*if (parameters['id']) {                                 // TEST !!!
+		  wrapper.addClass('tundra gridSplitter');
+		}*/
+		if (parent) parent.appendChild(wrapper);
+		window.addEvent('resize',Splitter__resize);
+		return wrapper;
+	}
+});
+
+function Splitter__resize(parent) {
+  if (parent === undefined || parent === null) { parent = Sjamayee.FORM; }
+  var children = $(parent).getElements('div');      
+	//var children = $$('div'); //,$(parent)); //$ES('*');
+	//var children = $ES('*'); //,$(parent)); //$ES('*');
+	//var children = $ES('*',$(parent)); //,$(parent)); //$ES('*');
+	//var children = $$('*'); //,$(parent)); //$ES('*');
+	//var children = $$('*',this); //$ES('*');
+	//var children = $$('div>div',this); //$ES('*');
+	children.each(function(child) {
+		if (child.parentResized) child.parentResized();
+		//if (child.parentResized()) child.parentResized();
+		//child.parentResized();
+	});
+}
+
+function Splitter__addWidget(widget,parameters) {
+	if (!parameters) parameters = {};
+	var numWidgets = this.widgets.length;
+
+	var orientation = this.orientation;
+	var handleWidth = parameters['handleWidth']?parameters['handleWidth']:this.handleWidth;
+	var handleColor = parameters['handleColor']?parameters['handleColor']:this.handleColor;
+	var handleBorder = parameters['handleBorder']?parameters['handleBorder']:this.handleBorder;
+  var handleClass = (orientation && orientation === 1)?'vsplitbar':'hsplitbar';
+	//var handleMargin = orientation?'1px 0px 1px 0px':'0px 1px 0px 1px';
+	var minimumSize = parameters['minimumSize']?parameters['minimumSize']:this.minimumSize;
+	var maximumSize = parameters['maximumSize']?parameters['maximumSize']:this.maximumSize;
+	var initialSize = parameters['initialSize']?parameters['initialSize']:this.initialSize;
+	var opaqueResize = parameters['opaqueResize']?parameters['opaqueResize']:this.opaqueResize;
+	
+	var handle = new Element('div',{
+	  'class': handleClass,
+		//'styles': {'background':'#aaa',	'border':'solid #999', 'position':'absolute',	'font-size':'0'}
+		//'styles': {'background-color':'red', 'border':'solid white', 'position':'absolute', 'font-size':'0', 'overflow':'hidden'}
+		//'styles': {'background-color':'lightgray', 'border':'3px null transparent', 'position':'absolute', 'font-size':'0', 'overflow':'hidden'}
+		//'styles': {'background-color':'lightgray', 'border':'1px', 'position':'absolute', 'font-size':'0', 'overflow':'hidden'}
+		//'styles': {'border':'1px solid lightgray', 'position':'absolute', 'font-size':'0', 'overflow':'hidden'}
+		//'styles': {'background-color':'lightgray', 'border':'none', 'position':'absolute', 'font-size':'0', 'overflow':'hidden'}
+		//'styles': {'background-color':handleColor, 'border':'none', 'position':'absolute', 'font-size':'0', 'overflow':'hidden'}
+		//'styles': {'background-color':'red', 'border':'none', 'position':'absolute', 'font-size':'0', 'overflow':'hidden'}
+		//'styles': {'background':'red', 'border':'solid red', 'position':'absolute', 'font-size':'0', 'overflow':'hidden'}
+		'styles': {'background':handleColor,'border':handleBorder,'position':'absolute','font-size':'0','overflow':'hidden'} //,'margin':handleMargin}
+	});
+	//handle.setStyles(orientation?{'border-width':'10px 0','cursor':'n-resize','height':this.handleWidth - 2,'width':this.offsetWidth}
+	//													  :{'border-width':'0 10px','cursor':'e-resize','width':this.handleWidth - 2,'height':this.offsetHeight});
+	//handle.setStyles(orientation?{'border-width':'1px 0','cursor':'ns-resize','height':1,'width':this.offsetWidth}
+	//														:{'border-width':'0 1px','cursor':'ew-resize','width':1,'height':this.offsetHeight});
+	handle.setStyles(orientation?{'border-width':handleWidth+'px 0','cursor':'ns-resize','height':handleWidth+'px','width':this.offsetWidth}
+															:{'border-width':'0 '+handleWidth+'px','cursor':'ew-resize','width':handleWidth+'px','height':this.offsetHeight});  
+	handle.num = numWidgets;
+	handle.addEvent('mousedown', function() {
+	  if (handleWidth === 0) { alert("handle/mousedown - handleWidth: 0"); return; }
+		var parent = this.parentNode;
+		var orientation = parent.orientation;
+		var pseudoHandle = new Element('div',{
+			//'styles': {'position':'absolute', 'left':this.offsetLeft, 'top':this.offsetTop, 'border':'1px dashed #000', 'font-size':'0'}
+			//'styles': {'position':'absolute', 'left':this.offsetLeft, 'top':this.offsetTop, 'border':'5px solid red', 'font-size':'0'}
+			'styles': {'position':'absolute', 'left':this.offsetLeft, 'top':this.offsetTop, 'border':'1px dashed black', 'font-size':'0'}
+		});
+		parent.appendChild(pseudoHandle);
+		pseudoHandle.setStyles(orientation?{'height':parent.handleWidth - 2,'width':this.offsetWidth - 2}
+																			:{'width':parent.handleWidth - 2,'height':this.offsetHeight - 2});
+		//pseudoHandle.setStyles({'overflow':'hidden'});
+		var xoffset = parent.getPosition().x;
+		var yoffset = parent.getPosition().y;
+		var min = 0;
+		if (orientation) {
+			var x = this.offsetTop;
+			//var max = parent.offsetHeight - parent.handleWidth;
+			var max = (parent.handleWidth !== 0)?parent.offsetHeight - parent.handleWidth:parent.initialSize;
+		}	else {
+			var x = this.offsetLeft;
+			//var max = parent.offsetWidth - parent.handleWidth;
+			var max = (parent.handleWidth !== 0)?parent.offsetWidth - parent.handleWidth:parent.initialSize;
+		}
+		if (this.num > 1) {
+	    //min = (orientation?parent.handles[this.num - 1].offsetTop:parent.handles[this.num - 1].offsetLeft) + parent.handleWidth;
+		  if (parent.handleWidth !== 0) {
+		    min = (orientation?parent.handles[this.num - 1].offsetTop:parent.handles[this.num - 1].offsetLeft) + parent.handleWidth;
+		  } else {
+		    min = parent.initialSize;
+		  }
+		}
+		if (this.num < parent.handles.length - 1) {
+		  //max = (orientation?parent.handles[this.num + 1].offsetTop:parent.handles[this.num + 1].offsetLeft) - parent.handleWidth;
+		  if (parent.handleWidth !== 0) {
+		    max = (orientation?parent.handles[this.num + 1].offsetTop:parent.handles[this.num + 1].offsetLeft) - parent.handleWidth;
+		  } else {
+		    max = parent.initialSize;
+		  }
+		}
+		var mousemove = function(e) {
+			var e = new Event(e),p = {x:0,y:0};
+			if (window.ie) try { document.selection.empty(); } catch(err) {};
+			x = orientation?e.page.y - yoffset - p.y:e.page.x - xoffset - p.x;
+			if (x < min) x = min;
+			if (x > max) x = max;
+			var dir = orientation?'top':'left';
+			pseudoHandle.setStyle(dir,x);
+		};
+		var mouseup = function(e) {
+			var e = new Event(e),p = {x:0,y:0};
+			if (window.ie) try { document.selection.empty(); } catch(err) {};
+			x = orientation?e.page.y - yoffset - p.y:e.page.x - xoffset - p.x;
+
+			var diff = x - (orientation?handle.offsetTop:handle.offsetLeft);
+			/*if (diff) {
+			  if (diff < parent.minimumSize) { diff = parent.minimumSize; }
+			  if (diff > parent.maximumSize) { diff = parent.maximumSize; }
+			}*/
+			var sizes = handle.parentNode.getSizes();
+			sizes[handle.num-1] += diff;
+			sizes[handle.num] -= diff;
+			handle.parentNode.setSizes(sizes);
+			pseudoHandle.destroy();
+			document.removeEvent('mouseup',mouseup);
+			document.removeEvent('mousemove',mousemove);
+		};
+		document.addEvent('mousemove',mousemove);
+		document.addEvent('mouseup',mouseup);
+	});
+	if (!numWidgets) {
+		handle.setStyle('display','none');
+	}
+	var widgetWrapper = new Element('div',{
+		'class': 'splitterPanel',
+		'styles': {'position': 'absolute', 'height': this.offsetHeight,	'width': this.offsetWidth, 'overflow': 'hidden'} //''auto'}
+	});
+	var sizes = [];
+	var w = 0;
+	if (numWidgets) w += numWidgets * handleWidth; //this.handleWidth;
+	for (var i=0; i < numWidgets; ++i) {
+		var panel = this.widgets[i];
+		if (orientation) {
+			panel.setStyle('height',Math.floor(panel.offsetHeight * (numWidgets / (numWidgets + 1))));
+			w += panel.offsetHeight;
+			sizes.push(panel.offsetHeight);
+		}	else {
+			panel.setStyle('width',Math.floor(panel.offsetWidth * (numWidgets / (numWidgets + 1))));
+			w += panel.offsetWidth;
+			sizes.push(panel.offsetWidth);
+		}
+		//panel.setStyle('overflow','hidden'); //TEST !!!
+	}
+	sizes.push((orientation?this.offsetHeight:this.offsetWidth) - w);
+
+	widgetWrapper.orientation = orientation;
+	widgetWrapper.handleWidth = handleWidth;
+	widgetWrapper.handleColor = handleColor;
+	widgetWrapper.handleBorder = handleBorder;
+	widgetWrapper.minimumSize = minimumSize;
+	widgetWrapper.maximumSize = maximumSize;
+	widgetWrapper.initialSize = initialSize;
+	widgetWrapper.opaqueResize = opaqueResize;
+	
+	this.minimumSize += widgetWrapper.minimumSize;
+	this.maximumSize += widgetWrapper.maximumSize;
+	this.initialSize += widgetWrapper.initialSize;
+	widgetWrapper.appendChild(widget);
+	//handle.setStyle('background-color','red'); //TEST!!!
+	this.appendChild(handle);
+	this.appendChild(widgetWrapper);
+	this.handles.push(handle);
+	this.widgets.push(widgetWrapper);
+	this.setSizes(sizes);
+}
+
+function Splitter__parentResized() {
+	var parent = this.parentNode;
+	var w = parent.offsetWidth, h = parent.offsetHeight;
+	if (parent === document.body) {
+		h = window.getHeight();
+    w = window.getWidth(); //TEST!!!
+	}
+	h = h - (parseInt(parent.getStyle('border-top-width')) - parseInt(parent.getStyle('border-bottom-width')));
+	//h = h - (parseInt(parent.getStyle('border-top-height')) - parseInt(parent.getStyle('border-bottom-height')));
+	w = w - (parseInt(parent.getStyle('border-left-width')) - parseInt(parent.getStyle('border-right-width')));
+	this.setStyles({'width': w,	'height': h}); //, 'overflow': 'hidden'});
+	this.setSizes(this.getSizes());
+}
+
+function Splitter__setSizes(sizes) {
+	if (!this.offsetWidth || !this.offsetHeight) return;
+	if (!this.handles.length) return;
+	var x = 0;
+	var w = 0;
+	for (var i = 0; i < sizes.length; ++i) {
+		w += sizes[i];
+	}
+	//var h = (sizes.length > 1)?this.handleWidth * (sizes.length-1):0;
+	var h = (sizes.length > 1)?((this.handleWidth !== 0)?this.handleWidth * (sizes.length-1):this.initialSize):0;
+
+	var maxSize = this.orientation?this.offsetHeight - h:this.offsetWidth - h;
+	if (!w) { // panel sizes are all 0
+		var panelSize = Math.floor(maxSize / this.handles.length);
+		for (var i = this.handles.length - 1; i; --i) sizes[i] = panelSize;
+		sizes[0] = maxSize - panelSize * (this.handles.length - 1);
+	}	else if (w != maxSize) { // panel sizes don't add up
+		var ratio = maxSize / w;
+		var sum = 0;
+		for (var i = this.handles.length-1; i; --i) {
+			var newSize = Math.floor(sizes[i] * ratio);
+			sizes[i] = newSize;
+			sum += newSize;
+		}
+		sizes[0] = maxSize-sum;
+	}
+	if (this.minimumSize < maxSize && this.minimumSize) { // check for width constraints
+		var found = 0, minTotal = 0, nonMinArr = [], nonMinTotal = 0;
+		for (var i = 0; i < sizes.length; ++i) {
+			if (this.widgets[i].minimumSize > sizes[i]) {
+				sizes[i] = this.widgets[i].minimumSize;
+				found = 1;
+				minTotal += this.widgets[i].minimumSize;
+			}	else {
+				nonMinTotal += sizes[i];
+				nonMinArr.push(i);
+			}
+		}
+		if (found) {
+			var ratio = (maxSize - minTotal) / nonMinTotal;
+			for (var i = 0; i < nonMinArr.length; ++i) sizes[nonMinArr[i]] = Math.floor(sizes[nonMinArr[i]] * ratio);
+			return this.setSizes(sizes);
+		}
+	}
+	for (var i = 0; i < sizes.length ; ++i) {
+		if (i) {
+    	//this.handles[i].setStyle('background-color','red'); //TEST!!!
+			//this.handles[i].setStyles(this.orientation?{'left':0,'width':this.offsetWidth,'top':x,'overflow':'hidden'}
+			//																				:{'left':x,'top':0,'height':this.offsetHeight,'overflow':'hidden'});
+			this.handles[i].setStyles(this.orientation?{'left':0,'top':x,'width':this.offsetWidth,'overflow':'hidden'}
+																								:{'left':x,'top':0,'height':this.offsetHeight,'overflow':'hidden'});
+			x += this.handleWidth;
+			//x += this.widgets[i].handleWidth;
+		}
+		  //this.widgets[i].setStyles(this.orientation?{'top':x,'left':0,'width':this.offsetWidth,'height':sizes[i],'overflow':'hidden'}
+			//																			  :{'left':x,'top':0,'height':this.offsetHeight,'width':sizes[i],'overflow':'hidden'});
+		  this.widgets[i].setStyles(this.orientation?{'top':x,'left':0,'width':this.offsetWidth,'height':sizes[i],'overflow':'hidden'}
+																							  :{'left':x,'top':0,'height':this.offsetHeight,'width':sizes[i],'overflow':'hidden'});
+		  x += sizes[i];
+	  //}
+	}
+  var children = this.getElements('div');
+	children.each(function(child) {
+	  //if (child.id && this.id && child.id != this.id) {
+		  if (child.parentResized) child.parentResized();
+		  //if (child.parentResized()) child.parentResized();
+		  //child.parentResized();
+		//}
+	});
+}
+
+function Splitter__getSizes() {
+	var result = [];
+	for (var i = 0; i < this.widgets.length; ++i) {
+	  //result.push(this.orientation?this.widgets[i].offsetHeight:this.widgets[i].offsetWidth);
+	  result.push(this.orientation?this.widgets[i].offsetHeight:this.widgets[i].offsetWidth);
+	}
+	return result;
+}
+
 //////////////////////////////////////////////////////////////////////////
 ///////////////////////////////// COMMON /////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
@@ -5956,7 +6300,6 @@ var UIComponent = new Class({
   initializationComplete: function() {
     this.initialized = true;
   },
-
   addChild: function(child) {
     this.grab(child.element);
     //Initialize child
@@ -5985,21 +6328,106 @@ var Sjamayee = new Class({
     this.facade = null;
 
     this.facade = SjamayeeFacade.getInstance();
-    this.parent(Sjamayee.FORM); 
+    //this.parent(Sjamayee.FORM,{height:window.innerHeight});
+    this.parent(Sjamayee.FORM,{height:$pick(window.getHeight(),document.body.clientHeight)});
   },
   initializeChildren: function() {
     //this.parent();
     this.header = new Header();
     this.addChild(this.header);
-    this.gridList = new GridList();
-    this.addChild(this.gridList);
     this.toolBar = new ToolBar();
     this.addChild(this.toolBar);
+    this.gridList = new GridList();
+    this.addChild(this.gridList);
     this.detail = new Detail();
     this.addChild(this.detail);
   },
   initializationComplete: function() {
-    this.facade.startup(this);
+    this.facade.startup(this);    
+/*
+    //this.vsplitter = new Splitter(document.body, {
+    this.vsplitter = new Splitter($(Sjamayee.FORM), {
+      'handleWidth':3,
+      'handleColor':'red',
+      'handleBorder':'3px solid red',
+      'orientation':1,
+      'minimumSize':0,
+      'maximumSize':800,
+      'opaqueResize':0});
+		this.vsplitter.addWidget($("sjamayeeTop"), {
+      'handleWidth':3,
+      'handleColor':'red',
+      'handleBorder':'3px solid red',
+      'orientation':1,
+      'minimumSize':0,
+      'maximumSize':400,
+      'opaqueResize':0});
+		this.vsplitter.addWidget($("sjamayeeBottom"), {
+      'handleWidth':3,
+      'handleColor':'blue',
+      'handleBorder':'3px solid red',
+      'orientation':1,
+      'minimumSize':0,
+      'maximumSize':400,
+      'opaqueResize':0});
+*/
+    this.vsplitter = new Splitter($(Sjamayee.FORM), {
+      'id':'verticalSplitter',
+      'handleWidth':3,
+      'handleColor':'red',
+      'handleBorder':'3px solid red',
+      'orientation':1,
+      'minimumSize':0, //400,
+      'maximumSize':$pick(window.getHeight(),document.body.clientHeight), //window.innerHeight,
+      'initialSize':$pick(window.getHeight(),document.body.clientHeight), //window.innerHeight,
+      'opaqueResize':0});
+		this.vsplitter.addWidget($("headerPane"), {
+      'handleWidth':3, //0,
+      'handleColor':'red',
+      'handleBorder':'3px solid red',
+      'orientation':1,
+      'minimumSize':26,
+      'maximumSize':26,
+      'initialSize':26,
+      'opaqueResize':0});
+		this.vsplitter.addWidget($("listPaneBorder"), {
+      'handleWidth':15,
+      'handleColor':'blue', //'transparent', //'yellow',
+      'handleBorder':'15px solid blue', //transparent', //yellow',
+      'orientation':1,
+      'minimumSize':200, //400,
+      'maximumSize':500,
+      'initialSize':400,
+      'opaqueResize':0});
+		this.vsplitter.addWidget($("toolBarPane"), {
+      'handleWidth':0,
+      'handleColor':'red',
+      'handleBorder':'0px solid red',
+      'orientation':1,
+      'minimumSize':28,
+      'maximumSize':28,
+      'initialSize':28,
+      'opaqueResize':0});
+		this.vsplitter.addWidget($("detailPane"), {
+      'handleWidth':10,
+      'handleColor':'green',
+      'handleBorder':'10px solid green',
+      'orientation':1,
+      'minimumSize':0, //100,
+      'maximumSize':400,
+      'initialSize':250,
+      'opaqueResize':0});
+		this.vsplitter.addWidget($("googleBranding"), {
+      'handleWidth':0,
+      'handleColor':'blue', //'red', //'lightgray', //'black',
+      'handleBorder':'0px solid transparent', //red', //lightgray', //black',
+      'orientation':1,
+      'minimumSize':20,
+      'maximumSize':20,
+      'initialSize':20,
+      'opaqueResize':0});
+    //Resize window (default: Sjamayee.FORM) !!!
+    Splitter__resize();
   }
 });
 Sjamayee.FORM = "sjamayeeForm";
@@ -6070,7 +6498,6 @@ var Header = new Class({
     this.settingButton_clickHandler = this.settingButton_clickHandler.bindWithEvent(this);
     this.helpLink_clickHandler = this.helpLink_clickHandler.bindWithEvent(this);
   },
-
   initializeChildren: function() {
     this.dataModelSelect = $(Header.DATA_MODEL_SELECT_ID);
     this.dataObjectsHeader = new DataObjectsHeader();
@@ -6091,7 +6518,6 @@ var Header = new Class({
     this.settingButton = $(Header.SETTING_BUTTON_ID);
     this.helpLink = $(Header.HELP_BUTTON_ID);
   },
-
   childrenInitialized: function() {
     this.dataModelSelect.addEvent(SjamayeeFacade.CHANGE, this.dataModelSelect_changeHandler);
     this.settingSelect.addEvent(SjamayeeFacade.CHANGE, this.settingSelect_changeHandler);
@@ -6627,6 +7053,7 @@ var AttributeListUIComponent = new Class({
       }
     }
     var html = '<div id="'+name+AttributeListUIComponent.HEADER_ID+'" class="'+AttributeListUIComponent.HEADER_CLASS_ID+'">'+headerValue+'</div>'+
+               '<div id="'+name+'X" style="position:relative;float:top;top:23px;height:100%;">'+
                '<div id="'+name+AttributeListUIComponent.NAMES_ID+'" class="'+AttributeListUIComponent.NAMES_CLASS_ID+'">'+
                ' <div id="'+name+AttributeListUIComponent.NAME_HEADER_ID+'" class="'+AttributeListUIComponent.NAME_HEADER_CLASS_ID+'">'+AttributeListUIComponent.NAME_HEADER_VALUE+'</div>'+
                ' <div id="'+this.getNameCellId(1,name)+'" class="'+AttributeListUIComponent.NAME_CLASS_ID+'">'+
@@ -6680,10 +7107,15 @@ var AttributeListUIComponent = new Class({
                ' <div id="'+this.getValueCellId(8,name)+'" class="'+AttributeListUIComponent.VALUE_CLASS_ID+'">'+
                '   <a id="'+this.getValueAnchorId(8,name)+'">88888888</a>'+
                ' </div>'+
+               '</div>'+
                '</div>';
     this.parent(name,{html:html});
     this.name_clickHandler = this.name_clickHandler.bindWithEvent(this);
     this.value_clickHandler = this.value_clickHandler.bindWithEvent(this);
+    
+    this.hsplitter = new Splitter($(name+"X"), {'handleWidth':1});
+		this.hsplitter.addWidget($(name+AttributeListUIComponent.NAMES_ID)); //, {'handleWidth':1});
+		this.hsplitter.addWidget($(name+AttributeListUIComponent.VALUES_ID)); //, {'handleWidth':1});
   },
   initializeChildren: function() {
     var name = this.id;
@@ -6740,12 +7172,12 @@ var AttributeListUIComponent = new Class({
     this.attribute08Name.addEvent(SjamayeeFacade.CLICK, this.name_clickHandler);
     this.attribute08Value.addEvent(SjamayeeFacade.CLICK, this.value_clickHandler);
     this.parent();
-  /*var cells = this.getCells();
+    var cells = this.getCells();
     for (var i = 0; i < cells.length; i++) {
       var cell = cells[i];
       cell.addEvent(SjamayeeFacade.CLICK, this.line_clickHandler);  
     }
-    this.addEvent(SjamayeeFacade.CLICK, this.list_clickHandler);*/
+    this.addEvent(SjamayeeFacade.CLICK, this.list_clickHandler);
   },
   setHeader: function(id, value) {
     $(id).innerHTML = value;
@@ -7278,8 +7710,8 @@ var GridList = new Class({
   }
 });
 GridList.ID = "listPaneBorder";
-GridList.NORMAL_SIZE = 220;
-GridList.MAXIMUM_SIZE = 437;
+GridList.NORMAL_SIZE = 0.50; /*220;*/
+GridList.MAXIMUM_SIZE = 0.75; /*437;*/
 //GridList.RELATIONS_GRID = "RelationsGrid";
 //GridList.OBJECTS_LIST = "ObjectsList";
 
@@ -7296,6 +7728,17 @@ var GridListSplitter = new Class({
     this.addChild(this.left);
     this.right = new GridListRight();   
     this.addChild(this.right);
+    /*this.vsplitter = new Splitter($(GridList.ID), {'handleWidth':4,'handleColor':'red','orientation':1});//,'handleBorder':'10px solid red'});
+		this.vsplitter.addWidget($("headerPane"), {'handleWidth':1,'handleColor':'red'});
+		this.vsplitter.addWidget($("listSplitter"), {'handleWidth':1,'handleColor':'red'});
+		this.vsplitter.addWidget($("toolBarPane"), {'handleWidth':1,'handleColor':'red'});*/
+
+    /*this.hsplitter = new Splitter($(GridListSplitter.ID), {'handleWidth':4,'handleColor':'lightgray'});//,'handleBorder':'10px solid red'});
+		this.hsplitter.addWidget($(GridListLeft.ID), {'handleWidth':4,'handleColor':'lightgray'});//,'handleBorder':'10px solid red'});
+		this.hsplitter.addWidget($(GridListRight.ID), {'handleWidth':4,'handleColor':'lightgray'});//,'handleBorder':'10px solid red'});*/
+    this.hsplitter = new Splitter($(GridList.ID), {'id':GridListSplitter.ID,'handleWidth':4}); //,'handleColor':'lightgray'});//,'handleBorder':'10px solid red'});
+		this.hsplitter.addWidget($(GridListLeft.ID)); //, {'handleWidth':4,'handleColor':'lightgray'});//,'handleBorder':'10px solid red'});
+		this.hsplitter.addWidget($(GridListRight.ID)); //, {'handleWidth':4,'handleColor':'lightgray'});//,'handleBorder':'10px solid red'});
   }
 });
 GridListSplitter.ID = "listSplitter";
@@ -8034,6 +8477,62 @@ ToolBar.NAVIGATION_BUTTONS_CLASS_ID = "navigationButtonsTB";
 ToolBar.UPDATE_BUTTONS_CLASS_ID = "updateButtonsTB";
 ToolBar.BUTTON_CLASS_ID = "toolBarButton";
 
+ToolBar.LIST_MENU_ITEM = "LIST | list";
+ToolBar.FIRST_PAGE_MENU_ITEM = "First Page";
+ToolBar.PREVIOUS_MENU_ITEM = "Previous";
+ToolBar.NEXT_MENU_ITEM = "Next";
+ToolBar.LAST_PAGE_MENU_ITEM = "Last Page";
+ToolBar.ADD_MENU_ITEM = "Add";
+ToolBar.DELETE_MENU_ITEM = "Delete";
+ToolBar.EDIT_MENU_ITEM = "Edit";
+ToolBar.UNDO_MENU_ITEM = "Undo";
+ToolBar.REDO_MENU_ITEM = "Redo";
+ToolBar.CLEAR_BUFFER_MENU_ITEM = "Clear Buffer...";
+ToolBar.DELETE_UNREF_OBJECTS_MENU_ITEM = "Delete Unreferenced Objects";
+
+ToolBar.EDIT_TEXT_MENU_ITEM = "Edit Text...";
+
+ToolBar.GRID_MENU_ITEM = "GRID | grid";
+ToolBar.GRID_MENU_ITEM = "Parent";
+ToolBar.GRID_MENU_ITEM = "Parent | Child";
+ToolBar.GRID_MENU_ITEM = "Child";
+ToolBar.GRID_MENU_ITEM = "Extract";
+ToolBar.GRID_MENU_ITEM = "Copy";
+ToolBar.GRID_MENU_ITEM = "Paste";
+ToolBar.GRID_MENU_ITEM = "Reset Grid";
+
+ToolBar.getMenuOptions = function() {
+  var _type_code_name = type_code_name?type_code_name:'';   
+  var result = '<option>'+Type.ALL_TYPES+'</option>';
+  var typeProxy = SjamayeeFacade.getInstance().retrieveProxy(TypeProxy.ID);
+  var types = typeProxy.getListTypes();
+  var typeSelected = _type_code_name;
+  var typeSelectPrefixed = false;
+  for (var i = 0; i < types.length; i++) {
+    var t1 = types[i];
+    if (t1) {
+      var type = new Type(t1);
+      //if (type.inUse() === false) { continue; }
+      var optionTag = '<option';
+      //optionTag += (typeSelected == type.getName())?' selected="selected"':'';
+      optionTag += (typeSelected == type.getCode())?' selected="selected"':'';
+      optionTag += '>';
+      var baseTypeFlag = '';
+      if (typeSelectPrefixed === true) {
+        for (var j = 0; j < RelationsHeader.TYPE_SELECT_PREFIX_LENGTH; j++) {
+          baseTypeFlag += '&nbsp;';
+        }
+      }
+      if (type.isBaseType()) {
+        baseTypeFlag = RelationsHeader.TYPE_SELECT_PREFIX;
+      }
+      //result += optionTag+type.getName()+'</option>';
+      result += optionTag+baseTypeFlag+type.getCode()+'</option>';
+    }
+  }
+  return result;
+};
+
 //Abstract
 //Class: ObjectsToolBar
 var ObjectsToolBar = new Class({
@@ -8455,12 +8954,13 @@ var Detail = new Class({
   Extends: SjamayeeUIComponent,
   initialize: function() {
     this.parent(Detail.ID);
-    this.splitter = null;
+    this.vsplitter = null;
+    this.hsplitter = null;
     this.detail_blurHandler = this.detail_blurHandler.bindWithEvent(this);
   },
   initializeChildren: function() {
-    this.splitter = new DetailSplitter();
-    this.addChild(this.splitter);
+    this.hsplitter = new DetailSplitter();
+    this.addChild(this.hsplitter);
   },  
   childrenInitialized: function() {
     this.addEvent(SjamayeeFacade.BLUR, this.detail_blurHandler);
@@ -8470,7 +8970,7 @@ var Detail = new Class({
   }
 });
 Detail.ID = "detailPane";
-Detail.NORMAL_SIZE = 217;
+Detail.NORMAL_SIZE = 0.50; /*1.00;*/ /*217;*/
 
 //Class: DetailSplitter
 var DetailSplitter = new Class({
@@ -8485,6 +8985,13 @@ var DetailSplitter = new Class({
     this.addChild(this.left);
     this.right = new DetailRight();   
     this.addChild(this.right);
+    /*this.vsplitter = new Splitter($(Detail.ID), {'handleWidth':4,'handleColor':'red','orientation':1});
+		this.vsplitter.addWidget($("detailSplitter"), {'handleWidth':1,'handleColor':'red'});
+		this.vsplitter.addWidget($("googleBranding"), {'handleWidth':1,'handleColor':'red'});*/
+
+    this.hsplitter = new Splitter($(Detail.ID), {'id':DetailSplitter.ID,'handleWidth':4}); //,'handleColor':'lightgray','minimumSize':0});//,'handleBorder':'10px solid lime'});
+		this.hsplitter.addWidget($(DetailLeft.ID)); //, {'handleWidth':4,'handleColor':'lightgray','minimumSize':0});//,'handleBorder':'10px solid lime'});
+		this.hsplitter.addWidget($(DetailRight.ID)); //, {'handleWidth':4,'handleColor':'lightgray','minimumSize':0});//,'handleBorder':'10px solid lime'});    
   }
 });
 DetailSplitter.ID = "detailSplitter";
@@ -8801,11 +9308,6 @@ ParentDetail.CLASS_ID = "parentDetail";
 //Class: DataParentDetail
 var DataParentDetail = new Class({
   Extends: ParentDetail,
-/*
-  initialize: function() {
-    this.parent(DataParentDetail.ID);
-  }
-*/
   initialize: function() {
     var html = '<div id="'+DataParentNTD.ID+'" class="'+ParentNTD.CLASS_ID+'"></div>'+
                '<div id="'+DataParentProperties.ID+'" class="'+ParentProperties.CLASS_ID+'"></div>';
@@ -8817,6 +9319,28 @@ var DataParentDetail = new Class({
     this.addChild(this.ntd);
     this.properties = new DataParentProperties();
     this.addChild(this.properties);
+    //this.hsplitter = new Splitter($(DataParentDetail.ID));
+    this.hsplitter = new Splitter($(DataParentDetail.ID), {
+      'handleWidth':3,
+      'handleColor':'inherit', //DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR, //'lightblue',
+      'handleBorder':'3px solid inherit'+DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR,
+      'orientation':0,
+      'minimumSize':100,
+      'opaqueResize':0});
+		this.hsplitter.addWidget($(DataParentNTD.ID)); /*, {
+      'handleWidth':3,
+      'handleColor':'inherit', //DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR, //'lightblue',
+      'handleBorder':'3px solid inherit'+DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR,
+      'orientation':0,
+      'minimumSize':100,
+      'opaqueResize':0});*/
+		this.hsplitter.addWidget($(DataParentProperties.ID)); /*, {
+      'handleWidth':3,
+      'handleColor':'inherit', //DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR, //'lightblue',
+      'handleBorder':'3px solid inherit'+DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR,
+      'orientation':0,
+      'minimumSize':100,
+      'opaqueResize':0});*/
   }
 });
 DataParentDetail.ID = "dataParentDetail";
@@ -8824,11 +9348,6 @@ DataParentDetail.ID = "dataParentDetail";
 //Class: ModelParentDetail
 var ModelParentDetail = new Class({
   Extends: ParentDetail,
-/*
-  initialize: function() {
-    this.parent(ModelParentDetail.ID);
-  }
-*/
   initialize: function() {
     var html = '<div id="'+ModelParentNTD.ID+'" class="'+ParentNTD.CLASS_ID+'"></div>'+
                '<div id="'+ModelParentProperties.ID+'" class="'+ParentProperties.CLASS_ID+'"></div>';
@@ -8840,6 +9359,28 @@ var ModelParentDetail = new Class({
     this.addChild(this.ntd);
     this.properties = new ModelParentProperties();
     this.addChild(this.properties);
+    //this.hsplitter = new Splitter($(ModelParentDetail.ID));
+    this.hsplitter = new Splitter($(ModelParentDetail.ID), {
+      'handleWidth':3,
+      'handleColor':ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR, //'red',
+      'handleBorder':'3px solid '+ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR,
+      'orientation':0,
+      'minimumSize':150,
+      'opaqueResize':0});
+		this.hsplitter.addWidget($(ModelParentNTD.ID)); /*, {
+      'handleWidth':3,
+      'handleColor':ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR, //'red',
+      'handleBorder':'3px solid '+ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR,
+      'orientation':0,
+      'minimumSize':150,
+      'opaqueResize':0});*/
+		this.hsplitter.addWidget($(ModelParentProperties.ID)); /*, {
+      'handleWidth':3,
+      'handleColor':ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR, //'red',
+      'handleBorder':'3px solid '+ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR,
+      'orientation':0,
+      'minimumSize':150,
+      'opaqueResize':0});*/
   }
 });
 ModelParentDetail.ID = "modelParentDetail";
@@ -8996,6 +9537,28 @@ var DataChildDetail = new Class({
     this.addChild(this.ntd);
     this.properties = new DataChildProperties();
     this.addChild(this.properties);
+    //this.hsplitter = new Splitter($(DataChildDetail.ID));
+    this.hsplitter = new Splitter($(DataChildDetail.ID), {
+      'handleWidth':3,
+      'handleColor':DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR, //'lightgreen',
+      'handleBorder':'3px solid '+DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR,
+      'orientation':0,
+      'minimumSize':200,
+      'opaqueResize':0});
+		this.hsplitter.addWidget($(DataChildNTD.ID)); /*, {
+      'handleWidth':3,
+      'handleColor':DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR, //'lightgreen',
+      'handleBorder':'3px solid '+DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR,
+      'orientation':0,
+      'minimumSize':200,
+      'opaqueResize':0});*/
+		this.hsplitter.addWidget($(DataChildProperties.ID)); /*, {
+      'handleWidth':3,
+      'handleColor':DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR, //'lightgreen',
+      'handleBorder':'3px solid '+DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR,
+      'orientation':0,
+      'minimumSize':200,
+      'opaqueResize':0});*/
   }
 });
 DataChildDetail.ID = "dataChildDetail";
@@ -9003,11 +9566,6 @@ DataChildDetail.ID = "dataChildDetail";
 //Class: ModelChildDetail
 var ModelChildDetail = new Class({
   Extends: ChildDetail,
-/*
-  initialize: function() {
-    this.parent(ModelChildDetail.ID);
-  }
-*/
   initialize: function() {
     var html = '<div id="'+ModelChildNTD.ID+'" class="'+ChildNTD.CLASS_ID+'"></div>'+
                '<div id="'+ModelChildProperties.ID+'" class="'+ChildProperties.CLASS_ID+'"></div>';
@@ -9018,6 +9576,28 @@ var ModelChildDetail = new Class({
     this.addChild(this.ntd);
     this.properties = new ModelChildProperties();
     this.addChild(this.properties);
+    //this.hsplitter = new Splitter($(ModelChildDetail.ID));
+    this.hsplitter = new Splitter($(ModelChildDetail.ID), {
+      'handleWidth':3,
+      'handleColor':ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR, //'red',
+      'handleBorder':'3px solid '+ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR,
+      'orientation':0,
+      'minimumSize':250,
+      'opaqueResize':0});
+		this.hsplitter.addWidget($(ModelChildNTD.ID)); /*, {
+      'handleWidth':3,
+      'handleColor':ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR, //'red',
+      'handleBorder':'3px solid '+ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR,
+      'orientation':0,
+      'minimumSize':250,
+      'opaqueResize':0});*/
+		this.hsplitter.addWidget($(ModelChildProperties.ID)); /*, {
+      'handleWidth':3,
+      'handleColor':ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR, //'red',
+      'handleBorder':'3px solid '+ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR,
+      'orientation':0,
+      'minimumSize':250,
+      'opaqueResize':0});*/
   }
 });
 ModelChildDetail.ID = "modelChildDetail";
@@ -11585,6 +12165,12 @@ var RelationsGridMediator = new Class({
         $(columnId).addClass(GridColumn.WHAT_USED_LEFT_CLASS_ID);
         $(columnId).addClass(GridColumn.WHAT_USED_LEFT_4X_CLASS_ID);
       }
+      //Add GridColumn-splitters !!!
+      this.gridUICLeft.hsplitter = new Splitter(this.gridUICLeft);
+  		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(0)));
+  		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(1)));
+  		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(2)));
+  		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(3)));
       //Set show/hide
       $(this.gridUICLeft.getColumnId(0)).setAttribute("style","display:block;");
       $(this.gridUICLeft.getColumnId(1)).setAttribute("style","display:block;");
@@ -11597,13 +12183,16 @@ var RelationsGridMediator = new Class({
       for (var i = Position.COLUMN_WHAT_FIRST(); i < Position.COLUMNS_MAX(); i++) {
         $(this.gridUICLeft.getColumnId(i)).setAttribute("style","display:none;");
       }
-      gridList.gridListSplitter.left.setAttribute("style","width:35%;height:100%;display:block;");
+      //gridList.gridListSplitter.left.setAttribute("style","width:35%;height:100%;display:block;");
+      gridList.gridListSplitter.left.setAttribute("style","width:100%;height:100%;display:block;");
       gridList.gridListSplitter.right.setAttribute("style","width:100%;height:100%;display:block;");
       this.resizeSplitter();
       break;      
       case SjamayeeFacade.GRID_4C_SHOW:
       var root = note.getBody();
       if (root === undefined || root === null) { root = this.gridUICLeft.getColumnId(3); }
+      //Add GridColumn-splitters !!!
+      this.gridUICLeft.hsplitter = new Splitter(this.gridUICLeft);
       //Set Column Classes: 3(Where/23)+1(Root/31)
       for (var i = Position.COLUMN_FIRST(); i < Position.COLUMN_WHAT_FIRST(); i++) {
         var columnId = this.gridUICLeft.getColumnId(i);
@@ -11618,7 +12207,8 @@ var RelationsGridMediator = new Class({
           $(columnId).addClass(GridColumn.WHAT_USED_LEFT_CLASS_ID);
           $(columnId).addClass(GridColumn.WHAT_USED_LEFT_4C_CLASS_ID);         
         }
-      }      
+    		this.gridUICLeft.hsplitter.addWidget($(columnId));
+      }
       //Set show/hide
       $(this.gridUICLeft.getColumnId(0)).setAttribute("style","display:block;");
       $(this.gridUICLeft.getColumnId(1)).setAttribute("style","display:block;");
@@ -11631,7 +12221,8 @@ var RelationsGridMediator = new Class({
       for (var i = Position.COLUMN_WHAT_FIRST(); i < Position.COLUMNS_MAX(); i++) {
         $(this.gridUICLeft.getColumnId(i)).setAttribute("style","display:none;");
       }
-      gridList.gridListSplitter.left.setAttribute("style","width:35%;height:100%;display:block;");
+      //gridList.gridListSplitter.left.setAttribute("style","width:35%;height:100%;display:block;");
+      gridList.gridListSplitter.left.setAttribute("style","width:100%;height:100%;display:block;");
       gridList.gridListSplitter.right.setAttribute("style","width:100%;height:100%;display:block;");
       this.resizeSplitter();
       break;
@@ -11646,22 +12237,31 @@ var RelationsGridMediator = new Class({
       this.gridUICLeft.removeClass(this.gridUICLeft.getColumnId(Position.COLUMNS_MAX()-4));
       $(this.gridUICLeft.getColumnId(Position.COLUMNS_MAX()-4)).addClass(GridColumn.WHERE_USED_CLASS_ID);
       $(this.gridUICLeft.getColumnId(Position.COLUMNS_MAX()-4)).addClass(GridColumn.ROOT_5C_CLASS_ID);
+      //Add GridColumn-splitters !!!
+      this.gridUICLeft.hsplitter = new Splitter(this.gridUICLeft);
+  		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(0)));
+  		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(1)));
       //Set show/hide
       $(this.gridUICLeft.getColumnId(0)).setAttribute("style","display:block;");
       $(this.gridUICLeft.getColumnId(1)).setAttribute("style","display:block;");
       if (Position.COLUMNS_MAX() > 2) {
         $(this.gridUICLeft.getColumnId(2)).setAttribute("style","display:block;");
+    		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(2)));
       }
       if (Position.COLUMNS_MAX() > 3) {
         $(this.gridUICLeft.getColumnId(3)).setAttribute("style","display:block;");
+    		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(3)));
       }
       if (Position.COLUMNS_MAX() > 4) {
         $(this.gridUICLeft.getColumnId(4)).setAttribute("style","display:block;");
+    		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(4)));
       }
       for (var i = (Position.COLUMN_WHAT_FIRST() + 1); i < Position.COLUMNS_MAX(); i++) {
         $(this.gridUICLeft.getColumnId(i)).setAttribute("style","display:none;");
+    		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(i)));
       }
-      gridList.gridListSplitter.left.setAttribute("style","width:52%;height:100%;display:block;");
+      //gridList.gridListSplitter.left.setAttribute("style","width:52%;height:100%;display:block;");
+      gridList.gridListSplitter.left.setAttribute("style","width:100%;height:100%;display:block;");
       gridList.gridListSplitter.right.setAttribute("style","width:100%;height:100%;display:block;");
       this.resizeSplitter();
       break;
@@ -11676,25 +12276,35 @@ var RelationsGridMediator = new Class({
       this.gridUICLeft.removeClass(this.gridUICLeft.getColumnId(Position.COLUMNS_MAX()-3));
       $(this.gridUICLeft.getColumnId(Position.COLUMNS_MAX()-3)).addClass(GridColumn.WHERE_USED_CLASS_ID);
       $(this.gridUICLeft.getColumnId(Position.COLUMNS_MAX()-3)).addClass(GridColumn.ROOT_6C_CLASS_ID);      
+      //Add GridColumn-splitters !!!
+      this.gridUICLeft.hsplitter = new Splitter(this.gridUICLeft);
+  		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(0)));
+  		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(1)));
       //Set show/hide
       $(this.gridUICLeft.getColumnId(0)).setAttribute("style","display:block;");
       $(this.gridUICLeft.getColumnId(1)).setAttribute("style","display:block;");
       if (Position.COLUMNS_MAX() > 2) {
         $(this.gridUICLeft.getColumnId(2)).setAttribute("style","display:block;");
+    		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(2)));
       }
       if (Position.COLUMNS_MAX() > 3) {
         $(this.gridUICLeft.getColumnId(3)).setAttribute("style","display:block;");
+    		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(3)));
       }
       if (Position.COLUMNS_MAX() > 4) {
         $(this.gridUICLeft.getColumnId(4)).setAttribute("style","display:block;");
+    		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(4)));
       }
       if (Position.COLUMNS_MAX() > 5) {
         $(this.gridUICLeft.getColumnId(5)).setAttribute("style","display:block;");
+    		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(5)));
       }
       for (var i = (Position.COLUMN_WHAT_FIRST() + 2); i < Position.COLUMNS_MAX(); i++) {
         $(this.gridUICLeft.getColumnId(i)).setAttribute("style","display:none;");
+    		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(i)));
       }
-      gridList.gridListSplitter.left.setAttribute("style","width:68%;height:100%;display:block;");
+      //gridList.gridListSplitter.left.setAttribute("style","width:68%;height:100%;display:block;");
+      gridList.gridListSplitter.left.setAttribute("style","width:100%;height:100%;display:block;");
       gridList.gridListSplitter.right.setAttribute("style","width:100%;height:100%;display:block;");
       this.resizeSplitter();
       break;
@@ -11709,28 +12319,39 @@ var RelationsGridMediator = new Class({
       this.gridUICLeft.removeClass(this.gridUICLeft.getColumnId(Position.COLUMNS_MAX()-2));
       $(this.gridUICLeft.getColumnId(Position.COLUMNS_MAX()-2)).addClass(GridColumn.WHERE_USED_CLASS_ID);
       $(this.gridUICLeft.getColumnId(Position.COLUMNS_MAX()-2)).addClass(GridColumn.ROOT_7C_CLASS_ID);
+      //Add GridColumn-splitters !!!
+      this.gridUICLeft.hsplitter = new Splitter(this.gridUICLeft);
+  		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(0)));
+  		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(1)));
       //Set show/hide
       $(this.gridUICLeft.getColumnId(0)).setAttribute("style","display:block;");
       $(this.gridUICLeft.getColumnId(1)).setAttribute("style","display:block;");
       if (Position.COLUMNS_MAX() > 2) {
         $(this.gridUICLeft.getColumnId(2)).setAttribute("style","display:block;");
+    		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(2)));
       }
       if (Position.COLUMNS_MAX() > 3) {
         $(this.gridUICLeft.getColumnId(3)).setAttribute("style","display:block;");
+    		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(3)));
       }
       if (Position.COLUMNS_MAX() > 4) {
         $(this.gridUICLeft.getColumnId(4)).setAttribute("style","display:block;");
+    		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(4)));
       }
       if (Position.COLUMNS_MAX() > 5) {
         $(this.gridUICLeft.getColumnId(5)).setAttribute("style","display:block;");
+    		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(5)));
       }
       if (Position.COLUMNS_MAX() > 6) {
         $(this.gridUICLeft.getColumnId(6)).setAttribute("style","display:block;");
+    		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(6)));
       }
       for (var i = (Position.COLUMN_WHAT_FIRST() + 3); i < Position.COLUMNS_MAX(); i++) {
         $(this.gridUICLeft.getColumnId(i)).setAttribute("style","display:none;");
+    		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(i)));
       }
-      gridList.gridListSplitter.left.setAttribute("style","width:87.5%;height:100%;display:block;");
+      //gridList.gridListSplitter.left.setAttribute("style","width:87.5%;height:100%;display:block;");
+      gridList.gridListSplitter.left.setAttribute("style","width:100%;height:100%;display:block;");
       gridList.gridListSplitter.right.setAttribute("style","width:100%;height:100%;display:block;");
       this.resizeSplitter();
       break;
@@ -11742,26 +12363,36 @@ var RelationsGridMediator = new Class({
         $(columnId).addClass(GridColumn.WHERE_USED_CLASS_ID);
         $(columnId).addClass(GridColumn.WHERE_USED_8C_CLASS_ID);
       }           
+      //Add GridColumn-splitters !!!
+      this.gridUICLeft.hsplitter = new Splitter(this.gridUICLeft);
+  		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(0)));
+  		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(1)));
       //Set show/hide
       $(this.gridUICLeft.getColumnId(0)).setAttribute("style","display:block;");
       $(this.gridUICLeft.getColumnId(1)).setAttribute("style","display:block;");
       if (Position.COLUMNS_MAX() > 2) {
         $(this.gridUICLeft.getColumnId(2)).setAttribute("style","display:block;");
+    		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(2)));
       }
       if (Position.COLUMNS_MAX() > 3) {
         $(this.gridUICLeft.getColumnId(3)).setAttribute("style","display:block;");
+    		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(3)));
       }
       if (Position.COLUMNS_MAX() > 4) {
         $(this.gridUICLeft.getColumnId(4)).setAttribute("style","display:block;");
+    		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(4)));
       }
       if (Position.COLUMNS_MAX() > 5) {
         $(this.gridUICLeft.getColumnId(5)).setAttribute("style","display:block;");
+    		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(5)));
       }
       if (Position.COLUMNS_MAX() > 6) {
         $(this.gridUICLeft.getColumnId(6)).setAttribute("style","display:block;");
+    		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(6)));
       }
       if (Position.COLUMNS_MAX() > 7) {
         $(this.gridUICLeft.getColumnId(7)).setAttribute("style","display:block;");
+    		this.gridUICLeft.hsplitter.addWidget($(this.gridUICLeft.getColumnId(7)));
       }
       gridList.gridListSplitter.left.setAttribute("style","width:100%;height:100%;display:block;");
       gridList.gridListSplitter.right.setAttribute("style","display:none;");
@@ -12749,10 +13380,10 @@ var DetailMediator = new Class({
       case SjamayeeFacade.OLIST_SHOW:
       //this.hide();      
       //detail.setAttribute("style","width:100%;height:"+Detail.NORMAL_SIZE+"px;display:block");      
-      /*detail.splitter.left.dataObjectNTD.setHeader(ObjectNTD.HEADER_ID, ObjectNTD.HEADER_VALUE);      
-      detail.splitter.left.modelObjectNTD.setAttribute("style","width:100%;height:100%;display:block;");
-      detail.splitter.right.dataObjectProperties.setHeader(ObjectProperties.HEADER_ID, ObjectProperties.HEADER_VALUE);
-      detail.splitter.right.modelObjectProperties.setAttribute("style","width:100%;height:100%;display:block;");
+      /*detail.hsplitter.left.dataObjectNTD.setHeader(ObjectNTD.HEADER_ID, ObjectNTD.HEADER_VALUE);      
+      detail.hsplitter.left.modelObjectNTD.setAttribute("style","width:100%;height:100%;display:block;");
+      detail.hsplitter.right.dataObjectProperties.setHeader(ObjectProperties.HEADER_ID, ObjectProperties.HEADER_VALUE);
+      detail.hsplitter.right.modelObjectProperties.setAttribute("style","width:100%;height:100%;display:block;");
       var objectPropertiesMediator = this.facade.retrieveMediator(ObjectPropertiesMediator.ID);
       objectPropertiesMediator.setType(AttributeListMediator.TYPE_OBJECT);*/
       break;
@@ -12774,10 +13405,10 @@ var DetailMediator = new Class({
       case SjamayeeFacade.GRID_PARENT_SHOW:
       //this.setState(DetailMediator.STATE_PARENT);
       /*this.hide();
-      detail.splitter.left.objectNTD.setHeader(ObjectNTD.HEADER_ID, ParentNTD.HEADER_VALUE);
-      detail.splitter.left.objectNTD.setAttribute("style","width:100%;height:100%;display:block;");
-      detail.splitter.right.objectProperties.setHeader(ObjectProperties.HEADER_ID, ParentProperties.HEADER_VALUE);
-      detail.splitter.right.objectProperties.setAttribute("style","width:100%;height:100%;display:block;");*/
+      detail.hsplitter.left.objectNTD.setHeader(ObjectNTD.HEADER_ID, ParentNTD.HEADER_VALUE);
+      detail.hsplitter.left.objectNTD.setAttribute("style","width:100%;height:100%;display:block;");
+      detail.hsplitter.right.objectProperties.setHeader(ObjectProperties.HEADER_ID, ParentProperties.HEADER_VALUE);
+      detail.hsplitter.right.objectProperties.setAttribute("style","width:100%;height:100%;display:block;");*/
       /*var objectPropertiesMediator = this.facade.retrieveMediator(DataObjectPropertiesMediator.ID);
       objectPropertiesMediator.setType(AttributeListMediator.TYPE_PARENT);
       this.sendNotification(SjamayeeFacade.OBJECT_ATTRIBUTE_LIST_ACTIVATE);
@@ -12787,8 +13418,8 @@ var DetailMediator = new Class({
       case SjamayeeFacade.GRID_PARENTANDCHILD_SHOW:
       /*this.setState(DetailMediator.STATE_PARENT_CHILD);
       //this.hide();
-      detail.splitter.left.parentDetail.setAttribute("style","width:100%;height:100%;display:block;");
-      detail.splitter.right.childDetail.setAttribute("style","width:100%;height:100%;display:block;");
+      detail.hsplitter.left.parentDetail.setAttribute("style","width:100%;height:100%;display:block;");
+      detail.hsplitter.right.childDetail.setAttribute("style","width:100%;height:100%;display:block;");
       this.sendNotification(SjamayeeFacade.PARENT_DETAIL);
       this.sendNotification(SjamayeeFacade.CHILD_DETAIL);
       //this.facade.setMessageText("Parent & Child detail.");*/
@@ -12796,10 +13427,10 @@ var DetailMediator = new Class({
       case SjamayeeFacade.GRID_CHILD_SHOW:
       //this.setState(DetailMediator.STATE_CHILD);
       /*this.hide();
-      detail.splitter.left.objectNTD.setHeader(ObjectNTD.HEADER_ID, ChildNTD.HEADER_VALUE);
-      detail.splitter.left.objectNTD.setAttribute("style","width:100%;height:100%;display:block;");
-      detail.splitter.right.objectProperties.setHeader(ObjectProperties.HEADER_ID, ChildProperties.HEADER_VALUE);
-      detail.splitter.right.objectProperties.setAttribute("style","width:100%;height:100%;display:block;");*/
+      detail.hsplitter.left.objectNTD.setHeader(ObjectNTD.HEADER_ID, ChildNTD.HEADER_VALUE);
+      detail.hsplitter.left.objectNTD.setAttribute("style","width:100%;height:100%;display:block;");
+      detail.hsplitter.right.objectProperties.setHeader(ObjectProperties.HEADER_ID, ChildProperties.HEADER_VALUE);
+      detail.hsplitter.right.objectProperties.setAttribute("style","width:100%;height:100%;display:block;");*/
       /*var objectPropertiesMediator = this.facade.retrieveMediator(DataObjectPropertiesMediator.ID);
       objectPropertiesMediator.setType(AttributeListMediator.TYPE_CHILD);
       this.sendNotification(SjamayeeFacade.OBJECT_ATTRIBUTE_LIST_ACTIVATE);
@@ -12810,14 +13441,14 @@ var DetailMediator = new Class({
   },
   hide: function() {
     var detail = this.getViewComponent();
-    detail.splitter.left.dataObjectNTD.setAttribute("style","display:none;");
-    detail.splitter.left.dataParentDetail.setAttribute("style","display:none;");
-    detail.splitter.left.modelObjectNTD.setAttribute("style","display:none;");
-    detail.splitter.left.modelParentDetail.setAttribute("style","display:none;");
-    detail.splitter.right.dataChildDetail.setAttribute("style","display:none;");
-    detail.splitter.right.dataObjectProperties.setAttribute("style","display:none;");
-    detail.splitter.right.modelChildDetail.setAttribute("style","display:none;");
-    detail.splitter.right.modelObjectProperties.setAttribute("style","display:none;");
+    detail.hsplitter.left.dataObjectNTD.setAttribute("style","display:none;");
+    detail.hsplitter.left.dataParentDetail.setAttribute("style","display:none;");
+    detail.hsplitter.left.modelObjectNTD.setAttribute("style","display:none;");
+    detail.hsplitter.left.modelParentDetail.setAttribute("style","display:none;");
+    detail.hsplitter.right.dataChildDetail.setAttribute("style","display:none;");
+    detail.hsplitter.right.dataObjectProperties.setAttribute("style","display:none;");
+    detail.hsplitter.right.modelChildDetail.setAttribute("style","display:none;");
+    detail.hsplitter.right.modelObjectProperties.setAttribute("style","display:none;");
   } 
 });
 DetailMediator.STATE_PARENT = "PARENT";
@@ -12850,17 +13481,18 @@ var DataDetailMediator = new Class({
       case SjamayeeFacade.OLIST_DATA_SHOW:
       this.hide();      
       //detail.setAttribute("style","width:100%;height:"+Detail.NORMAL_SIZE+"px;display:block");      
-      //detail.splitter.left.dataObjectNTD.setHeader(DataObjectNTD.HEADER_ID, ObjectNTD.HEADER_VALUE);
-      detail.splitter.left.dataObjectNTD.setAttribute("style","width:100%;height:100%;display:block;");
-      detail.splitter.left.dataObjectNTD.header.innerHTML = ObjectNTD.HEADER_VALUE;
-      //detail.splitter.right.dataObjectProperties.setHeader(DataObjectProperties.HEADER_ID, ObjectProperties.HEADER_VALUE);
-      detail.splitter.right.dataObjectProperties.setAttribute("style","width:100%;height:100%;display:block;");
+      //detail.hsplitter.left.dataObjectNTD.setHeader(DataObjectNTD.HEADER_ID, ObjectNTD.HEADER_VALUE);
+      detail.hsplitter.left.dataObjectNTD.setAttribute("style","width:100%;height:100%;display:block;");
+      detail.hsplitter.left.dataObjectNTD.header.innerHTML = ObjectNTD.HEADER_VALUE;
+      //detail.hsplitter.right.dataObjectProperties.setHeader(DataObjectProperties.HEADER_ID, ObjectProperties.HEADER_VALUE);
+      detail.hsplitter.right.dataObjectProperties.setAttribute("style","width:100%;height:100%;display:block;");
       var objectPropertiesMediator = this.facade.retrieveMediator(DataObjectPropertiesMediator.ID);
       objectPropertiesMediator.setType(AttributeListMediator.TYPE_OBJECT);
       break;
       case SjamayeeFacade.GRID_DATA_SHOW:
       this.hide();
-      detail.setAttribute("style","width:100%;height:"+Detail.NORMAL_SIZE+"px;display:block");
+      //detail.setAttribute("style","width:100%;height:"+Detail.NORMAL_SIZE+"px;display:block");
+      detail.setAttribute("style","width:100%;height:"+(window.innerHeight*Detail.NORMAL_SIZE)+"px;display:block");
       switch (this.getState()) {
         case DetailMediator.STATE_PARENT:
         this.sendNotification(SjamayeeFacade.GRID_DATA_PARENT_SHOW);
@@ -12875,18 +13507,18 @@ var DataDetailMediator = new Class({
       break;
       case SjamayeeFacade.GRID_DATA_PARENT_SHOW:
       this.hide();
-      //detail.splitter.left.dataObjectNTD.setHeader(DataParentNTD.HEADER_ID, ParentNTD.HEADER_VALUE);
-      detail.splitter.left.dataObjectNTD.setAttribute("style","width:100%;height:100%;display:block;");
-      detail.splitter.left.dataObjectNTD.header.innerHTML = ParentNTD.HEADER_VALUE;
-      //detail.splitter.right.dataObjectProperties.setHeader(DataParentProperties.HEADER_ID, DataParentProperties.HEADER_VALUE);
-      detail.splitter.right.dataObjectProperties.setAttribute("style","width:100%;height:100%;display:block;");
+      //detail.hsplitter.left.dataObjectNTD.setHeader(DataParentNTD.HEADER_ID, ParentNTD.HEADER_VALUE);
+      detail.hsplitter.left.dataObjectNTD.setAttribute("style","width:100%;height:100%;display:block;");
+      detail.hsplitter.left.dataObjectNTD.header.innerHTML = ParentNTD.HEADER_VALUE;
+      //detail.hsplitter.right.dataObjectProperties.setHeader(DataParentProperties.HEADER_ID, DataParentProperties.HEADER_VALUE);
+      detail.hsplitter.right.dataObjectProperties.setAttribute("style","width:100%;height:100%;display:block;");
       this.sendNotification(SjamayeeFacade.GRID_DATA_RESIZE,SjamayeeFacade.SIZE_NORMAL);
       //this.sendNotification(SjamayeeFacade.GRID_PARENT_SHOW); //TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! FIND REPLACEMENT !!!
       break;
       case SjamayeeFacade.GRID_DATA_PARENTANDCHILD_SHOW:
       this.hide();
-      detail.splitter.left.dataParentDetail.setAttribute("style","width:100%;height:100%;display:block;");
-      detail.splitter.right.dataChildDetail.setAttribute("style","width:100%;height:100%;display:block;");      
+      detail.hsplitter.left.dataParentDetail.setAttribute("style","width:100%;height:100%;display:block;");
+      detail.hsplitter.right.dataChildDetail.setAttribute("style","width:100%;height:100%;display:block;");      
       this.setState(DetailMediator.STATE_PARENT_CHILD);
       this.sendNotification(SjamayeeFacade.PARENT_DETAIL);
       this.sendNotification(SjamayeeFacade.CHILD_DETAIL);     
@@ -12895,11 +13527,11 @@ var DataDetailMediator = new Class({
       break;
       case SjamayeeFacade.GRID_DATA_CHILD_SHOW:
       this.hide();
-      //detail.splitter.left.dataObjectNTD.setHeader(DataChildNTD.HEADER_ID, ChildNTD.HEADER_VALUE);
-      detail.splitter.left.dataObjectNTD.setAttribute("style","width:100%;height:100%;display:block;");
-      detail.splitter.left.dataObjectNTD.header.innerHTML = ChildNTD.HEADER_VALUE;
-      //detail.splitter.right.dataObjectProperties.setHeader(DataChildProperties.HEADER_ID, DataChildProperties.HEADER_VALUE);
-      detail.splitter.right.dataObjectProperties.setAttribute("style","width:100%;height:100%;display:block;");
+      //detail.hsplitter.left.dataObjectNTD.setHeader(DataChildNTD.HEADER_ID, ChildNTD.HEADER_VALUE);
+      detail.hsplitter.left.dataObjectNTD.setAttribute("style","width:100%;height:100%;display:block;");
+      detail.hsplitter.left.dataObjectNTD.header.innerHTML = ChildNTD.HEADER_VALUE;
+      //detail.hsplitter.right.dataObjectProperties.setHeader(DataChildProperties.HEADER_ID, DataChildProperties.HEADER_VALUE);
+      detail.hsplitter.right.dataObjectProperties.setAttribute("style","width:100%;height:100%;display:block;");
       this.sendNotification(SjamayeeFacade.GRID_DATA_RESIZE,SjamayeeFacade.SIZE_NORMAL);
       //this.sendNotification(SjamayeeFacade.GRID_CHILD_SHOW); //TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! FIND REPLACEMENT !!!
       break;
@@ -12934,17 +13566,18 @@ var ModelDetailMediator = new Class({
       case SjamayeeFacade.OLIST_MODEL_SHOW:
       this.hide();
       //detail.setAttribute("style","width:100%;height:"+Detail.NORMAL_SIZE+"px;display:block");      
-      //detail.splitter.left.modelObjectNTD.setHeader(ModelObjectNTD.HEADER_ID, ObjectNTD.HEADER_VALUE);      
-      detail.splitter.left.modelObjectNTD.setAttribute("style","width:100%;height:100%;display:block;");
-      detail.splitter.left.modelObjectNTD.header.innerHTML = ObjectNTD.HEADER_VALUE;
-      //detail.splitter.right.modelObjectProperties.setHeader(ModelObjectProperties.HEADER_ID, ObjectProperties.HEADER_VALUE);
-      detail.splitter.right.modelObjectProperties.setAttribute("style","width:100%;height:100%;display:block;");
+      //detail.hsplitter.left.modelObjectNTD.setHeader(ModelObjectNTD.HEADER_ID, ObjectNTD.HEADER_VALUE);      
+      detail.hsplitter.left.modelObjectNTD.setAttribute("style","width:100%;height:100%;display:block;");
+      detail.hsplitter.left.modelObjectNTD.header.innerHTML = ObjectNTD.HEADER_VALUE;
+      //detail.hsplitter.right.modelObjectProperties.setHeader(ModelObjectProperties.HEADER_ID, ObjectProperties.HEADER_VALUE);
+      detail.hsplitter.right.modelObjectProperties.setAttribute("style","width:100%;height:100%;display:block;");
       var objectPropertiesMediator = this.facade.retrieveMediator(ModelObjectPropertiesMediator.ID);
       objectPropertiesMediator.setType(AttributeListMediator.TYPE_OBJECT);
       break;
       case SjamayeeFacade.GRID_MODEL_SHOW:
       this.hide();
-      detail.setAttribute("style","width:100%;height:"+Detail.NORMAL_SIZE+"px;display:block");
+      //detail.setAttribute("style","width:100%;height:"+Detail.NORMAL_SIZE+"px;display:block");
+      detail.setAttribute("style","width:100%;height:"+(window.innerHeight*Detail.NORMAL_SIZE)+"px;display:block");
       switch (this.getState()) {
         case DetailMediator.STATE_PARENT:
         this.sendNotification(SjamayeeFacade.GRID_MODEL_PARENT_SHOW);
@@ -12959,28 +13592,28 @@ var ModelDetailMediator = new Class({
       break;
       case SjamayeeFacade.GRID_MODEL_PARENT_SHOW:
       this.hide();
-      //detail.splitter.left.modelObjectNTD.setHeader(ModelParentNTD.HEADER_ID, ParentNTD.HEADER_VALUE);
-      detail.splitter.left.modelObjectNTD.setAttribute("style","width:100%;height:100%;display:block;");
-      detail.splitter.left.modelObjectNTD.header.innerHTML = ParentNTD.HEADER_VALUE;
-      //detail.splitter.right.modelObjectProperties.setHeader(ModelParentProperties.HEADER_ID, ModelParentProperties.HEADER_VALUE);
-      detail.splitter.right.modelObjectProperties.setAttribute("style","width:100%;height:100%;display:block;");
+      //detail.hsplitter.left.modelObjectNTD.setHeader(ModelParentNTD.HEADER_ID, ParentNTD.HEADER_VALUE);
+      detail.hsplitter.left.modelObjectNTD.setAttribute("style","width:100%;height:100%;display:block;");
+      detail.hsplitter.left.modelObjectNTD.header.innerHTML = ParentNTD.HEADER_VALUE;
+      //detail.hsplitter.right.modelObjectProperties.setHeader(ModelParentProperties.HEADER_ID, ModelParentProperties.HEADER_VALUE);
+      detail.hsplitter.right.modelObjectProperties.setAttribute("style","width:100%;height:100%;display:block;");
       this.sendNotification(SjamayeeFacade.GRID_MODEL_RESIZE,SjamayeeFacade.SIZE_NORMAL);
       //this.sendNotification(SjamayeeFacade.GRID_PARENT_SHOW); //TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! FIND REPLACEMENT !!!
       break;
       case SjamayeeFacade.GRID_MODEL_PARENTANDCHILD_SHOW:
       this.hide();
-      detail.splitter.left.modelParentDetail.setAttribute("style","width:100%;height:100%;display:block;");
-      detail.splitter.right.modelChildDetail.setAttribute("style","width:100%;height:100%;display:block;");
+      detail.hsplitter.left.modelParentDetail.setAttribute("style","width:100%;height:100%;display:block;");
+      detail.hsplitter.right.modelChildDetail.setAttribute("style","width:100%;height:100%;display:block;");
       this.sendNotification(SjamayeeFacade.GRID_MODEL_RESIZE,SjamayeeFacade.SIZE_NORMAL);
       //this.sendNotification(SjamayeeFacade.GRID_PARENTANDCHILD_SHOW); //TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! FIND REPLACEMENT !!!
       break;
       case SjamayeeFacade.GRID_MODEL_CHILD_SHOW:
       this.hide();
-      //detail.splitter.left.modelObjectNTD.setHeader(ModelChildNTD.HEADER_ID, ChildNTD.HEADER_VALUE);
-      detail.splitter.left.modelObjectNTD.setAttribute("style","width:100%;height:100%;display:block;");
-      detail.splitter.left.modelObjectNTD.header.innerHTML = ChildNTD.HEADER_VALUE;
-      //detail.splitter.right.modelObjectProperties.setHeader(ModelChildProperties.HEADER_ID, ModelChildProperties.HEADER_VALUE);
-      detail.splitter.right.modelObjectProperties.setAttribute("style","width:100%;height:100%;display:block;");
+      //detail.hsplitter.left.modelObjectNTD.setHeader(ModelChildNTD.HEADER_ID, ChildNTD.HEADER_VALUE);
+      detail.hsplitter.left.modelObjectNTD.setAttribute("style","width:100%;height:100%;display:block;");
+      detail.hsplitter.left.modelObjectNTD.header.innerHTML = ChildNTD.HEADER_VALUE;
+      //detail.hsplitter.right.modelObjectProperties.setHeader(ModelChildProperties.HEADER_ID, ModelChildProperties.HEADER_VALUE);
+      detail.hsplitter.right.modelObjectProperties.setAttribute("style","width:100%;height:100%;display:block;");
       this.sendNotification(SjamayeeFacade.GRID_MODEL_RESIZE,SjamayeeFacade.SIZE_NORMAL);
       //this.sendNotification(SjamayeeFacade.GRID_CHILD_SHOW); //TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! FIND REPLACEMENT !!!
       break;
@@ -13782,8 +14415,8 @@ var DataObjectDetailMediator = new Class({
   initialize: function(viewComponent) {
     this.parent(DataObjectDetailMediator.ID,viewComponent);
     var detail = this.getViewComponent();
-    this.facade.registerMediator(new DataObjectNTDMediator(detail.splitter.left.dataObjectDetail.ntd));
-    this.facade.registerMediator(new DataObjectPropertiesMediator(detail.splitter.left.dataObjectDetail.properties));
+    this.facade.registerMediator(new DataObjectNTDMediator(detail.hsplitter.left.dataObjectDetail.ntd));
+    this.facade.registerMediator(new DataObjectPropertiesMediator(detail.hsplitter.left.dataObjectDetail.properties));
   }
 });
 DataObjectDetailMediator.ID = "DataObjectDetailMediator";
@@ -13794,8 +14427,8 @@ var ModelObjectDetailMediator = new Class({
   initialize: function(viewComponent) {
     this.parent(ModelObjectDetailMediator.ID,viewComponent);
     var detail = this.getViewComponent();
-    this.facade.registerMediator(new ModelObjectNTDMediator(detail.splitter.left.modelObjectDetail.ntd));
-    this.facade.registerMediator(new ModelObjectPropertiesMediator(detail.splitter.left.modelObjectDetail.properties));
+    this.facade.registerMediator(new ModelObjectNTDMediator(detail.hsplitter.left.modelObjectDetail.ntd));
+    this.facade.registerMediator(new ModelObjectPropertiesMediator(detail.hsplitter.left.modelObjectDetail.properties));
   }
 });
 ModelObjectDetailMediator.ID = "ModelObjectDetailMediator";
@@ -13807,8 +14440,8 @@ var DataParentDetailMediator = new Class({
   initialize: function(viewComponent) {
     this.parent(DataParentDetailMediator.ID,viewComponent);
     var detail = this.getViewComponent();
-    this.facade.registerMediator(new DataParentNTDMediator(detail.splitter.left.dataParentDetail.ntd));
-    this.facade.registerMediator(new DataParentPropertiesMediator(detail.splitter.left.dataParentDetail.properties));
+    this.facade.registerMediator(new DataParentNTDMediator(detail.hsplitter.left.dataParentDetail.ntd));
+    this.facade.registerMediator(new DataParentPropertiesMediator(detail.hsplitter.left.dataParentDetail.properties));
   }
 });
 DataParentDetailMediator.ID = "DataParentDetailMediator";
@@ -13819,8 +14452,8 @@ var ModelParentDetailMediator = new Class({
   initialize: function(viewComponent) {
     this.parent(ModelParentDetailMediator.ID,viewComponent);
     var detail = this.getViewComponent();
-    this.facade.registerMediator(new ModelParentNTDMediator(detail.splitter.left.modelParentDetail.ntd));
-    this.facade.registerMediator(new ModelParentPropertiesMediator(detail.splitter.left.modelParentDetail.properties));
+    this.facade.registerMediator(new ModelParentNTDMediator(detail.hsplitter.left.modelParentDetail.ntd));
+    this.facade.registerMediator(new ModelParentPropertiesMediator(detail.hsplitter.left.modelParentDetail.properties));
   }
 });
 ModelParentDetailMediator.ID = "ModelParentDetailMediator";
@@ -14042,8 +14675,8 @@ var DataChildDetailMediator = new Class({
   initialize: function(viewComponent) {
     this.parent(DataChildDetailMediator.ID,viewComponent);
     var detail = this.getViewComponent();
-    this.facade.registerMediator(new DataChildNTDMediator(detail.splitter.right.dataChildDetail.ntd));
-    this.facade.registerMediator(new DataChildPropertiesMediator(detail.splitter.right.dataChildDetail.properties));
+    this.facade.registerMediator(new DataChildNTDMediator(detail.hsplitter.right.dataChildDetail.ntd));
+    this.facade.registerMediator(new DataChildPropertiesMediator(detail.hsplitter.right.dataChildDetail.properties));
   }
 });
 DataChildDetailMediator.ID = "DataChildDetailMediator";
@@ -14054,8 +14687,8 @@ var ModelChildDetailMediator = new Class({
   initialize: function(viewComponent) {
     this.parent(ModelChildDetailMediator.ID,viewComponent);
     var detail = this.getViewComponent();
-    this.facade.registerMediator(new ModelChildNTDMediator(detail.splitter.right.modelChildDetail.ntd));
-    this.facade.registerMediator(new ModelChildPropertiesMediator(detail.splitter.right.modelChildDetail.properties));
+    this.facade.registerMediator(new ModelChildNTDMediator(detail.hsplitter.right.modelChildDetail.ntd));
+    this.facade.registerMediator(new ModelChildPropertiesMediator(detail.hsplitter.right.modelChildDetail.properties));
   }
 });
 ModelChildDetailMediator.ID = "ModelChildDetailMediator";
@@ -16661,12 +17294,16 @@ var ModelObjectsTextsEditorMediator = new Class({
       this.textResize();
       this.sendNotification(SjamayeeFacade.OLIST_MODEL_TEXT_RESIZED, this.isTextNormal());
       var detail = this.facade.retrieveMediator(ModelObjectDetailMediator.ID).getViewComponent();     
+      var windowInnerHeight = window.innerHeight;
       if (this.isTextFull() === true) {
         detail.setAttribute("style","display:none;");
-        gridList.setAttribute("style","width:100%;height:"+GridList.MAXIMUM_SIZE+"px;display:block;");
+        //gridList.setAttribute("style","width:100%;height:"+GridList.MAXIMUM_SIZE+"px;display:block;");
+        gridList.setAttribute("style","width:100%;height:"+(windowInnerHeight*GridList.MAXIMUM_SIZE)+"px;display:block;");
       } else {
-        detail.setAttribute("style","width:100%;height:"+Detail.NORMAL_SIZE+"px;display:block;");
-        gridList.setAttribute("style","width:100%;height:"+GridList.NORMAL_SIZE+"px;display:block;");
+        //detail.setAttribute("style","width:100%;height:"+Detail.NORMAL_SIZE+"px;display:block;");
+        //gridList.setAttribute("style","width:100%;height:"+GridList.NORMAL_SIZE+"px;display:block;");
+        detail.setAttribute("style","width:100%;height:"+(windowInnerHeight*Detail.NORMAL_SIZE)+"px;display:block;");
+        gridList.setAttribute("style","width:100%;height:"+(windowInnerHeight*GridList.NORMAL_SIZE)+"px;display:block;");
       }
       break;
       case SjamayeeFacade.OLIST_MODEL_TEXT_SAVE:
@@ -16757,13 +17394,17 @@ var ModelRelationsTextsEditorMediator = new Class({
       this.textResize();
       this.sendNotification(SjamayeeFacade.GRID_MODEL_TEXT_RESIZED, this.isTextNormal());
       //var detail = this.facade.retrieveMediator(ModelDetailMediator.ID).getViewComponent(); //TODO: ??????????????????????????
-      var detail = this.facade.retrieveMediator(ModelObjectDetailMediator.ID).getViewComponent();     
+      var detail = this.facade.retrieveMediator(ModelObjectDetailMediator.ID).getViewComponent();
+      var windowInnerHeight = window.innerHeight;      
       if (this.isTextFull() === true) {
         detail.setAttribute("style","display:none;");
-        gridList.setAttribute("style","width:100%;height:"+GridList.MAXIMUM_SIZE+"px;display:block;");
+        //gridList.setAttribute("style","width:100%;height:"+GridList.MAXIMUM_SIZE+"px;display:block;");
+        gridList.setAttribute("style","width:100%;height:"+(windowInnerHeight*GridList.MAXIMUM_SIZE)+"px;display:block;");
       } else {
-        detail.setAttribute("style","width:100%;height:"+Detail.NORMAL_SIZE+"px;display:block;");
-        gridList.setAttribute("style","width:100%;height:"+GridList.NORMAL_SIZE+"px;display:block;");
+        //detail.setAttribute("style","width:100%;height:"+Detail.NORMAL_SIZE+"px;display:block;");
+        //gridList.setAttribute("style","width:100%;height:"+GridList.NORMAL_SIZE+"px;display:block;");
+        detail.setAttribute("style","width:100%;height:"+(windowInnerHeight*Detail.NORMAL_SIZE)+"px;display:block;");
+        gridList.setAttribute("style","width:100%;height:"+(windowInnerHeight*GridList.NORMAL_SIZE)+"px;display:block;");
       }
       break;
       /*
@@ -17237,6 +17878,7 @@ var ModelRelationsGridMediator = new Class({
       case SjamayeeFacade.GRID_MODEL_RESIZE:
       var gridSize = note.getBody();
       this.gridResize(gridSize);
+      resizePanes('detailPaneLeft','detailPaneRight');      
       //this.home(); //TODO !!!
       this.sendNotification(SjamayeeFacade.MODEL_TYPES_RELOAD);                 //FOR TEST ONLY !!! REMOVE LATER !!!
       this.sendNotification(SjamayeeFacade.GRID_MODEL_REFRESH);
@@ -17261,18 +17903,23 @@ var ModelRelationsGridMediator = new Class({
     var parentDetail = this.facade.retrieveMediator(ModelParentDetailMediator.ID).getViewComponent();
     var childDetail = this.facade.retrieveMediator(ModelChildDetailMediator.ID).getViewComponent();
     var gridList = this.getViewComponent();
+    var windowInnerHeight = window.innerHeight;    
     if (this.isGridFull() === true) {
       this.setPageSize(RelationsGridMediator.PAGE_SIZE_MAX);
       this.setEndOfList(this.getPageSize() - 1);      
       parentDetail.setAttribute("style","display:none;");
       childDetail.setAttribute("style","display:none;");
-      gridList.setAttribute("style","width:100%;height:"+GridList.MAXIMUM_SIZE+"px;");
+      //gridList.setAttribute("style","width:100%;height:"+GridList.MAXIMUM_SIZE+"px;");
+      gridList.setAttribute("style","width:100%;height:"+(windowInnerHeight*GridList.MAXIMUM_SIZE)+"px;");
     } else {
       this.setPageSize(RelationsGridMediator.PAGE_SIZE_MIN);
       this.setEndOfList(this.getPageSize() - 1);
-      parentDetail.setAttribute("style","width:100%;height:"+Detail.NORMAL_SIZE+"px;display:block;");
+      /*parentDetail.setAttribute("style","width:100%;height:"+Detail.NORMAL_SIZE+"px;display:block;");
       childDetail.setAttribute("style","width:100%;height:"+Detail.NORMAL_SIZE+"px;display:block;");
-      gridList.setAttribute("style","width:100%;height:"+GridList.NORMAL_SIZE+"px;");     
+      gridList.setAttribute("style","width:100%;height:"+GridList.NORMAL_SIZE+"px;");*/
+      parentDetail.setAttribute("style","width:100%;height:"+(windowInnerHeight*Detail.NORMAL_SIZE)+"px;display:block;");
+      childDetail.setAttribute("style","width:100%;height:"+(windowInnerHeight*Detail.NORMAL_SIZE)+"px;display:block;");
+      gridList.setAttribute("style","width:100%;height:"+(windowInnerHeight*GridList.NORMAL_SIZE)+"px;");
     }
     var resizeButtonText = (this.isGridFull() === true)?RelationsToolBar.RESIZE_BUTTON_FULL_VALUE:RelationsToolBar.RESIZE_BUTTON_NORMAL_VALUE;
     this.setResizeButtonText(resizeButtonText);
@@ -17570,18 +18217,23 @@ var ModelObjectsListMediator = new Class({
     var parentDetail = this.facade.retrieveMediator(ModelParentDetailMediator.ID).getViewComponent();
     var childDetail = this.facade.retrieveMediator(ModelChildDetailMediator.ID).getViewComponent();
     var gridList = this.getViewComponent();   
+    var windowInnerHeight = window.innerHeight;
     if (this.isListFull() === true) {
       this.setPageSize(ObjectsListMediator.PAGE_SIZE_MAX);
       this.setEndOfList(this.getPageSize() - 1);      
       parentDetail.setAttribute("style","display:none;");
       childDetail.setAttribute("style","display:none;");
-      gridList.setAttribute("style","width:100%;height:"+GridList.MAXIMUM_SIZE+"px;");
+      //gridList.setAttribute("style","width:100%;height:"+GridList.MAXIMUM_SIZE+"px;");
+      gridList.setAttribute("style","width:100%;height:"+(windowInnerHeight*GridList.MAXIMUM_SIZE)+"px;");
     } else {
       this.setPageSize(ObjectsListMediator.PAGE_SIZE_MIN);
       this.setEndOfList(this.getPageSize() - 1);      
-      parentDetail.setAttribute("style","width:100%;height:"+Detail.NORMAL_SIZE+"px;display:block;");
+      /*parentDetail.setAttribute("style","width:100%;height:"+Detail.NORMAL_SIZE+"px;display:block;");
       childDetail.setAttribute("style","width:100%;height:"+Detail.NORMAL_SIZE+"px;display:block;");
-      gridList.setAttribute("style","width:100%;height:"+GridList.NORMAL_SIZE+"px;");     
+      gridList.setAttribute("style","width:100%;height:"+GridList.NORMAL_SIZE+"px;");*/
+      parentDetail.setAttribute("style","width:100%;height:"+(windowInnerHeight*Detail.NORMAL_SIZE)+"px;display:block;");
+      childDetail.setAttribute("style","width:100%;height:"+(windowInnerHeight*Detail.NORMAL_SIZE)+"px;display:block;");
+      gridList.setAttribute("style","width:100%;height:"+(windowInnerHeight*GridList.NORMAL_SIZE)+"px;");
     }
     var resizeButtonText = (this.isListFull() === true)?ObjectsToolBar.RESIZE_BUTTON_FULL_VALUE:ObjectsToolBar.RESIZE_BUTTON_NORMAL_VALUE;
     this.setResizeButtonText(resizeButtonText);
@@ -20699,6 +21351,9 @@ var DataRelationsGridMediator = new Class({
       case SjamayeeFacade.GRID_DATA_RESIZE:
       var gridSize = note.getBody();
       this.gridResize(gridSize);
+
+      resizePanes('detailPaneLeft','detailPaneRight');
+
       this.sendNotification(SjamayeeFacade.DATA_TYPES_RELOAD);                 //FOR TEST ONLY !!! REMOVE LATER !!!     
       this.sendNotification(SjamayeeFacade.GRID_DATA_REFRESH);
       break;
@@ -20723,18 +21378,23 @@ var DataRelationsGridMediator = new Class({
     var parentDetail = this.facade.retrieveMediator(DataParentDetailMediator.ID).getViewComponent();
     var childDetail = this.facade.retrieveMediator(DataChildDetailMediator.ID).getViewComponent();
     var gridList = this.getViewComponent();
+    var windowInnerHeight = window.innerHeight;
     if (this.isGridFull() === true) {
       this.setPageSize(RelationsGridMediator.PAGE_SIZE_MAX);
       this.setEndOfList(this.getPageSize() - 1);      
       parentDetail.setAttribute("style","display:none;");
       childDetail.setAttribute("style","display:none;");
-      gridList.setAttribute("style","width:100%;height:"+GridList.MAXIMUM_SIZE+"px;");
+      //gridList.setAttribute("style","width:100%;height:"+GridList.MAXIMUM_SIZE+"px;");
+      gridList.setAttribute("style","width:100%;height:"+(windowInnerHeight*GridList.MAXIMUM_SIZE)+"px;");
     } else {
       this.setPageSize(RelationsGridMediator.PAGE_SIZE_MIN);
       this.setEndOfList(this.getPageSize() - 1);
-      parentDetail.setAttribute("style","width:100%;height:"+Detail.NORMAL_SIZE+"px;display:block;");
+      /*parentDetail.setAttribute("style","width:100%;height:"+Detail.NORMAL_SIZE+"px;display:block;");
       childDetail.setAttribute("style","width:100%;height:"+Detail.NORMAL_SIZE+"px;display:block;");
-      gridList.setAttribute("style","width:100%;height:"+GridList.NORMAL_SIZE+"px;");     
+      gridList.setAttribute("style","width:100%;height:"+GridList.NORMAL_SIZE+"px;");*/
+      parentDetail.setAttribute("style","width:100%;height:"+(windowInnerHeight*Detail.NORMAL_SIZE)+"px;display:block;");
+      childDetail.setAttribute("style","width:100%;height:"+(windowInnerHeight*Detail.NORMAL_SIZE)+"px;display:block;");
+      gridList.setAttribute("style","width:100%;height:"+(windowInnerHeight*GridList.NORMAL_SIZE)+"px;");
     }
     var resizeButtonText = (this.isGridFull() === true)?RelationsToolBar.RESIZE_BUTTON_FULL_VALUE:RelationsToolBar.RESIZE_BUTTON_NORMAL_VALUE;
     this.setResizeButtonText(resizeButtonText);
@@ -20943,19 +21603,24 @@ var DataObjectsListMediator = new Class({
     this.parent(listSize);
     var parentDetail = this.facade.retrieveMediator(DataParentDetailMediator.ID).getViewComponent();
     var childDetail = this.facade.retrieveMediator(DataChildDetailMediator.ID).getViewComponent();
-    var gridList = this.getViewComponent();   
+    var gridList = this.getViewComponent();
+    var windowInnerHeight = window.innerHeight;
     if (this.isListFull() === true) {
       this.setPageSize(ObjectsListMediator.PAGE_SIZE_MAX);
       this.setEndOfList(this.getPageSize() - 1);      
       parentDetail.setAttribute("style","display:none;");
       childDetail.setAttribute("style","display:none;");
-      gridList.setAttribute("style","width:100%;height:"+GridList.MAXIMUM_SIZE+"px;");
+      //gridList.setAttribute("style","width:100%;height:"+GridList.MAXIMUM_SIZE+"px;");
+      gridList.setAttribute("style","width:100%;height:"+(windowInnerHeightGridList.MAXIMUM_SIZE)+"px;");
     } else {
       this.setPageSize(ObjectsListMediator.PAGE_SIZE_MIN);
       this.setEndOfList(this.getPageSize() - 1);      
-      parentDetail.setAttribute("style","width:100%;height:"+Detail.NORMAL_SIZE+"px;display:block;");
+      /*parentDetail.setAttribute("style","width:100%;height:"+Detail.NORMAL_SIZE+"px;display:block;");
       childDetail.setAttribute("style","width:100%;height:"+Detail.NORMAL_SIZE+"px;display:block;");
-      gridList.setAttribute("style","width:100%;height:"+GridList.NORMAL_SIZE+"px;");     
+      gridList.setAttribute("style","width:100%;height:"+GridList.NORMAL_SIZE+"px;");*/
+      parentDetail.setAttribute("style","width:100%;height:"+(windowInnerHeight*Detail.NORMAL_SIZE)+"px;display:block;");
+      childDetail.setAttribute("style","width:100%;height:"+(windowInnerHeight*Detail.NORMAL_SIZE)+"px;display:block;");
+      gridList.setAttribute("style","width:100%;height:"+(windowInnerHeight*GridList.NORMAL_SIZE)+"px;");
     }
     var resizeButtonText = (this.isListFull() === true)?ObjectsToolBar.RESIZE_BUTTON_FULL_VALUE:ObjectsToolBar.RESIZE_BUTTON_NORMAL_VALUE;
     this.setResizeButtonText(resizeButtonText);

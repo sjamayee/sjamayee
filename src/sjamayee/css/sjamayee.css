@@ -27,6 +27,7 @@ External entry point', }
 
 Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f30001 (NS_ERROR_NOT_INITIALIZED) [nsIDOMJSWindow.setTimeout]"  nsresult: "0xc1f30001 (NS_ERROR_NOT_INITIALIZED)"  location: "JS frame :: https://sja.na6.visual.force.com/resource/1272448729000/sja__yui_min_js :: anonymous :: line 10"  data: no]
 */
+
   .tundra .dijitSplitContainerSizerH {
     background:url("../images/splitContainerSizerV.png") repeat-y #fff;
     border:0;

@@ -21,12 +21,15 @@
 	<link rel="stylesheet" type="text/css" href="../demo/sjamayee.css"/>
   <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.1.0/build/cssfonts/fonts-min.css"/>
 
+  <!-- script type="text/javascript" src="../../externs/js/jquery.js"></script -->
+  <!-- script type="text/javascript" src="../../externs/js/jquery.min.js"></script -->
+  <!-- script type="text/javascript" src="../../externs/js/jquery.splitter.js"></script -->
   <script type="text/javascript" src="../../externs/js/dojo_xd.js"></script>
   <script type="text/javascript" src="../../externs/js/yui_min.js"></script>
   <script type="text/javascript" src="../../externs/js/jsmin.js"></script>
   <script type="text/javascript" src="../../externs/js/json.js"></script>
-  <script type="text/javascript" src="../../externs/js/mootools_1_2_5_core_nc.js"></script>
-  <script type="text/javascript" src="../../externs/js/mootools_1_2_4_4_more_nc.js"></script>
+  <!-- script type="text/javascript" src="../../externs/js/mootools_1_2_5_core_nc.js"></script -->
+  <!-- script type="text/javascript" src="../../externs/js/mootools_1_2_4_4_more_nc.js"></script -->
   <script type="text/javascript" src="../../externs/js/pureMVC_2_0_Mini.js"></script>
   <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 
@@ -34,9 +37,39 @@
   <script type="text/javascript" src="../demo/sjamayee_grid.js"></script>
   <script type="text/javascript" src="../demo/sjamayee_pmvc.js"></script>
 
+	<script type="text/javascript" src="splitter_demo_bestanden/mootools.js"></script>
+	<script type="text/javascript" src="splitter_mootools.js"></script>
+
   <!-- Salesforce.com >
   <apex:includeScript value="/soap/ajax/17.0/connection.js"/>
   <apex:includeScript value="/soap/ajax/17.0/apex.js"/ -->
+
+	<style type="text/css" media="all">
+		html, body {
+			margin: 0;
+			padding: 0;
+			overflow: hidden;	/* Remove scroll bars on browser window */
+		}
+		#header { padding: 1em; }
+
+		.propertiesHeader {
+			/*height: 200px;
+			width: 500px;
+			border: 5px solid #aaa;*/
+		}
+		.propertiesHeader div {
+			overflow: hidden;
+		}
+/*		
+		.vsplitbar {
+			width: 1px;
+			background: lightgray;
+		}
+		.vsplitbar.active, .vsplitbar:hover {
+			background: gray;
+		}
+*/
+	</style>
 
   <script type="text/javascript">
    dojo.require("dojo.cookie");  
@@ -140,6 +173,17 @@
       }
       //alert("loadLog/loadDataRelations - loaded: "+i);
     }
+/*
+		$().ready(function() {
+			$(".propertiesHeader").splitter();
+		});
+		
+		(function($){
+			$.ready(function() {
+				$(".propertiesHeader").splitter();
+			});
+		})(jQuery);
+*/
   </script>
 <!--
   <script type="text/javascript" src="http://sjamayee-explorer.googlecode.com/files/typesJson.js"></script>
