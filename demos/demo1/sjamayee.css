@@ -998,7 +998,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
 }
 #googleBranding {
   width:100%;
-  height:100%;
+  height:20px;
   display:block;
   border-bottom:1px solid gray;
 }

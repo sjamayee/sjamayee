@@ -3987,40 +3987,58 @@ var Splitter = new Class({
 	initialize: function(parent,parameters) {
 		if (!parameters) parameters = {};
 
-		var wrapper_orientation = parameters['orientation']?parameters['orientation']:0; // 0 is horizontal. otherwise, vertical
-		var wrapper_handleWidth = parameters['handleWidth']?parameters['handleWidth']:0; //1;
-		var wrapper_handleColor = parameters['handleColor']?parameters['handleColor']:'lightgray';
-		var wrapper_handleBorder = parameters['handleBorder']?parameters['handleBorder']:'none';
-		var wrapper_minimumSize = parameters['minimumSize']?parameters['minimumSize']:0; //40;
-		var wrapper_maximumSize = parameters['maximumSize']?parameters['maximumSize']:h; //800;
-		var wrapper_initialSize = parameters['initialSize']?parameters['initialSize']:(wrapper_minimumSize + wrapper_maximumSize)/2; //40;
-		var wrapper_opaqueResize = parameters['opaqueResize']?parameters['opaqueResize']:0;
+		var orientation = parameters['orientation']?parameters['orientation']:0; // 0 is horizontal. otherwise, vertical
+		var handleWidth = parameters['handleWidth']?parameters['handleWidth']:0; //1;
+		var handleColor = parameters['handleColor']?parameters['handleColor']:'lightgray';
+		var handleBorder = parameters['handleBorder']?parameters['handleBorder']:'none';
+		var minimumSize = parameters['minimumSize']?parameters['minimumSize']:0; //40;
+		var maximumSize = parameters['maximumSize']?parameters['maximumSize']:h; //800;
+		var initialSize = parameters['initialSize']?parameters['initialSize']:(minimumSize + maximumSize)/2; //40;
+		var opaqueResize = parameters['opaqueResize']?parameters['opaqueResize']:0;
     
+		var w = '0px', h = '0px';
 		if (parent) {
 			//$(parent).setStyles({'margin': 0,	'padding': 0});
-			var w = parent.offsetWidth, h = parent.offsetHeight;
-			if (wrapper_orientation === 0) {
-			  h = wrapper_initialSize;
+			w = parent.offsetWidth, h = parent.offsetHeight;
+			if (orientation) {
+			  h = initialSize+'px';
+			  w = '100%'; //TEST!!!
+  			/*if (parent === document.body || !parent.tagName) {
+  				//w = $pick(window.innerWidth,document.body.clientWidth); //TEST!!!
+  				//h = $pick(window.innerHeight,document.body.clientHeight);
+  				//document.body.setStyle('overflow','hidden');
+  				//TEST !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  				//w = $pick(window.getWidth(),document.body.clientWidth); //TEST!!!
+  				h = $pick(window.getHeight(),document.body.clientHeight);
+  			}*/
 			} else {
-			  w = wrapper_initialSize;
+			  h = '100%'; //TEST!!!
+			  w = initialSize+'px';
+  			/*if (parent === document.body || !parent.tagName) {
+  				//w = $pick(window.innerWidth,document.body.clientWidth); //TEST!!!
+  				//h = $pick(window.innerHeight,document.body.clientHeight);
+  				//document.body.setStyle('overflow','hidden');
+
+  				//TEST !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  				//w = $pick(window.getWidth(),document.body.clientWidth); //TEST!!!
+  				h = $pick(window.getHeight(),document.body.clientHeight);
+  			}*/
 			}
-			if (parent === document.body || !parent.tagName) {
+			/*if (parent === document.body || !parent.tagName) {
 				//w = $pick(window.innerWidth,document.body.clientWidth); //TEST!!!
 				//h = $pick(window.innerHeight,document.body.clientHeight);
 				//document.body.setStyle('overflow','hidden');
 				
 				//TEST !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-				w = $pick(window.getWidth(),document.body.clientWidth); //TEST!!!
+				//w = $pick(window.getWidth(),document.body.clientWidth); //TEST!!!
 				h = $pick(window.getHeight(),document.body.clientHeight);
-			}
+			}*/
 		  //h = h - (parseInt(parent.getStyle('border-top-width')) - parseInt(parent.getStyle('border-bottom-width')));
       //h = h - (parseInt(parent.getStyle('border-top-height')) - parseInt(parent.getStyle('border-bottom-height')));			
 		  //w = w - (parseInt(parent.getStyle('border-left-width')) - parseInt(parent.getStyle('border-right-width')));
 
     	//h = h - parseInt(parent.getStyle('border-top-height')) - parseInt(parent.getStyle('border-bottom-height'));
     	//w = w - parseInt(parent.getStyle('border-left-width')) - parseInt(parent.getStyle('border-right-width'));
-		} else {
-			var w = 0, h = 0;
 		}
 		var wrapperId = parameters['id']?parameters['id']:null;
 		var wrapper = null;
@@ -4029,7 +4047,7 @@ var Splitter = new Class({
 		} else {
 		  wrapper = new Element('div');
 		}
-    if (wrapper_orientation && wrapper_orientation === 1) {
+    if (orientation) {
   		wrapper.setStyles({'position':'relative', 'top':'0px', 'width':w, 'height':h}); //, 'overflow':'hidden'}
     } else {
   		wrapper.setStyles({'position':'relative', 'left':'0px', 'width':w, 'height':h}); //, 'overflow':'hidden'}      
@@ -4040,14 +4058,14 @@ var Splitter = new Class({
 			'styles': {'position':'relative',	'width':w, 'height':h} //, 'overflow':'hidden'}
 		});*/
 		$extend(wrapper,{addWidget:Splitter__addWidget,	parentResized:Splitter__parentResized, setSizes:Splitter__setSizes,	getSizes:Splitter__getSizes});
-		wrapper.orientation = wrapper_orientation;
-		wrapper.handleWidth = wrapper_handleWidth;
-		wrapper.handleColor = wrapper_handleColor;
-		wrapper.handleBorder = wrapper_handleBorder;
-		wrapper.minimumSize = wrapper_minimumSize;
-		wrapper.maximumSize = wrapper_maximumSize;
-		wrapper.initialSize = wrapper_initialSize;
-		wrapper.opaqueResize = wrapper_opaqueResize;
+		wrapper.orientation = orientation;
+		wrapper.handleWidth = handleWidth;
+		wrapper.handleColor = handleColor;
+		wrapper.handleBorder = handleBorder;
+		wrapper.minimumSize = minimumSize;
+		wrapper.maximumSize = maximumSize;
+		wrapper.initialSize = initialSize;
+		wrapper.opaqueResize = opaqueResize;
 		wrapper.widgets=[];
 		wrapper.handles=[];
 		wrapper.addClass('splitter');
@@ -4084,7 +4102,8 @@ function Splitter__addWidget(widget,parameters) {
 	var handleWidth = parameters['handleWidth']?parameters['handleWidth']:this.handleWidth;
 	var handleColor = parameters['handleColor']?parameters['handleColor']:this.handleColor;
 	var handleBorder = parameters['handleBorder']?parameters['handleBorder']:this.handleBorder;
-  var handleClass = (orientation && orientation === 1)?'vsplitbar':'hsplitbar';
+  var handleBorderKey = (orientation)?'border-top':'border-left';
+  var handleClass = (orientation)?'vsplitbar':'hsplitbar';
 	//var handleMargin = orientation?'1px 0px 1px 0px':'0px 1px 0px 1px';
 	var minimumSize = parameters['minimumSize']?parameters['minimumSize']:this.minimumSize;
 	var maximumSize = parameters['maximumSize']?parameters['maximumSize']:this.maximumSize;
@@ -4102,14 +4121,17 @@ function Splitter__addWidget(widget,parameters) {
 		//'styles': {'background-color':handleColor, 'border':'none', 'position':'absolute', 'font-size':'0', 'overflow':'hidden'}
 		//'styles': {'background-color':'red', 'border':'none', 'position':'absolute', 'font-size':'0', 'overflow':'hidden'}
 		//'styles': {'background':'red', 'border':'solid red', 'position':'absolute', 'font-size':'0', 'overflow':'hidden'}
-		'styles': {'background':handleColor,'border':handleBorder,'position':'absolute','font-size':'0','overflow':'hidden'} //,'margin':handleMargin}
+		//'styles': {'background':handleColor,'border':handleBorder,'position':'absolute','font-size':'0','overflow':'hidden'} //,'margin':handleMargin}
+		'styles': {'background-color':'transparent',handleBorderKey:handleBorder,'position':'absolute','font-size':'0','overflow':'hidden'} //,'margin':handleMargin}
 	});
 	//handle.setStyles(orientation?{'border-width':'10px 0','cursor':'n-resize','height':this.handleWidth - 2,'width':this.offsetWidth}
 	//													  :{'border-width':'0 10px','cursor':'e-resize','width':this.handleWidth - 2,'height':this.offsetHeight});
 	//handle.setStyles(orientation?{'border-width':'1px 0','cursor':'ns-resize','height':1,'width':this.offsetWidth}
 	//														:{'border-width':'0 1px','cursor':'ew-resize','width':1,'height':this.offsetHeight});
-	handle.setStyles(orientation?{'border-width':handleWidth+'px 0','cursor':'ns-resize','height':handleWidth+'px','width':this.offsetWidth}
-															:{'border-width':'0 '+handleWidth+'px','cursor':'ew-resize','width':handleWidth+'px','height':this.offsetHeight});  
+	//handle.setStyles(orientation?{'border-width':handleWidth+'px 0','cursor':'ns-resize','height':handleWidth+'px','width':'100%'} //'width':this.offsetWidth}
+	//														:{'border-width':'0 '+handleWidth+'px','cursor':'ew-resize','width':handleWidth+'px','height':'100%'}); //'height':this.offsetHeight});
+	handle.setStyles(orientation?{'border-width':handleWidth+'px 0','cursor':'ns-resize','height':initialSize,'width':'100%'}
+											        :{'border-width':'0 '+handleWidth+'px','cursor':'ew-resize','width':initialSize,'height':'100%'});
 	handle.num = numWidgets;
 	handle.addEvent('mousedown', function() {
 	  if (handleWidth === 0) { alert("handle/mousedown - handleWidth: 0"); return; }
@@ -4127,6 +4149,7 @@ function Splitter__addWidget(widget,parameters) {
 		var xoffset = parent.getPosition().x;
 		var yoffset = parent.getPosition().y;
 		var min = 0;
+		//if (orientation) {
 		if (orientation) {
 			var x = this.offsetTop;
 			//var max = parent.offsetHeight - parent.handleWidth;
@@ -4185,9 +4208,20 @@ function Splitter__addWidget(widget,parameters) {
 	if (!numWidgets) {
 		handle.setStyle('display','none');
 	}
+
+  var w = '100%', h = '100%';
+	if (orientation) {
+		h = this.offsetHeight+'px';
+		h = (handleWidth !== 0)?parent.offsetHeight - parent.handleWidth+'px':initialSize+'px';
+		
+	}	else {
+		w = this.offsetWidth+'px';
+		w = (handleWidth !== 0)?parent.offsetWidth - parent.handleWidth+'px':initialSize+'px';
+	}
 	var widgetWrapper = new Element('div',{
 		'class': 'splitterPanel',
-		'styles': {'position': 'absolute', 'height': this.offsetHeight,	'width': this.offsetWidth, 'overflow': 'hidden'} //''auto'}
+		//'styles': {'position': 'absolute', 'height': this.offsetHeight,	'width': this.offsetWidth, 'overflow': 'hidden'} //''auto'}
+		'styles': {'position': 'absolute', 'height': h,	'width': w, 'overflow': 'hidden'} //''auto'}
 	});
 	var sizes = [];
 	var w = 0;
@@ -4230,13 +4264,14 @@ function Splitter__addWidget(widget,parameters) {
 
 function Splitter__parentResized() {
 	var parent = this.parentNode;
-	var w = parent.offsetWidth, h = parent.offsetHeight;
+	//var w = parent.offsetWidth, h = parent.offsetHeight;
+	var w = parent.width, h = parent.height;
 	if (parent === document.body) {
 		h = window.getHeight();
     w = window.getWidth(); //TEST!!!
 	}
-	h = h - (parseInt(parent.getStyle('border-top-width')) - parseInt(parent.getStyle('border-bottom-width')));
-	//h = h - (parseInt(parent.getStyle('border-top-height')) - parseInt(parent.getStyle('border-bottom-height')));
+	//h = h - (parseInt(parent.getStyle('border-top-width')) - parseInt(parent.getStyle('border-bottom-width')));
+	h = h - (parseInt(parent.getStyle('border-top-height')) - parseInt(parent.getStyle('border-bottom-height')));
 	w = w - (parseInt(parent.getStyle('border-left-width')) - parseInt(parent.getStyle('border-right-width')));
 	this.setStyles({'width': w,	'height': h}); //, 'overflow': 'hidden'});
 	this.setSizes(this.getSizes());
@@ -4303,14 +4338,15 @@ function Splitter__setSizes(sizes) {
 		  x += sizes[i];
 	  //}
 	}
-  var children = this.getElements('div');
+  /*var children = this.getElements('div');
 	children.each(function(child) {
 	  //if (child.id && this.id && child.id != this.id) {
 		  if (child.parentResized) child.parentResized();
 		  //if (child.parentResized()) child.parentResized();
 		  //child.parentResized();
 		//}
-	});
+	});*/
+	Splitter__resize(this);
 }
 
 function Splitter__getSizes() {
@@ -4321,6 +4357,80 @@ function Splitter__getSizes() {
 	}
 	return result;
 }
+
+/************************************************************************************************
+   Drag.Dock.js - Drag.Dock, an extension of Drag.Move that allows docking to a container's edge. 
+   authors: Sean McArthur (http://mcarthurgfx.com) 
+   license: MIT-style license 
+   requires: mootools(core/1.2.1: '*'; more/1.2.1.1: [Drag, Drag.Move]
+   provides: [Drag.Dock, Element.makeDockable]
+   ...
+************************************************************************************************/
+Drag.Dock = new Class({
+	Extends: Drag.Move,	
+	options: {
+		proximity: 20
+	},
+	initialize: function(element, options, location) {
+		this.parent(element, options);
+		if (!this.options.container) {
+			this.element.setStyle('position', 'fixed');
+		}
+	},
+	drag: function(event) {
+		this.parent(event);
+		var container = this.dimensions();
+		if (this.element.offsetTop < this.options.proximity) {
+			this.dock('top');
+		}
+		if (this.element.offsetTop + this.element.offsetHeight > container.y - this.options.proximity) {
+			this.dock('bottom');
+		}
+		if (this.element.offsetLeft < this.options.proximity) {
+			this.dock('left');
+		}
+		if (this.element.offsetLeft + this.element.offsetWidth > container.x - this.options.proximity) {
+			this.dock('right');
+		}
+	},
+	dock: function(location) {
+		location = location || 'top';
+		var container = this.dimensions();
+		switch (location) {
+			case 'top':
+			default:
+				this.element.setStyle('top',0);
+				break;
+			case 'middle':
+				this.element.setStyle('top', (container.y - this.element.offsetHeight) / 2);
+				break;
+			case 'bottom':
+				this.element.setStyle('top',container.y - this.element.offsetHeight);
+				break;
+			case 'left':
+				this.element.setStyle('left',0);
+				break;
+			case 'center':
+				this.element.setStyle('left', (container.x - this.element.offsetWidth) / 2);
+				break;
+			case 'right':
+				this.element.setStyle('left',container.x - this.element.offsetWidth)
+				break;
+		}
+		this.fireEvent('dock', location);
+		return this;
+	},
+	dimensions: function() {
+		var container = $(this.options.container) || window;
+		return container.getSize();
+	}.protect()
+});
+
+Element.implement({
+	makeDockable: function(options) {
+		return new Drag.Dock(this, options);
+	}
+});
 
 //////////////////////////////////////////////////////////////////////////
 ///////////////////////////////// COMMON /////////////////////////////////
@@ -6392,10 +6502,10 @@ var Sjamayee = new Class({
       'opaqueResize':0});
 		this.vsplitter.addWidget($("listPaneBorder"), {
       'handleWidth':15,
-      'handleColor':'blue', //'transparent', //'yellow',
+      'handleColor':'transparent', //'blue', //'transparent', //'yellow',
       'handleBorder':'15px solid blue', //transparent', //yellow',
       'orientation':1,
-      'minimumSize':200, //400,
+      'minimumSize':0, //200, //400,
       'maximumSize':500,
       'initialSize':400,
       'opaqueResize':0});
@@ -6419,8 +6529,8 @@ var Sjamayee = new Class({
       'opaqueResize':0});
 		this.vsplitter.addWidget($("googleBranding"), {
       'handleWidth':0,
-      'handleColor':'blue', //'red', //'lightgray', //'black',
-      'handleBorder':'0px solid transparent', //red', //lightgray', //black',
+      'handleColor':'transparent', //'blue', //'red', //'lightgray', //'black',
+      'handleBorder':'0px solid red', //lightgray', //black',
       'orientation':1,
       'minimumSize':20,
       'maximumSize':20,

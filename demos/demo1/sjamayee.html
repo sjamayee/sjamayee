@@ -67,15 +67,15 @@
 			width:100%;
 		}
 		.vsplitbar {
-			//background-image: url(vgrabber.gif) no-repeat center;
-			background: #c66 url(vgrabber.gif) no-repeat center;
-			opacity: 0.7;
+			//background-image: url(hgrabber.gif) no-repeat center;
+			background: #c66 url(hgrabber.gif) no-repeat center;
+			opacity: 1; //0.7;
 			filter: alpha(opacity=70); /* IE */
 		}
 		.hsplitbar {
-			//background-image: url(hgrabber.gif) no-repeat center;
-			background: #c66 url(hgrabber.gif) no-repeat center;
-			opacity: 0.7;
+			//background-image: url(vgrabber.gif) no-repeat center;
+			background: #c66 url(vgrabber.gif) no-repeat center;
+			opacity: 1; //0.7;
 			filter: alpha(opacity=70); /* IE */			
 		}
 	</style>
@@ -202,11 +202,13 @@
  <body>
   <div style="margin:10px 10px 0px 10px;">
    <div id="sjamayeeForm" style="width:100%;height:1000px;border:1px solid gray;z-index:99;">
-	  <div id="verticalSplitter" class="tundra gridSplitter" style="position:relative;align:top;background-color:white;width:100%;height:100%;" tabindex="-1">
+	  <!-- div id="verticalSplitter" class="tundra gridSplitter" style="position:relative;align:top;background-color:white;width:100%;height:100%;" tabindex="-1" -->
+	  <div id="verticalSplitter" class="tundra gridSplitter" style="position:relative;align:top;background-color:transparent;" tabindex="-1">
     <!-- HEADERPANE -->
 	  <div id="headerPane" style="width:100%;height:100%;display:block;"></div>
     <div id="listPaneBorder" class="normalBorder listPaneBorder" style="background-color:inherit;width:100%;height:100%;margin-top:3px;">
-     <div id="listSplitter" class="tundra gridSplitter" style="position:relative;align:top;background-color:white;width:100%;height:92%;" tabindex="-1">
+     <!-- div id="listSplitter" class="tundra gridSplitter" style="position:relative;align:top;background-color:white;width:100%;height:92%;" tabindex="-1" -->
+     <div id="listSplitter" class="tundra gridSplitter" style="position:relative;align:top;background-color:transparent;" tabindex="-1">
       <!-- LIST-/GRIDPANE -->
       <div id="listPaneLeft" class="listPane" style="height:100%;width:100%;background-color:inherit;overflow:hidden;"></div>
       <div id="listPaneRight" class="listPane" style="height:100%;background-color:inherit;overflow:hidden;" tabindex="-1"></div>
@@ -215,7 +217,8 @@
     <!-- TOOLBARPANE -->
     <div id="toolBarPane" style="width:100%;height:100%;display:block;background-color:yellow" tabindex="-1"></div>
     <div id="detailPane" class="listPane" style="vertical-align:top;background-color:inherit;width:100%;height:100%;border:1px solid lightgray;display:block;" tabindex="-1">
-     <div id="detailSplitter" class="tundra gridSplitter" style="vertical-align:top;background-color:inherit;width:100%;height:97%;" tabindex="-1">
+     <!-- div id="detailSplitter" class="tundra gridSplitter" style="vertical-align:top;background-color:inherit;width:100%;height:97%;" tabindex="-1" -->
+     <div id="detailSplitter" class="tundra gridSplitter" style="vertical-align:top;background-color:transparent;" tabindex="-1">
       <!-- DETAILPANE -->
       <div id="detailPaneLeft" class="listPane" style="height:100%;width:100%;background-color:white;overflow:hidden;display:block;" tabindex="-1"></div>
       <div id="detailPaneRight" class="listPane" style="height:100%;background-color:white;overflow:hidden;display:block;" tabindex="-1"></div>
