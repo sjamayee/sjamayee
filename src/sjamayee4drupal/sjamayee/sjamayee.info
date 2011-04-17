@@ -1,6 +1,6 @@
 ; $Id: sjamayee
 name = Sjamayee
-description = Sjamayee Browser, Explorer, Composer.
+description = Scrambler for Sjamayee Browser, Explorer, Composer.
 package = Sjamayee
 core = 7.x
 php = 5.x
