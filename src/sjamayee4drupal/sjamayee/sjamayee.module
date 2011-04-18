@@ -232,10 +232,12 @@ function _sjamayee_link_relations($dataset_name, $relations) {
 /*****************************************************************************
  * Scrambling of the drupal data into sjamayee datasets.
  * In this first version, we focus on some dynamic, generic datasets.
- * The dynamic part is: field_xxx (CCK) and menu, node, taxonomy, user, role.
+ * The dynamic part is: field_xxx (CCK) and menu, node, role, taxonomy, user, view.
  * We hope that we, with this approach, can capture the most important part of
  * the data, especially the important data for the building blocks.
  * The result would be a universal scrambler for this part of the drupal data.
+ * Sjamayee can than offer another view (dynamic grid view) on the same data
+ * for the administration of drupal web sites.
  * For special cases the scrambler needs extension.
  ****************************************************************************/
 function _sjamayee_scramble_drupal($S,$T,$X,$ME,$MA,$MR,$DE,$DA,$DR) {
