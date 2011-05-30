@@ -1,0 +1,307 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" -->
+<!-- html xmlns="http://www.w3.org/1999/xhtml" -->
+<html>
+ <head>
+  <title>Sjamayee - Browser/Explorer/Composer</title>
+  <style type="text/css">html { overflow:hidden; }</style>	
+  <style>
+   //Google branding
+   div#googleBranding {
+     /*margin: 0px 10px 0px 10px;
+     width: 100%;
+     height: 20px;
+     //background-color: lightGray;
+		 border:none;*/
+   }
+   div#googleBranding .gBranding 		 { text-align: right; }
+   div#googleBranding .gBrandingText { color: black; }
+  </style>  
+	<!-- link rel="stylesheet" type="text/css" href="../../src/externs/css/tundra.css"/>
+	<link rel="stylesheet" type="text/css" href="../../src/externs/css/dojo.css"/ -->
+	<link rel="stylesheet" type="text/css" href="sjamayee.css"/>
+  <!-- link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.1.0/build/cssfonts/fonts-min.css"/ -->
+
+  <script type="text/javascript" src="../../src/externs/js/dojo_xd.js"></script>
+  <script type="text/javascript" src="../../src/externs/js/yui_min.js"></script>
+  <script type="text/javascript" src="../../src/externs/js/jsmin.js"></script>
+  <script type="text/javascript" src="../../src/externs/js/json.js"></script>
+  <script type="text/javascript" src="../../src/externs/js/mootools_1_2_5_core_nc.js"></script>
+  <script type="text/javascript" src="../../src/externs/js/mootools_1_2_4_4_more_nc.js"></script>
+
+  <script type="text/javascript" src="../../src/externs/js/pureMVC_2_0_Mini.js"></script>
+  <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+
+  <script type="text/javascript" src="sjamayee_base.js"></script>
+  <script type="text/javascript" src="sjamayee_grid.js"></script>
+  <!-- script type="text/javascript" src="sjamayee_pmvc.js"></script -->
+  <script type="text/javascript" src="sjamayee_splitter.js"></script>
+
+  <!-- Salesforce.com >
+  <apex:includeScript value="/soap/ajax/17.0/connection.js"/>
+  <apex:includeScript value="/soap/ajax/17.0/apex.js"/ -->
+
+	<style type="text/css" media="all">
+		html, body {
+			margin: 0;
+			padding: 0;
+			overflow: hidden;	/* Remove scroll bars on browser window */
+		}
+		#header { padding: 1em; }
+		div {
+			border:none;
+		}
+
+		.propertiesHeader {
+			/*height: 200px;
+			width: 500px;
+			border: 5px solid #aaa;*/
+		}
+		.propertiesHeader div {
+			overflow: hidden;
+		}
+
+		.splitter {
+			position:relative;
+			/*height:100%;
+			width:100%;*/
+		}
+		.splitterPanel {
+			position:relative;
+			/*height:100%;
+			width:100%;*/
+		}
+		.vsplitbar {
+			background-image: url(hgrabber.gif) no-repeat center;
+			background: #c66 url(hgrabber.gif) no-repeat center;
+			opacity: 1; //0.7;
+			filter: alpha(opacity=70); /* IE */
+		}
+		.hsplitbar {
+			background-image: url(vgrabber.gif) no-repeat center;
+			background: #c66 url(vgrabber.gif) no-repeat center;
+			opacity: 1; //0.7;
+			filter: alpha(opacity=70); /* IE */			
+		}
+	</style>
+
+  <script type="text/javascript">
+   dojo.require("dojo.cookie");  
+   dojo.require("dojox.json.ref");
+   dojo.require("dijit.layout.ContentPane");
+   dojo.require("dijit.layout.BorderContainer");
+   dojo.require("dojo.parser");
+
+   dojo.addOnLoad(preloader);
+
+   dojo.addOnLoad(function() {
+     init();
+     dojo.parser.parse(); // or set djConfig.parseOnLoad = true
+   });
+  
+   function init()    {
+		 //addSplitters();
+     //alert("pmvc - Sjamayee started!");
+     var sjamayee = new Sjamayee();
+     sjamayee.initializeChildren();
+     sjamayee.childrenInitialized();
+     sjamayee.initializationComplete();
+     //alert("pmvc - Sjamayee created!");
+   }
+
+    var field_error_gif = null;
+    var required_field_gif = null;
+    function preloader() {
+      //alert("preLoader");
+      var resourceUrl = "https://na6.salesforce.com/resource/";
+      //not_found image
+      field_error_gif = resourceUrl+"1290250671000/sja__field_error_gif";
+      required_field_gif = resourceUrl+"1290250720000/sja__required_field_gif";
+    } 
+
+    google.load('language', "1");
+    google.setOnLoadCallback(initialize);
+    function initialize() {
+      var v = {type:'vertical'};
+      google.language.getBranding('googleBranding'); //, v);
+    }
+
+		function addSplitters() {
+	    var vsplitter1 = new Splitter($("sjamayeeForm"), {
+	      'handleWidth':5,
+	      'handleColor':'inherit',
+	      'handleBorder':'none',
+	      'orientation':1,
+	      'minimumSize':'100%',
+	      'maximumSize':'100%',
+	      'initialSize':'100%',
+	      'opaqueResize':1});	
+			vsplitter1.addWidget($("topPane"), {
+	      'handleWidth':0,
+	      'handleColor':'inherit',
+	      'handleBorder':'none', //'0px solid red',
+	      'orientation':1,
+	      'minimumSize':'28px',
+	      'maximumSize':'897px', //(925-28)
+	      'initialSize':'400px', //'50%',
+	      'opaqueResize':1});
+			vsplitter1.addWidget($("bottomPane"), {
+	      'handleWidth':5,
+	      'handleColor':'inherit',
+	      'handleBorder':'none', //'0px solid red',
+	      'orientation':1,
+	      'minimumSize':'28px',
+	      'maximumSize':'897px', //(925-28)
+	      'initialSize':'497px', //'50%',
+	      'opaqueResize':1});
+	    var hsplitter1 = new Splitter($("listPane"), {
+	      'handleWidth':5,
+	      'handleColor':'inherit',
+	      'handleBorder':'none',
+	      'orientation':0,
+	      'minimumSize':'100%',
+	      'maximumSize':'100%',
+	      'initialSize':'100%',
+	      'opaqueResize':1});		
+			hsplitter1.addWidget($("listPaneLeft"), {
+	      'handleWidth':0,
+	      'handleColor':'inherit',
+	      'handleBorder':'none', //'0px solid red',
+	      'orientation':0,
+	      'minimumSize':'0%',
+	      'maximumSize':'100%',
+	      'initialSize':'300px', //'30%',
+	      'opaqueResize':1});
+			hsplitter1.addWidget($("listPaneRight"), {
+	      'handleWidth':5,
+	      'handleColor':'inherit',
+	      'handleBorder':'none', //'0px solid red',
+	      'orientation':0,
+	      'minimumSize':'0%',
+	      'maximumSize':'100%',
+	      'initialSize':'500px', //'70%',
+	      'opaqueResize':1});
+	    var hsplitter2 = new Splitter($("detailPane"), {
+	      'handleWidth':5,
+	      'handleColor':'inherit',
+	      'handleBorder':'none',
+	      'orientation':0,
+	      'minimumSize':'100%',
+	      'maximumSize':'100%',
+	      'initialSize':'100%',
+	      'opaqueResize':1});		
+			hsplitter2.addWidget($("detailPaneLeft"), {
+	      'handleWidth':0,
+	      'handleColor':'inherit',
+	      'handleBorder':'none', //'0px solid red',
+	      'orientation':0,
+	      'minimumSize':'0%',
+	      'maximumSize':'100%',
+	      'initialSize':'200px', //'40%',
+	      'opaqueResize':1});
+			hsplitter2.addWidget($("detailPaneRight"), {
+	      'handleWidth':5,
+	      'handleColor':'inherit',
+	      'handleBorder':'none', //'0px solid red',
+	      'orientation':0,
+	      'minimumSize':'0%',
+	      'maximumSize':'100%',
+	      'initialSize':'400px', //'60%',
+	      'opaqueResize':1});
+	    //Splitter__resize();
+	    //$("sjamayeeForm_splitter").resize();
+	    //vsplitter1.resize();
+	    //$("sjamayeeForm_splitter").resize();
+	    //$("sjamayeeForm").resize();
+			//vsplitter1.resize();
+			window.resize();
+		}
+		
+		///////////////////////////////
+		// LOAD DEMO DATASET (JSON). //
+		///////////////////////////////
+    function loadTypes(obj) {
+      _types = obj;
+      var types = obj.types;
+      var i = 0;
+      while (types[i]) {
+        var jso = types[i];
+				//if (i === 0) { alert("loadTypes - jso: "+jso.type); }
+        i++;
+      }
+     //alert("loadLog/loadTypes - loaded: "+i);
+    }
+    function loadModelEntities(obj) {
+      _modelEntities = obj;
+      var entities = obj.entities;
+      var i = 0;
+      while (entities[i]) {
+        var jso = entities[i];
+				//if (i === 0) { alert("loadModelEntities - jso: "+jso.name); }
+        i++;
+      }
+      //alert("loadLog/loadModelEntities - loaded: "+i);
+    }
+    function loadModelRelations(obj) {
+      _modelRelations = obj;
+      var relations = obj.relations;
+      var i = 0;
+      while (relations[i]) {
+        var jso = relations[i];
+				//if (i === 0) { alert("loadModelRelations - jso: "+jso.name); }
+        i++;
+      }
+      //alert("loadLog/loadModelRelations - loaded: "+i);
+    }
+    function loadDataEntities(obj) {
+      _dataEntities = obj;
+      var entities = obj.entities;
+      var i = 0;
+      while (entities[i]) {
+        var jso = entities[i];
+				//if (i === 0) { alert("loadDataEntities - jso: "+jso.name); }
+        i++;
+      }
+      //alert("loadLog/loadDataEntities - loaded: "+i);
+    }
+    function loadDataRelations(obj) {
+      _dataRelations = obj;
+      var relations = obj.relations;
+      var i = 0;
+      while (relations[i]) {
+        var jso = relations[i];
+				//if (i === 0) { alert("loadDataRelations - jso: "+jso.name); }
+        i++;
+      }
+      //alert("loadLog/loadDataRelations - loaded: "+i);
+    }
+  </script>
+  <script type="text/javascript" src="http://sjamayee-explorer.googlecode.com/files/demo_project_planning_typesJson.js"></script>
+  <script type="text/javascript" src="http://sjamayee-explorer.googlecode.com/files/demo_project_planning_modelEntitiesJson.js"></script>
+  <script type="text/javascript" src="http://sjamayee-explorer.googlecode.com/files/demo_project_planning_modelRelationsJson.js"></script>
+  <script type="text/javascript" src="http://sjamayee-explorer.googlecode.com/files/demo_project_planning_dataEntitiesJson.js"></script>
+  <script type="text/javascript" src="http://sjamayee-explorer.googlecode.com/files/demo_project_planning_dataRelationsJson.js"></script>
+ </head>
+ <body>
+  <div style="margin:10px 10px 0px 10px;border:none;">
+   <div id="sjamayeeForm" style="width:100%;height:925px;"> <!-- background-color:lightgray;border:0px solid gray;" --> <!-- z-index:99;" -->
+	  <div id ="topPane" style="width:100%;height:100%;"> <!-- background-color:inherit -->
+	   <div id="headerPane" style="width:100%;height:28px;"></div> <!-- background-color:yellow; -->
+     <div id="listPane" style="width:100%;height:100%;position:relative;align:left;"> <!-- background-color:lightblue; -->
+     	<!-- div id="listPaneLeft" style="height:100%;width:100%;background-color:lime;position:relative;align:left;float:left;">AAA</div>
+     	<div id="listPaneRight" style="height:100%;width:100%;background-color:yellow;position:relative;align:left;float:left;">BBB</div -->
+     </div>
+		</div>
+	  <div id ="bottomPane" style="width:100%;height:100%;"> <!-- background-color:lime -->
+     <!-- div id="toolBarPane" style="width:100%;height:28px;background-color:red;cursor:ns-resize;" onmousedown="alert('!!!');"></div -->
+     <div id="toolBarPane" class="toolBar" style="width:100%;height:28px;cursor:ns-resize;"></div> <!-- background-color:red; -->
+     <div id="detailPane" class="listPane" style="width:100%;height:100%;"> <!-- background-color:inherit; -->
+     	<!-- div id="detailPaneLeft" style="height:100%;width:100%;background-color:lightblue;position:relative;align:left;float:left;">111</div>
+     	<div id="detailPaneRight" style="height:100%;width:100%;background-color:blue;position:relative;align:left;float:left;">222</div -->
+     </div>
+    </div>
+   </div>
+   <div id="googleBranding" style="width:100%;height:20px;"></div>
+  </div>
+ </body>
+</html>
