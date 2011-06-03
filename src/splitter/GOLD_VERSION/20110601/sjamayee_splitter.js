@@ -41,9 +41,6 @@ var Splitter = new Class({
 			w = w - parseInt(parent.getStyle('border-left-width')) - parseInt(parent.getStyle('border-right-width'));
 		}
 		var wrapper = new Element('div');
-
-  	//alert("Splitter/initialize pid: "+parent.id);
-
 	  wrapper.setAttribute('id',parent.id+"_splitter");
 		wrapper.setStyles({'position':'relative', 'background-color':'transparent', 'width':w+'px', 'height':h+'px'}); //, 'overflow':'hidden'}
     if (wrapper_orientation && wrapper_orientation === 1) {
@@ -102,9 +99,6 @@ var Splitter = new Class({
   	  'class': handleClass,
   		'styles': {'background':handleColor,'border':handleBorder,'position':'absolute','font-size':'0','overflow':'hidden'} //,'margin':handleMargin}
   	});
-  	
-  	//alert("Splitter/addWidget pid: "+parent.id+" - wid: "+widget.id);
-  	
     handle.setAttribute("id",parent.id+"_"+widget.id+"_handle");
   	handle.setStyles(orientation?{'border-width':handleWidth+'px 0','cursor':'ns-resize','height':handleWidth+'px','width':this.offsetWidth}
   															:{'border-width':'0 '+handleWidth+'px','cursor':'ew-resize','width':handleWidth+'px','height':this.offsetHeight});  
@@ -1267,7 +1261,7 @@ var PrepViewCommand = new Class({
       //*this.facade.registerMediator(new ModelObjectsTextsEditorMediator(app.top.gridList));
       //*this.facade.registerMediator(new ModelRelationsTextsEditorMediator(app.top.gridList));
     }
-/*
+
     this.facade.registerMediator(new DataObjectNTDMediator(app.bottom.detail.left.dataObjectNTD));
     this.facade.registerMediator(new DataObjectPropertiesMediator(app.bottom.detail.right.dataObjectProperties));
     this.facade.registerMediator(new DataParentDetailMediator(app.bottom.detail));
@@ -1281,15 +1275,9 @@ var PrepViewCommand = new Class({
     this.facade.registerMediator(new ModelChildDetailMediator(app.bottom.detail));   
     this.facade.registerMediator(new ModelGridListMediator(app.top.gridList));
     //this.facade.registerMediator(new ModelDetailMediator(app.bottom.detail));    
-*/
-    this.facade.registerMediator(new HeaderMediator(app.header));
-    
-    this.facade.registerMediator(new DataObjectsMediator(app.dataObjectsPane));
-    this.facade.registerMediator(new DataRelationsMediator(app.dataRelationsPane));
-    this.facade.registerMediator(new ModelObjectsMediator(app.modelObjectsPane));
-    this.facade.registerMediator(new ModelRelationsMediator(app.modelRelationsPane));
-    
-    //this.facade.registerMediator(new ToolBarMediator(app.bottom.toolBar));
+
+    this.facade.registerMediator(new HeaderMediator(app.top.header));
+    this.facade.registerMediator(new ToolBarMediator(app.bottom.toolBar));
     //Show Data Relations Grid.
     this.sendNotification(SjamayeeFacade.GRID_DATA_SHOW);
   }
@@ -1586,6 +1574,7 @@ var UndoCommand = new Class({
       Utils.alert("UndoCommand - error: "+error.message,Utils.LOG_LEVEL_ERROR);
     }
   },
+
 //Abstract
   undo_add: function(cmd) { return undefined; },
   undo_edit: function(cmd) { return undefined; },
@@ -6381,13 +6370,8 @@ var Sjamayee = new Class({
   Extends: UIComponent,
   initialize: function(element, properties) {
     this.appName = "Sjamayee!";
-    //this.top = null;
-    //this.bottom = null;
-    this.header = null;
-    this.dataObjectsPane = null;
-    this.dataRelationsPane = null;
-    this.modelObjectsPane = null;
-    this.modelRelationsPane = null;
+    this.top = null;
+    this.bottom = null;
     //Reference to the SjamayeeFacade for calling 'startup'
     //this.facade = null;
     this.facade = SjamayeeFacade.getInstance();
@@ -6396,23 +6380,13 @@ var Sjamayee = new Class({
   },
   initializeChildren: function() {
     //this.parent();
-    /*this.top = new TopPane();
+    this.top = new TopPane();
     this.addChild(this.top);
     this.bottom = new BottomPane();
-    this.addChild(this.bottom);*/
-    this.header = new Header();
-    this.addChild(this.header);
-    this.dataObjectsPane = new DataObjectsPane();
-    this.addChild(this.dataObjectsPane);
-    this.dataRelationsPane = new DataRelationsPane();
-    this.addChild(this.dataRelationsPane);
-    this.modelObjectsPane = new ModelObjectsPane();
-    this.addChild(this.modelObjectsPane);
-    this.modelRelationsPane = new ModelRelationsPane();
-    this.addChild(this.modelRelationsPane);
+    this.addChild(this.bottom);
   },
   initializationComplete: function() {
-    /*this.vsplitter = new Splitter($(Sjamayee.FORM), {
+    this.vsplitter = new Splitter($(Sjamayee.FORM), {
       //'id':'splitTopBottom',
       'handleWidth':5,
       'handleColor':'red', //'inherit', //'yellow', //'inherit',
@@ -6440,7 +6414,8 @@ var Sjamayee = new Class({
       'maximumSize':'100%', //'897px', //(925-28)
       'initialSize':'100%', //'497px', //'50%',
       'opaqueResize':1});
-    this.vsplitter.resize();*/
+    this.vsplitter.resize();
+    
     //STARTUP !!!
     this.facade.startup(this);    
   }
@@ -6465,7 +6440,7 @@ var SjamayeeUIComponent = new Class({
     }
   }
 });
-/*
+
 //Class: TopPane
 var TopPane = new Class({
   Extends: SjamayeeUIComponent,
@@ -6483,268 +6458,6 @@ var TopPane = new Class({
   }
 });
 TopPane.ID = "topPane";
-*/
-//Class: DataObjectsPane
-var DataObjectsPane = new Class({
-  Extends: SjamayeeUIComponent,
-  initialize: function(properties) {
-    this.list = null;
-    this.bottom = null;
-    this.parent(DataObjectsPane.ID);
-  },
-  initializeChildren: function() {
-    this.list = new DataObjectsList();
-    this.addChild(this.list);
-    this.bottom = new DataObjectsBottomPane();
-    this.addChild(this.bottom);
-  },
-  initializationComplete: function() {
-    this.vsplitter = new Splitter($(DataObjectsPane.ID), {
-      'handleWidth':0,
-      'handleColor':DataDetailMediator.BACKGROUND_HIGHLITE_COLOR, //'inherit', //'yellow', //'inherit',
-      'handleBorder':'none',
-      'orientation':1,
-      'minimumSize':'100%',
-      'maximumSize':'100%',
-      'initialSize':'100%',
-      'opaqueResize':1});	
-		this.vsplitter.addWidget($(DataObjectsList.ID), {
-      'handleWidth':5,
-      'orientation':1,
-      'minimumSize':'10%',
-      'maximumSize':'100%',
-      'initialSize':'100%',
-      'opaqueResize':1});
-		this.vsplitter.addWidget($(DataObjectsBottomPane.ID), {
-      'handleWidth':5,
-      //'handleColor':'red', //'inherit', //'yellow', //'inherit',
-      'orientation':1,
-      'minimumSize':'10%',
-      'maximumSize':'100%',
-      'initialSize':'100%',
-      'opaqueResize':1});    
-    this.vsplitter.resize();
-  }
-});
-DataObjectsPane.ID = "dataObjects";
-
-//Class: DataObjectsBottomPane
-var DataObjectsBottomPane = new Class({
-  Extends: SjamayeeUIComponent,
-  initialize: function(properties) {
-    this.toolBar = null;
-    this.detail = null;
-    this.parent(DataObjectsBottomPane.ID);
-  },
-  initializeChildren: function() {
-    this.toolBar = new ToolBar(ToolBar.DATA_OBJECTS_ID);
-    this.addChild(this.toolBar);
-    this.detail = new Detail(Detail.DATA_OBJECTS_ID);
-    this.addChild(this.detail);
-  },
-});
-DataObjectsBottomPane.ID = "dataObjectsBottom";
-
-//Class: ModelObjectsPane
-var ModelObjectsPane = new Class({
-  Extends: SjamayeeUIComponent,
-  initialize: function(properties) {
-    this.list = null;
-    this.bottom = null;
-    //this.toolBar = null;
-    //this.detail = null;
-    this.parent(ModelObjectsPane.ID);
-  },
-  initializeChildren: function() {
-    this.list = new ModelObjectsList();
-    this.addChild(this.list);
-    this.bottom = new ModelObjectsBottomPane();
-    this.addChild(this.bottom);
-    /*this.toolBar = new ToolBar();
-    this.addChild(this.toolBar);
-    this.detail = new Detail(); //ModelObjectsDetail();
-    this.addChild(this.detail);*/
-  },
-  initializationComplete: function() {
-    this.vsplitter = new Splitter($(ModelObjectsPane.ID), {
-      'handleWidth':0,
-      'handleColor':ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR, //'inherit', //'yellow', //'inherit',
-      'handleBorder':'none',
-      'orientation':1,
-      'minimumSize':'100%',
-      'maximumSize':'100%',
-      'initialSize':'100%',
-      'opaqueResize':1});	
-		this.vsplitter.addWidget($(ModelObjectsList.ID), {
-      'handleWidth':5,
-      'orientation':1,
-      'minimumSize':'10%',
-      'maximumSize':'100%',
-      'initialSize':'100%',
-      'opaqueResize':1});
-		this.vsplitter.addWidget($(ModelObjectsBottomPane.ID), {
-      'handleWidth':5,
-      //'handleColor':'red', //'inherit', //'yellow', //'inherit',
-      'orientation':1,
-      'minimumSize':'10%',
-      'maximumSize':'100%',
-      'initialSize':'100%',
-      'opaqueResize':1});    
-    this.vsplitter.resize();
-  }  
-});
-ModelObjectsPane.ID = "modelObjects";
-
-//Class: ModelObjectsBottomPane
-var ModelObjectsBottomPane = new Class({
-  Extends: SjamayeeUIComponent,
-  initialize: function(properties) {
-    this.toolBar = null;
-    this.detail = null;
-    this.parent(ModelObjectsBottomPane.ID);
-  },
-  initializeChildren: function() {
-    this.toolBar = new ToolBar(ToolBar.MODEL_OBJECTS_ID);
-    this.addChild(this.toolBar);
-    this.detail = new Detail(Detail.MODEL_OBJECTS_ID);
-    this.addChild(this.detail);
-  },
-});
-ModelObjectsBottomPane.ID = "modelObjectsBottom";
-
-//Class: DataRelationsPane
-var DataRelationsPane = new Class({
-  Extends: SjamayeeUIComponent,
-  initialize: function(properties) {
-    this.grid = null;
-    //this.toolBar = null;
-    //this.detail = null;
-    this.bottom = null;
-    this.parent(DataRelationsPane.ID);
-  },
-  initializeChildren: function() {
-    this.grid = new DataRelationsGrid();
-    this.addChild(this.grid);
-    this.bottom = new DataRelationsBottomPane();
-    this.addChild(this.bottom);
-    /*this.toolBar = new ToolBar();
-    this.addChild(this.toolBar);
-    this.detail = new Detail(); //DataObjectsDetail();
-    this.addChild(this.detail);*/
-  },
-  initializationComplete: function() {
-    this.vsplitter = new Splitter($(DataRelationsPane.ID), {
-      'handleWidth':0,
-      'handleColor':DataDetailMediator.BACKGROUND_HIGHLITE_COLOR, //'inherit', //'yellow', //'inherit',
-      'handleBorder':'none',
-      'orientation':1,
-      'minimumSize':'100%',
-      'maximumSize':'100%',
-      'initialSize':'100%',
-      'opaqueResize':1});	
-		this.vsplitter.addWidget($(DataRelationsGrid.ID), {
-      'handleWidth':5,
-      'orientation':1,
-      'minimumSize':'10%',
-      'maximumSize':'100%',
-      'initialSize':'100%',
-      'opaqueResize':1});
-		this.vsplitter.addWidget($(DataRelationsBottomPane.ID), {
-      'handleWidth':5,
-      //'handleColor':'red', //'inherit', //'yellow', //'inherit',
-      'orientation':1,
-      'minimumSize':'10%',
-      'maximumSize':'100%',
-      'initialSize':'100%',
-      'opaqueResize':1});    
-    this.vsplitter.resize();
-  }
-});
-DataRelationsPane.ID = "dataRelations";
-
-//Class: DataRelationsBottomPane
-var DataRelationsBottomPane = new Class({
-  Extends: SjamayeeUIComponent,
-  initialize: function(properties) {
-    this.toolBar = null;
-    this.detail = null;
-    this.parent(DataRelationsBottomPane.ID);
-  },
-  initializeChildren: function() {
-    this.toolBar = new ToolBar(ToolBar.DATA_RELATIONS_ID);
-    this.addChild(this.toolBar);
-    this.detail = new Detail(Detail.DATA_RELATIONS_ID);
-    this.addChild(this.detail);
-  },
-});
-DataRelationsBottomPane.ID = "dataRelationsBottom";
-
-//Class: ModelRelationsPane
-var ModelRelationsPane = new Class({
-  Extends: SjamayeeUIComponent,
-  initialize: function(properties) {
-    this.grid = null;
-    //this.toolBar = null;
-    //this.detail = null;
-    this.bottom = null;
-    this.parent(ModelRelationsPane.ID);
-  },
-  initializeChildren: function() {
-    this.grid = new ModelRelationsGrid();
-    this.addChild(this.grid);
-    this.bottom = new ModelRelationsBottomPane();
-    this.addChild(this.bottom);
-    /*this.toolBar = new ToolBar();
-    this.addChild(this.toolBar);
-    this.detail = new Detail(); //DataObjectsDetail();
-    this.addChild(this.detail);*/
-  },
-  initializationComplete: function() {
-    this.vsplitter = new Splitter($(ModelRelationsPane.ID), {
-      'handleWidth':0,
-      'handleColor':ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR, //'inherit', //'yellow', //'inherit',
-      'handleBorder':'none',
-      'orientation':1,
-      'minimumSize':'100%',
-      'maximumSize':'100%',
-      'initialSize':'100%',
-      'opaqueResize':1});	
-		this.vsplitter.addWidget($(ModelRelationsGrid.ID), {
-      'handleWidth':5,
-      'orientation':1,
-      'minimumSize':'10%',
-      'maximumSize':'100%',
-      'initialSize':'100%',
-      'opaqueResize':1});
-		this.vsplitter.addWidget($(ModelRelationsBottomPane.ID), {
-      'handleWidth':5,
-      //'handleColor':'red', //'inherit', //'yellow', //'inherit',
-      'orientation':1,
-      'minimumSize':'10%',
-      'maximumSize':'100%',
-      'initialSize':'100%',
-      'opaqueResize':1});    
-    this.vsplitter.resize();
-  }
-});
-ModelRelationsPane.ID = "modelRelations";
-
-//Class: ModelRelationsBottomPane
-var ModelRelationsBottomPane = new Class({
-  Extends: SjamayeeUIComponent,
-  initialize: function(properties) {
-    this.toolBar = null;
-    this.detail = null;
-    this.parent(ModelRelationsBottomPane.ID);
-  },
-  initializeChildren: function() {
-    this.toolBar = new ToolBar(ToolBar.MODEL_RELATIONS_ID);
-    this.addChild(this.toolBar);
-    this.detail = new Detail(Detail.MODEL_RELATIONS_ID);
-    this.addChild(this.detail);
-  },
-});
-ModelRelationsBottomPane.ID = "modelRelationsBottom";
 
 //Class: Header
 var Header = new Class({
@@ -7550,7 +7263,7 @@ var TextsEditorUIComponent = new Class({
   initialize: function(name,properties) {
     var textEditorId = name+TextsEditorUIComponent.COMPONENT_ID;
     var html = '<div id="'+name+'" style="width:100%;height:100%;">'+
-               '<div id="'+name+TextsEditorUIComponent.LEFT_PANE_ID+'" style="position:relative;float:left;width:35%;height:100%;background-color:#FAE4DB;text-align:center;">'+
+               '<div id="'+name+TextsEditorUIComponent.LEFT_PANE_ID+'" style="position:relative;float:left;width:35%;height:100%;background-color:#FF887A;text-align:center;">'+
                '<br/><br/><h2>MODEL TEXT EDITOR</h2><br/><br/>';
     if (name == ModelRelationsTextsEditor.ID) {
       html += '<button id="'+name+TextsEditorUIComponent.RELATION_TEXT_BUTTON_ID+'" class="'+TextsEditorUIComponent.BUTTON_CLASS_ID+'">'+TextsEditorUIComponent.RELATION_TEXT_BUTTON_VALUE+'</button>'+
@@ -7750,7 +7463,7 @@ var ModelObjectsTextsEditor = new Class({
     this.textarea = $(textEditorId);
   },
   /*buildHtml: function() {
-    //var result = '<div style="position:relative;float:left;width:100%;height:100%;background-color:#FAE4DB;text-align:center;">'+
+    //var result = '<div style="position:relative;float:left;width:100%;height:100%;background-color:#FF887A;text-align:center;">'+
     //var result = '<div style="position:relative;float:left;width:100%;height:100%;background:inherit">'+
     //           '<br/><br/><h2>'+ModelObjectsTextsEditorLeft.LABEL+'</h2><br/><br/>'+
     //           '</div>';
@@ -7875,7 +7588,7 @@ var ModelRelationsTextsEditor = new Class({
   },
   /*buildHtml: function() {
     var name = ModelRelationsTextsEditor.ID;
-    //var result = '<div style="position:relative;float:left;width:100%;height:100%;background-color:#FAE4DB;text-align:center;">'+
+    //var result = '<div style="position:relative;float:left;width:100%;height:100%;background-color:#FF887A;text-align:center;">'+
     var result = '<br/><br/><h2>'+ModelRelationsTextsEditor.LABEL+'</h2><br/><br/>'+
                  '<button id="'+name+ModelRelationsTextsEditor.RELATION_TEXT_BUTTON_ID+'" class="'+TextsEditor.BUTTON_CLASS_ID+'">'+ModelRelationsTextsEditor.RELATION_TEXT_BUTTON_VALUE+'</button>'+
                  '<br/><br/>'+
@@ -8500,7 +8213,7 @@ var ModelRelationsGrid = new Class({
   }
 });
 ModelRelationsGrid.ID = "modelRelationsGrid";
-/*
+
 //Class: BottomPane
 var BottomPane = new Class({
   Extends: SjamayeeUIComponent,
@@ -8518,7 +8231,7 @@ var BottomPane = new Class({
   },
 });
 BottomPane.ID = "bottomPane";
-*/
+
 //Class: ToolBar
 var ToolBar = new Class({
   Extends: SjamayeeUIComponent,
@@ -8535,54 +8248,24 @@ var ToolBar = new Class({
               '<div id="'+ModelRelationsTextsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>';
     }*/
 
-    //var html = '<div id="'+DataObjectsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>'+
-    //           '<div id="'+DataRelationsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>';
-    
-    this.name = (name)?name:ToolBar.ID;
-    var html = '';
-    switch (this.name) {
-      case ToolBar.DATA_OBJECTS_ID:
-      html += '<div id="'+DataObjectsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>';
-      break;
-      case ToolBar.DATA_RELATIONS_ID:
-      html += '<div id="'+DataRelationsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>';
-      break;
-      case ToolBar.MODEL_OBJECTS_ID:
+    var html = '<div id="'+DataObjectsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>'+
+               '<div id="'+DataRelationsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>';
+    if (SjamayeeFacade.APPLICATION_TYPE == SjamayeeFacade.COMPOSER) {               
       html += '<div id="'+ModelObjectsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>'+
-              '<div id="'+ModelObjectsTextsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>';
-      break;
-      case ToolBar.MODEL_RELATIONS_ID:
-      html += '<div id="'+ModelRelationsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>'; /*+
-              '<div id="'+ModelRelationsTextsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>';*/
-      break;
-    }
-
-    /*if (SjamayeeFacade.APPLICATION_TYPE == SjamayeeFacade.COMPOSER) {               
-      **html += '<div id="'+ModelObjectsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>'+
               '<div id="'+ModelRelationsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>'+
               '<div id="'+ModelObjectsTextsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>'+
-              '<div id="'+ModelRelationsTextsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>';**
-      switch (this.name) {
-        case ToolBar.MODEL_OBJECTS_ID:
-        html += '<div id="'+ModelObjectsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>'+
-                '<div id="'+ModelObjectsTextsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>';
-        break;
-        case ToolBar.MODEL_RELATIONS_ID:
-        html += '<div id="'+ModelRelationsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>'+
-                '<div id="'+ModelRelationsTextsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>';
-        break;
-      }      
-    }*/
-    this.parent(this.name,{html: html});
+              '<div id="'+ModelRelationsTextsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>';
+    }
+    this.parent(ToolBar.ID,{html: html});
     this.dataObjectsToolBar = null;
     this.dataRelationsToolBar = null;
     this.modelObjectsToolBar = null;
-    this.modelObjectsTextsToolBar = null;
     this.modelRelationsToolBar = null;
+    this.modelObjectsTextsToolBar = null;
     this.modelRelationsTextsToolBar = null;
   },
   initializeChildren: function() {
-  /*this.dataObjectsToolBar = new DataObjectsToolBar();
+    this.dataObjectsToolBar = new DataObjectsToolBar();
     this.addChild(this.dataObjectsToolBar);
     this.dataRelationsToolBar = new DataRelationsToolBar();
     this.addChild(this.dataRelationsToolBar);
@@ -8595,52 +8278,10 @@ var ToolBar = new Class({
       this.addChild(this.modelObjectsTextsToolBar);
       this.modelRelationsTextsToolBar = new ModelRelationsTextsToolBar();
       this.addChild(this.modelRelationsTextsToolBar);
-    }*/
-    switch (this.name) {
-      case ToolBar.DATA_OBJECTS_ID:
-      this.dataObjectsToolBar = new DataObjectsToolBar();
-      this.addChild(this.dataObjectsToolBar);
-      break;
-      case ToolBar.DATA_RELATIONS_ID:
-      this.dataRelationsToolBar = new DataRelationsToolBar();
-      this.addChild(this.dataRelationsToolBar);
-      break;
-      case ToolBar.MODEL_OBJECTS_ID:
-      this.modelObjectsToolBar = new ModelObjectsToolBar();
-      this.addChild(this.modelObjectsToolBar);
-      this.modelObjectsTextsToolBar = new ModelObjectsTextsToolBar();
-      this.addChild(this.modelObjectsTextsToolBar);
-      break;
-      case ToolBar.MODEL_RELATIONS_ID:
-      this.modelRelationsToolBar = new ModelRelationsToolBar();
-      this.addChild(this.modelRelationsToolBar);    
-      //this.modelRelationsTextsToolBar = new ModelRelationsTextsToolBar();
-      //this.addChild(this.modelRelationsTextsToolBar);
-      break;
     }
-    /*if (SjamayeeFacade.APPLICATION_TYPE == SjamayeeFacade.COMPOSER) {   
-      switch (this.name) {
-        case ToolBar.MODEL_OBJECTS_ID:
-        this.modelObjectsToolBar = new ModelObjectsToolBar();
-        this.addChild(this.modelObjectsToolBar);
-        this.modelObjectsTextsToolBar = new ModelObjectsTextsToolBar();
-        this.addChild(this.modelObjectsTextsToolBar);
-        break;
-        case ToolBar.MODEL_RELATIONS_ID:
-        this.modelRelationsToolBar = new ModelRelationsToolBar();
-        this.addChild(this.modelRelationsToolBar);    
-        this.modelRelationsTextsToolBar = new ModelRelationsTextsToolBar();
-        this.addChild(this.modelRelationsTextsToolBar);
-        break;
-      }
-    }*/
   }
 });
 ToolBar.ID = "toolBarPane";
-ToolBar.DATA_OBJECTS_ID = "dataObjectsToolBar";
-ToolBar.DATA_RELATIONS_ID = "dataRelationsToolBar";
-ToolBar.MODEL_OBJECTS_ID = "modelObjectsToolBar";
-ToolBar.MODEL_RELATIONS_ID = "modelRelationsToolBar";
 ToolBar.CLASS_ID = "toolBar";
 ToolBar.SPECIAL_ID = "Special";
 ToolBar.COMMON_ID = "Common";
@@ -9128,45 +8769,25 @@ TextsToolBar.CANCEL_BUTTON_VALUE = "Cancel";
 //Class: Detail
 var Detail = new Class({
   Extends: SjamayeeUIComponent,
-  initialize: function(name,properties) {
-  //var html = '<div id="'+DetailLeft.ID+'" style="width:100%;height:100%;background-color:inherit;"></div>'+
-  //           '<div id="'+DetailRight.ID+'" style="width:100%;height:100%;background-color:inherit;"></div>';
-    this.name = (name)?name:Detail.ID;
-    var html = '';
-    switch (this.name) {
-      case Detail.DATA_OBJECTS_ID:
-      html += '<div id="'+DetailLeft.DATA_OBJECTS_ID+'" style="width:100%;height:100%;background-color:inherit;"></div>'+
-              '<div id="'+DetailRight.DATA_OBJECTS_ID+'" style="width:100%;height:100%;background-color:inherit;"></div>';
-      break;
-      case Detail.DATA_RELATIONS_ID:
-      html += '<div id="'+DetailLeft.DATA_RELATIONS_ID+'" style="width:100%;height:100%;background-color:inherit;"></div>'+
-              '<div id="'+DetailRight.DATA_RELATIONS_ID+'" style="width:100%;height:100%;background-color:inherit;"></div>';
-      break;
-      case Detail.MODEL_OBJECTS_ID:
-      html += '<div id="'+DetailLeft.MODEL_OBJECTS_ID+'" style="width:100%;height:100%;background-color:inherit;"></div>'+
-              '<div id="'+DetailRight.MODEL_OBJECTS_ID+'" style="width:100%;height:100%;background-color:inherit;"></div>';
-      break;
-      case Detail.MODEL_RELATIONS_ID:
-      html += '<div id="'+DetailLeft.MODEL_RELATIONS_ID+'" style="width:100%;height:100%;background-color:inherit;"></div>'+
-              '<div id="'+DetailRight.MODEL_RELATIONS_ID+'" style="width:100%;height:100%;background-color:inherit;"></div>';
-      break;
-    }
-    this.parent(this.name,{html: html});
+  initialize: function() {
+    var html = '<div id="'+DetailLeft.ID+'" style="width:100%;height:100%;background-color:inherit;"></div>'+
+               '<div id="'+DetailRight.ID+'" style="width:100%;height:100%;background-color:inherit;"></div>';
+    this.parent(Detail.ID,{html: html});
     this.left = null;
     this.right = null;
     this.detail_blurHandler = this.detail_blurHandler.bindWithEvent(this);
   },
   initializeChildren: function() {
-    this.left = new DetailLeft(this.name+'Left');
+    this.left = new DetailLeft();
     this.addChild(this.left);
-    this.right = new DetailRight(this.name+'Right');
+    this.right = new DetailRight();   
     this.addChild(this.right);
   },  
   childrenInitialized: function() {
     this.addEvent(SjamayeeFacade.BLUR, this.detail_blurHandler);
   },
   initializationComplete: function() {
-    this.hsplitter = new Splitter($(this.name), {
+    this.hsplitter = new Splitter($(Detail.ID), {
       'handleWidth':5,
       'handleColor':'inherit', //'white', //'red', //'inherit',
       'handleBorder':'none',
@@ -9175,7 +8796,7 @@ var Detail = new Class({
       'maximumSize':'100%',
       'initialSize':'100%',
       'opaqueResize':1});		
-  	this.hsplitter.addWidget($(this.name+'Left'), {
+  	this.hsplitter.addWidget($(DetailLeft.ID), {
       'handleWidth':0,
       //'handleColor':'black', //'inherit',
       //'handleBorder':'none', //'0px solid red',
@@ -9184,7 +8805,7 @@ var Detail = new Class({
       'maximumSize':'100%',
       'initialSize':'100%', //'200px';
       'opaqueResize':1});
-  	this.hsplitter.addWidget($(this.name+'Right'), {
+  	this.hsplitter.addWidget($(DetailRight.ID), {
       'handleWidth':5,
       //'handleColor':'black', //'inherit',
       //'handleBorder':'none', //'0px solid red',
@@ -9193,17 +8814,8 @@ var Detail = new Class({
       'maximumSize':'100%',
       'initialSize':'100%', //'400px';
       'opaqueResize':1});
-    //this.hsplitter.setHandleColor('red');
-    switch (this.name) {
-      case Detail.DATA_OBJECTS_ID:
-      case Detail.DATA_RELATIONS_ID:
-      this.hsplitter.setHandleColor(DataDetailMediator.BACKGROUND_HIGHLITE_COLOR);
-      break;
-      case Detail.MODEL_OBJECTS_ID:
-      case Detail.MODEL_RELATIONS_ID:
-      this.hsplitter.setHandleColor(ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR);
-      break;
-    }
+
+    this.hsplitter.setHandleColor('black');
     this.hsplitter.resize();
   },  
   detail_blurHandler: function()  {
@@ -9211,44 +8823,27 @@ var Detail = new Class({
   }
 });
 Detail.ID = "detailPane";
-Detail.DATA_OBJECTS_ID = "dataObjectsDetail";
-Detail.DATA_RELATIONS_ID = "dataRelationsDetail";
-Detail.MODEL_OBJECTS_ID = "modelObjectsDetail";
-Detail.MODEL_RELATIONS_ID = "modelRelationsDetail";
 Detail.NORMAL_SIZE = 0.50; /*1.00;*/ /*217;*/
 
 //Class: DetailLeft
 var DetailLeft = new Class({
   Extends: SjamayeeUIComponent,
-  initialize: function(name,properties) {
-   /*var html = '<div id="'+DataObjectNTD.ID+'" class="'+ObjectNTD.CLASS_ID+'"></div>'+
+  initialize: function() {
+   	var html = '<div id="'+DataObjectNTD.ID+'" class="'+ObjectNTD.CLASS_ID+'"></div>'+
                '<div id="'+DataParentDetail.ID+'" class="'+ParentDetail.CLASS_ID+'"></div>'+
                '<div id="'+ModelObjectNTD.ID+'" class="'+ObjectNTD.CLASS_ID+'"></div>'+
-               '<div id="'+ModelParentDetail.ID+'" class="'+ParentDetail.CLASS_ID+'"></div>';*/
-    this.name = (name)?name:DetailLeft.ID;
-    var html = '';
-    switch (this.name) {
-      case DetailLeft.DATA_OBJECTS_ID:
-      html = '<div id="'+DataObjectNTD.ID+'" class="'+ObjectNTD.CLASS_ID+'"></div>';
-      break;
-      case DetailLeft.DATA_RELATIONS_ID:
-      html = '<div id="'+DataParentDetail.ID+'" class="'+ParentDetail.CLASS_ID+'"></div>';
-      break;
-      case DetailLeft.MODEL_OBJECTS_ID:
-      html = '<div id="'+ModelObjectNTD.ID+'" class="'+ObjectNTD.CLASS_ID+'"></div>';
-      break;
-      case DetailLeft.MODEL_RELATIONS_ID:
-      html = '<div id="'+ModelParentDetail.ID+'" class="'+ParentDetail.CLASS_ID+'"></div>';
-      break;
-    }    
-    this.parent(this.name, {html: html});
+               '<div id="'+ModelParentDetail.ID+'" class="'+ParentDetail.CLASS_ID+'"></div>';
+    this.parent(DetailLeft.ID, {html: html});
     this.dataObjectNTD = null;
     this.dataParentDetail = null;
     this.modelObjectNTD = null;
     this.modelParentDetail = null;
+
+    this.dataSplitterSize = null;
+    this.modelSplitterSize = null;
   },
   initializeChildren: function() {
-  /*//alert("DetailLeft/initializeChildren");
+    //alert("DetailLeft/initializeChildren");
     this.dataObjectNTD = new DataObjectNTD();
     this.addChild(this.dataObjectNTD);
     this.dataParentDetail = new DataParentDetail();
@@ -9256,65 +8851,27 @@ var DetailLeft = new Class({
     this.modelObjectNTD = new ModelObjectNTD();
     this.addChild(this.modelObjectNTD);
     this.modelParentDetail = new ModelParentDetail();
-    this.addChild(this.modelParentDetail);*/
-    switch (this.name) {
-      case DetailLeft.DATA_OBJECTS_ID:
-      this.dataObjectNTD = new DataObjectNTD();
-      this.addChild(this.dataObjectNTD);
-      break;
-      case DetailLeft.DATA_RELATIONS_ID:
-      this.dataParentDetail = new DataParentDetail();
-      this.addChild(this.dataParentDetail);
-      break;
-      case DetailLeft.MODEL_OBJECTS_ID:
-      this.modelObjectNTD = new ModelObjectNTD();
-      this.addChild(this.modelObjectNTD);
-      break;
-      case DetailLeft.MODEL_RELATIONS_ID:
-      this.modelParentDetail = new ModelParentDetail();
-      this.addChild(this.modelParentDetail);
-      break;
-    }
+    this.addChild(this.modelParentDetail);
   }
 });
 DetailLeft.ID = "detailPaneLeft";
-DetailLeft.DATA_OBJECTS_ID = "dataObjectsDetailLeft";
-DetailLeft.DATA_RELATIONS_ID = "dataRelationsDetailLeft";
-DetailLeft.MODEL_OBJECTS_ID = "modelObjectsDetailLeft";
-DetailLeft.MODEL_RELATIONS_ID = "modelRelationsDetailLeft";
 
 //Class: DetailRight
 var DetailRight = new Class({
   Extends: SjamayeeUIComponent,
-  initialize: function(name,properties) {
-   	/*var html = '<div id="'+DataObjectProperties.ID+'" class="'+ObjectProperties.CLASS_ID+'"></div>'+
+  initialize: function() {
+   	var html = '<div id="'+DataObjectProperties.ID+'" class="'+ObjectProperties.CLASS_ID+'"></div>'+
                '<div id="'+DataChildDetail.ID+'" class="'+ChildDetail.CLASS_ID+'"></div>'+
                '<div id="'+ModelObjectProperties.ID+'" class="'+ObjectProperties.CLASS_ID+'"></div>'+
-               '<div id="'+ModelChildDetail.ID+'" class="'+ChildDetail.CLASS_ID+'"></div>';*/
-    this.name = (name)?name:DetailRight.ID;
-    var html = '';
-    switch (this.name) {
-      case DetailRight.DATA_OBJECTS_ID:
-     	html = '<div id="'+DataObjectProperties.ID+'" class="'+ObjectProperties.CLASS_ID+'"></div>';
-      break;
-      case DetailRight.DATA_RELATIONS_ID:
-     	html = '<div id="'+DataChildDetail.ID+'" class="'+ChildDetail.CLASS_ID+'"></div>';
-      break;
-      case DetailRight.MODEL_OBJECTS_ID:
-     	html = '<div id="'+ModelObjectProperties.ID+'" class="'+ObjectProperties.CLASS_ID+'"></div>';
-      break;
-      case DetailRight.MODEL_RELATIONS_ID:
-     	html = '<div id="'+ModelChildDetail.ID+'" class="'+ChildDetail.CLASS_ID+'"></div>';
-      break;
-    }    
-    this.parent(this.name, {html: html});
+               '<div id="'+ModelChildDetail.ID+'" class="'+ChildDetail.CLASS_ID+'"></div>';
+    this.parent(DetailRight.ID, {html: html});
     this.dataObjectProperties = null;
     this.dataChildDetail = null;
     this.modelObjectProperties = null;
     this.modelChildDetail = null;
   },
   initializeChildren: function() {
-  /*//alert("DetailRight/initializeChildren");
+  //alert("DetailRight/initializeChildren");
     this.dataObjectProperties = new DataObjectProperties();
     this.addChild(this.dataObjectProperties);
     this.dataChildDetail = new DataChildDetail();
@@ -9322,32 +8879,10 @@ var DetailRight = new Class({
     this.modelObjectProperties = new ModelObjectProperties();
     this.addChild(this.modelObjectProperties);
     this.modelChildDetail = new ModelChildDetail();
-    this.addChild(this.modelChildDetail);*/
-    switch (this.name) {
-      case DetailRight.DATA_OBJECTS_ID:
-      this.dataObjectProperties = new DataObjectProperties();
-      this.addChild(this.dataObjectProperties);
-      break;
-      case DetailRight.DATA_RELATIONS_ID:
-      this.dataChildDetail = new DataChildDetail();
-      this.addChild(this.dataChildDetail);
-      break;
-      case DetailRight.MODEL_OBJECTS_ID:
-      this.modelObjectProperties = new ModelObjectProperties();
-      this.addChild(this.modelObjectProperties);
-      break;
-      case DetailRight.MODEL_RELATIONS_ID:
-      this.modelChildDetail = new ModelChildDetail();
-      this.addChild(this.modelChildDetail);
-      break;
-    }
+    this.addChild(this.modelChildDetail);
   }
 });
 DetailRight.ID = "detailPaneRight";
-DetailRight.DATA_OBJECTS_ID = "dataObjectsDetailRight";
-DetailRight.DATA_RELATIONS_ID = "dataRelationsDetailRight";
-DetailRight.MODEL_OBJECTS_ID = "modelObjectsDetailRight";
-DetailRight.MODEL_RELATIONS_ID = "modelRelationsDetailRight";
 
 //Abstract
 //Class: DetailNTD
@@ -10301,150 +9836,6 @@ var HeaderMediator = new Class({
 HeaderMediator.ID = "HeaderMediator";
 
 //Abstract
-//Class: ListGridMediator
-var ListGridMediator = new Class({
-  Extends: SjamayeeMediator,
-  initialize: function(name,viewComponent)  {
-    this.parent(name,viewComponent);
-  },
-  hide: function() {
-    var app = this.facade.getApplication();
-    app.dataObjectsPane.setAttribute("style","display:none;");
-    app.dataRelationsPane.setAttribute("style","display:none;");
-    app.modelObjectsPane.setAttribute("style","display:none;");
-    app.modelRelationsPane.setAttribute("style","display:none;");
-  }   
-});
-
-//Class: DataObjectsMediator
-var DataObjectsMediator = new Class({
-  Extends: ListGridMediator, //SjamayeeMediator,
-  initialize: function(viewComponent) {
-    this.parent(DataObjectsMediator.ID,viewComponent);
-    var dataObjectsPane = this.getViewComponent();
-    this.facade.registerMediator(new DataObjectsListMediator(dataObjectsPane.list));
-    this.facade.registerMediator(new DataObjectsToolBarMediator(dataObjectsPane.bottom.toolBar.dataObjectsToolBar));
-    //this.facade.registerMediator(new DataObjectsDetailMediator(dataObjectsPane.bottom.detail));
-    this.facade.registerMediator(new DataObjectNTDMediator(dataObjectsPane.bottom.detail.left.dataObjectNTD));
-    this.facade.registerMediator(new DataObjectPropertiesMediator(dataObjectsPane.bottom.detail.right.dataObjectProperties));
-  },
-  listNotificationInterests: function() {
-    var result = this.parent();
-    return result.concat([
-      SjamayeeFacade.OLIST_DATA_SHOW
-    ]);
-  },
-  handleNotification: function(note)  {
-    this.parent(note);
-    var app = this.facade.getApplication();
-    var dataObjectsPane = this.getViewComponent();
-    switch (note.getName()) {
-      case SjamayeeFacade.OLIST_DATA_SHOW:
-      this.hide();
-      dataObjectsPane.setAttribute("style","display:block;");
-      break;
-    }
-  }
-});
-DataObjectsMediator.ID = "dataObjectsMediator";
-
-//Class: DataRelationsMediator
-var DataRelationsMediator = new Class({
-  Extends: ListGridMediator, //SjamayeeMediator,
-  initialize: function(viewComponent) {
-    this.parent(DataRelationsMediator.ID,viewComponent);
-    var dataRelationsPane = this.getViewComponent();
-    this.facade.registerMediator(new DataRelationsGridMediator(dataRelationsPane.grid));
-    this.facade.registerMediator(new DataRelationsToolBarMediator(dataRelationsPane.bottom.toolBar.dataRelationsToolBar));
-    //this.facade.registerMediator(new DataRelationsDetailMediator(dataRelationsPane.bottom.detail));
-    this.facade.registerMediator(new DataParentDetailMediator(dataRelationsPane.bottom.detail));
-    this.facade.registerMediator(new DataChildDetailMediator(dataRelationsPane.bottom.detail));
-  },
-  listNotificationInterests: function() {
-    var result = this.parent();
-    return result.concat([
-      SjamayeeFacade.GRID_DATA_SHOW
-    ]);
-  },
-  handleNotification: function(note)  {
-    this.parent(note);
-    var app = this.facade.getApplication();
-    var dataRelationsPane = this.getViewComponent();
-    switch (note.getName()) {
-      case SjamayeeFacade.GRID_DATA_SHOW:
-      this.hide();
-      dataRelationsPane.setAttribute("style","display:block;");
-      break;
-    }
-  }
-});
-DataRelationsMediator.ID = "dataRelationsMediator";
-
-//Class: ModelObjectsMediator
-var ModelObjectsMediator = new Class({
-  Extends: ListGridMediator, //SjamayeeMediator,
-  initialize: function(viewComponent) {
-    this.parent(ModelObjectsMediator.ID,viewComponent);
-    var modelObjectsPane = this.getViewComponent();
-    this.facade.registerMediator(new ModelObjectsListMediator(modelObjectsPane.list));
-    this.facade.registerMediator(new ModelObjectsToolBarMediator(modelObjectsPane.bottom.toolBar.modelObjectsToolBar));
-    //this.facade.registerMediator(new ModelObjectsDetailMediator(modelObjectsPane.bottom.detail));
-    this.facade.registerMediator(new ModelObjectNTDMediator(modelObjectsPane.bottom.detail.left.modelObjectNTD));
-    this.facade.registerMediator(new ModelObjectPropertiesMediator(modelObjectsPane.bottom.detail.right.modelObjectProperties));
-  },
-  listNotificationInterests: function() {
-    var result = this.parent();
-    return result.concat([
-      SjamayeeFacade.OLIST_MODEL_SHOW
-    ]);
-  },
-  handleNotification: function(note)  {
-    this.parent(note);
-    var app = this.facade.getApplication();
-    var modelObjectsPane = this.getViewComponent();
-    switch (note.getName()) {
-      case SjamayeeFacade.OLIST_MODEL_SHOW:
-      this.hide();
-      modelObjectsPane.setAttribute("style","display:block;");
-      break;
-    }
-  }
-});
-DataObjectsMediator.ID = "dataObjectsMediator";
-
-//Class: ModelRelationsMediator
-var ModelRelationsMediator = new Class({
-  Extends: ListGridMediator, //SjamayeeMediator,
-  initialize: function(viewComponent) {
-    this.parent(ModelRelationsMediator.ID,viewComponent);
-    var modelRelationsPane = this.getViewComponent();
-    this.facade.registerMediator(new ModelRelationsGridMediator(modelRelationsPane.grid));
-    this.facade.registerMediator(new ModelRelationsToolBarMediator(modelRelationsPane.bottom.toolBar.modelRelationsToolBar));
-    //this.facade.registerMediator(new ModelRelationsDetailMediator(modelRelationsPane.bottom.detail));
-    this.facade.registerMediator(new ModelParentDetailMediator(modelRelationsPane.bottom.detail));
-    this.facade.registerMediator(new ModelChildDetailMediator(modelRelationsPane.bottom.detail));
-  },
-  listNotificationInterests: function() {
-    var result = this.parent();
-    return result.concat([
-      SjamayeeFacade.GRID_MODEL_SHOW
-    ]);
-  },
-  handleNotification: function(note)  {
-    this.parent(note);
-    var app = this.facade.getApplication();
-    var modelRelationsPane = this.getViewComponent();
-    switch (note.getName()) {
-      case SjamayeeFacade.GRID_MODEL_SHOW:
-      this.hide();
-      modelRelationsPane.setAttribute("style","display:block;");
-      break;
-    }
-  }
-});
-ModelRelationsMediator.ID = "modelRelationsMediator";
-
-//Abstract
 //Class: ObjectsHeaderMediator
 var ObjectsHeaderMediator = new Class({
   Extends: SjamayeeMediator,
@@ -11070,7 +10461,6 @@ var GridListMediator = new Class({
   initialize: function(name,viewComponent)  {
     this.parent(name,viewComponent);
   },
-/*******************************************************************************************
   hide: function() {
     this.listSize = null;
     //this.objectsListLeftWidth = 300; //null;
@@ -11100,7 +10490,6 @@ var GridListMediator = new Class({
     gridList.modelRelationsTextsEditor.setAttribute("style","display:none;");    
     //this.setSplitterStyle(null); //gridList.gridListSplitter.getAttribute("style"));
   },
-*******************************************************************************************/
 /*setMessageText: function(messageText) {
     if (this.messageText === null) {
       var mediator = null;
@@ -13637,19 +13026,19 @@ var ObjectsToolBarMediator = new Class({
   onEditText: function()            { alert("ObjectsToolBarMediator/onEditText"); },
   onDeleteUnrefObjects: function()  { alert("ObjectsToolBarMediator/onDeleteUnrefObjects"); },
   hide: function() {
-    //var dataObjectsToolBar = this.facade.retrieveMediator(DataObjectsToolBarMediator.ID).getViewComponent();
-    //dataObjectsToolBar.setAttribute("style","display:none;");
-    //var dataRelationsToolBar = this.facade.retrieveMediator(DataRelationsToolBarMediator.ID).getViewComponent();
-    //dataRelationsToolBar.setAttribute("style","display:none;");
+    var dataObjectsToolBar = this.facade.retrieveMediator(DataObjectsToolBarMediator.ID).getViewComponent();
+    dataObjectsToolBar.setAttribute("style","display:none;");
+    var dataRelationsToolBar = this.facade.retrieveMediator(DataRelationsToolBarMediator.ID).getViewComponent();
+    dataRelationsToolBar.setAttribute("style","display:none;");
     if (SjamayeeFacade.APPLICATION_TYPE == SjamayeeFacade.COMPOSER) {
-      //var modelObjectsToolBar = this.facade.retrieveMediator(ModelObjectsToolBarMediator.ID).getViewComponent();
-      //modelObjectsToolBar.setAttribute("style","display:none;");
-      //var modelRelationsToolBar = this.facade.retrieveMediator(ModelRelationsToolBarMediator.ID).getViewComponent();
-      //modelRelationsToolBar.setAttribute("style","display:none;");
-      //var modelObjectsTextsToolBar = this.facade.retrieveMediator(ModelObjectsTextsToolBarMediator.ID).getViewComponent();
-      //modelObjectsTextsToolBar.setAttribute("style","display:none;");
-      //var modelRelationsTextsToolBar = this.facade.retrieveMediator(ModelRelationsTextsToolBarMediator.ID).getViewComponent();
-      //modelRelationsTextsToolBar.setAttribute("style","display:none;");
+      var modelObjectsToolBar = this.facade.retrieveMediator(ModelObjectsToolBarMediator.ID).getViewComponent();
+      modelObjectsToolBar.setAttribute("style","display:none;");
+      var modelRelationsToolBar = this.facade.retrieveMediator(ModelRelationsToolBarMediator.ID).getViewComponent();
+      modelRelationsToolBar.setAttribute("style","display:none;");
+      var modelObjectsTextsToolBar = this.facade.retrieveMediator(ModelObjectsTextsToolBarMediator.ID).getViewComponent();
+      modelObjectsTextsToolBar.setAttribute("style","display:none;");
+      var modelRelationsTextsToolBar = this.facade.retrieveMediator(ModelRelationsTextsToolBarMediator.ID).getViewComponent();
+      modelRelationsTextsToolBar.setAttribute("style","display:none;");
     }
   },
   enableButtons: function() {
@@ -13747,19 +13136,19 @@ var RelationsToolBarMediator = new Class({
   onResetGrid: function()           { alert("RelationsToolBarMediator/onResetGrid"); },
 
   hide: function() {
-    //var dataObjectsToolBar = this.facade.retrieveMediator(DataObjectsToolBarMediator.ID).getViewComponent();
-    //dataObjectsToolBar.setAttribute("style","display:none;");
-    //var dataRelationsToolBar = this.facade.retrieveMediator(DataRelationsToolBarMediator.ID).getViewComponent();
-    //dataRelationsToolBar.setAttribute("style","display:none;");
+    var dataObjectsToolBar = this.facade.retrieveMediator(DataObjectsToolBarMediator.ID).getViewComponent();
+    dataObjectsToolBar.setAttribute("style","display:none;");
+    var dataRelationsToolBar = this.facade.retrieveMediator(DataRelationsToolBarMediator.ID).getViewComponent();
+    dataRelationsToolBar.setAttribute("style","display:none;");
     if (SjamayeeFacade.APPLICATION_TYPE == SjamayeeFacade.COMPOSER) {
-      //var modelObjectsToolBar = this.facade.retrieveMediator(ModelObjectsToolBarMediator.ID).getViewComponent();
-      //modelObjectsToolBar.setAttribute("style","display:none;");
-      //var modelRelationsToolBar = this.facade.retrieveMediator(ModelRelationsToolBarMediator.ID).getViewComponent();
-      //modelRelationsToolBar.setAttribute("style","display:none;");
-      //var modelObjectsTextsToolBar = this.facade.retrieveMediator(ModelObjectsTextsToolBarMediator.ID).getViewComponent();
-      //modelObjectsTextsToolBar.setAttribute("style","display:none;");
-      //var modelRelationsTextsToolBar = this.facade.retrieveMediator(ModelRelationsTextsToolBarMediator.ID).getViewComponent();
-      //modelRelationsTextsToolBar.setAttribute("style","display:none;");
+      var modelObjectsToolBar = this.facade.retrieveMediator(ModelObjectsToolBarMediator.ID).getViewComponent();
+      modelObjectsToolBar.setAttribute("style","display:none;");
+      var modelRelationsToolBar = this.facade.retrieveMediator(ModelRelationsToolBarMediator.ID).getViewComponent();
+      modelRelationsToolBar.setAttribute("style","display:none;");
+      var modelObjectsTextsToolBar = this.facade.retrieveMediator(ModelObjectsTextsToolBarMediator.ID).getViewComponent();
+      modelObjectsTextsToolBar.setAttribute("style","display:none;");
+      var modelRelationsTextsToolBar = this.facade.retrieveMediator(ModelRelationsTextsToolBarMediator.ID).getViewComponent();
+      modelRelationsTextsToolBar.setAttribute("style","display:none;");
     }
   },
   enableButtons: function() {
@@ -13881,10 +13270,10 @@ var DetailMediator = new Class({
       case SjamayeeFacade.OLIST_SHOW:
       this.hide();
       //detail.setAttribute("style","width:100%;height:"+Detail.NORMAL_SIZE+"px;display:block");      
-      if (detail.left.dataObjectNTD)        { detail.left.dataObjectNTD.setHeader(ObjectNTD.HEADER_ID, ObjectNTD.HEADER_VALUE); }
-      if (detail.left.dataObjectNTD)        { detail.left.dataObjectNTD.setAttribute("style","width:100%;height:100%;display:block;"); }
-      if (detail.left.dataObjectProperties) { detail.right.dataObjectProperties.setHeader(ObjectProperties.HEADER_ID, ObjectProperties.HEADER_VALUE); }
-      if (detail.left.dataObjectProperties) { detail.right.dataObjectProperties.setAttribute("style","width:100%;height:100%;display:block;"); }
+      detail.left.dataObjectNTD.setHeader(ObjectNTD.HEADER_ID, ObjectNTD.HEADER_VALUE);      
+      detail.left.modelObjectNTD.setAttribute("style","width:100%;height:100%;display:block;");
+      detail.right.dataObjectProperties.setHeader(ObjectProperties.HEADER_ID, ObjectProperties.HEADER_VALUE);
+      detail.right.modelObjectProperties.setAttribute("style","width:100%;height:100%;display:block;");
       //var objectPropertiesMediator = this.facade.retrieveMediator(ObjectPropertiesMediator.ID);
       //objectPropertiesMediator.setType(AttributeListMediator.TYPE_OBJECT);
       break;
@@ -13907,10 +13296,10 @@ var DetailMediator = new Class({
       detail.hsplitter = null;
       //this.setState(DetailMediator.STATE_PARENT);
       this.hide();
-      if (detail.left.dataObjectNTD)        { detail.left.dataObjectNTD.setHeader(ObjectNTD.HEADER_ID, ParentNTD.HEADER_VALUE); }
-      if (detail.left.dataObjectNTD)        { detail.left.dataObjectNTD.setAttribute("style","width:100%;height:100%;display:block;"); }
-      if (detail.left.dataObjectProperties) { detail.right.dataObjectProperties.setHeader(ObjectProperties.HEADER_ID, ParentProperties.HEADER_VALUE); }
-      if (detail.left.dataObjectProperties) { detail.right.dataObjectProperties.setAttribute("style","width:100%;height:100%;display:block;"); }
+      detail.left.dataObjectNTD.setHeader(ObjectNTD.HEADER_ID, ParentNTD.HEADER_VALUE);
+      detail.left.dataObjectNTD.setAttribute("style","width:100%;height:100%;display:block;");
+      detail.right.dataObjectProperties.setHeader(ObjectProperties.HEADER_ID, ParentProperties.HEADER_VALUE);
+      detail.right.dataObjectProperties.setAttribute("style","width:100%;height:100%;display:block;");
       /*var objectPropertiesMediator = this.facade.retrieveMediator(DataObjectPropertiesMediator.ID);
       objectPropertiesMediator.setType(AttributeListMediator.TYPE_PARENT);
       this.sendNotification(SjamayeeFacade.OBJECT_ATTRIBUTE_LIST_ACTIVATE);
@@ -13920,8 +13309,8 @@ var DetailMediator = new Class({
       case SjamayeeFacade.GRID_PARENTANDCHILD_SHOW:
       this.setState(DetailMediator.STATE_PARENT_CHILD);
       this.hide();
-      if (detail.left.dataParentDetail) { detail.left.dataParentDetail.setAttribute("style","width:100%;height:100%;display:block;"); }
-      if (detail.right.dataChildDetail) { detail.right.dataChildDetail.setAttribute("style","width:100%;height:100%;display:block;"); }
+      detail.left.dataParentDetail.setAttribute("style","width:100%;height:100%;display:block;");
+      detail.right.dataChildDetail.setAttribute("style","width:100%;height:100%;display:block;");
       this.sendNotification(SjamayeeFacade.PARENT_DETAIL);
       this.sendNotification(SjamayeeFacade.CHILD_DETAIL);
       //this.facade.setMessageText("Parent & Child detail.");
@@ -13930,10 +13319,10 @@ var DetailMediator = new Class({
       detail.hsplitter = null;
       //this.setState(DetailMediator.STATE_CHILD);
       this.hide();
-      if (detail.left.dataObjectNTD)         { detail.left.dataObjectNTD.setHeader(ObjectNTD.HEADER_ID, ChildNTD.HEADER_VALUE); }
-      if (detail.left.dataObjectNTD)         { detail.left.dataObjectNTD.setAttribute("style","width:100%;height:100%;display:block;"); }
-      if (detail.right.dataObjectProperties) { detail.right.dataObjectProperties.setHeader(ObjectProperties.HEADER_ID, ChildProperties.HEADER_VALUE); }
-      if (detail.right.dataObjectProperties) { detail.right.dataObjectProperties.setAttribute("style","width:100%;height:100%;display:block;"); }
+      detail.left.dataObjectNTD.setHeader(ObjectNTD.HEADER_ID, ChildNTD.HEADER_VALUE);
+      detail.left.dataObjectNTD.setAttribute("style","width:100%;height:100%;display:block;");
+      detail.right.dataObjectProperties.setHeader(ObjectProperties.HEADER_ID, ChildProperties.HEADER_VALUE);
+      detail.right.dataObjectProperties.setAttribute("style","width:100%;height:100%;display:block;");
       /*var objectPropertiesMediator = this.facade.retrieveMediator(DataObjectPropertiesMediator.ID);
       objectPropertiesMediator.setType(AttributeListMediator.TYPE_CHILD);
       this.sendNotification(SjamayeeFacade.OBJECT_ATTRIBUTE_LIST_ACTIVATE);
@@ -13944,17 +13333,15 @@ var DetailMediator = new Class({
   },
   hide: function() {
     var detail = this.getViewComponent();
-    if (detail.left.dataObjectNTD)          { detail.left.dataObjectNTD.setAttribute("style","display:none;"); }
-    if (detail.left.dataParentDetail)       { detail.left.dataParentDetail.setAttribute("style","display:none;"); }
-    if (detail.left.modelObjectNTD)         { detail.left.modelObjectNTD.setAttribute("style","display:none;"); }
-    if (detail.left.modelParentDetail)      { detail.left.modelParentDetail.setAttribute("style","display:none;"); }
-    if (detail.right.dataChildDetail)       { detail.right.dataChildDetail.setAttribute("style","display:none;"); }
-    if (detail.right.dataObjectProperties)  { detail.right.dataObjectProperties.setAttribute("style","display:none;"); }
-    if (detail.right.modelChildDetail)      { detail.right.modelChildDetail.setAttribute("style","display:none;"); }
-    if (detail.right.modelObjectProperties) { detail.right.modelObjectProperties.setAttribute("style","display:none;"); }
+    detail.left.dataObjectNTD.setAttribute("style","display:none;");
+    detail.left.dataParentDetail.setAttribute("style","display:none;");
+    detail.left.modelObjectNTD.setAttribute("style","display:none;");
+    detail.left.modelParentDetail.setAttribute("style","display:none;");
+    detail.right.dataChildDetail.setAttribute("style","display:none;");
+    detail.right.dataObjectProperties.setAttribute("style","display:none;");
+    detail.right.modelChildDetail.setAttribute("style","display:none;");
+    detail.right.modelObjectProperties.setAttribute("style","display:none;");
   }
-  //Abstract
-  //hide: function() {}
 });
 DetailMediator.STATE_PARENT = "PARENT";
 DetailMediator.STATE_CHILD = "CHILD";
@@ -13987,11 +13374,11 @@ var DataDetailMediator = new Class({
       this.hide();
       //detail.setAttribute("style","width:100%;height:"+Detail.NORMAL_SIZE+"px;display:block");      
       //detail.hsplitter.left.dataObjectNTD.setHeader(DataObjectNTD.HEADER_ID, ObjectNTD.HEADER_VALUE);
-      if (detail.left.dataObjectNTD)         { detail.left.dataObjectNTD.setHeader(DataObjectNTD.HEADER_ID, ObjectNTD.HEADER_VALUE); }
-      if (detail.left.dataObjectNTD)         { detail.left.dataObjectNTD.setAttribute("style","width:100%;height:100%;display:block;"); }
+      detail.left.dataObjectNTD.setHeader(DataObjectNTD.HEADER_ID, ObjectNTD.HEADER_VALUE);
+      detail.left.dataObjectNTD.setAttribute("style","width:100%;height:100%;display:block;");
       //detail.left.dataObjectNTD.header.innerHTML = ObjectNTD.HEADER_VALUE;
       //detail.hsplitter.right.dataObjectProperties.setHeader(DataObjectProperties.HEADER_ID, ObjectProperties.HEADER_VALUE);
-      if (detail.right.dataObjectProperties) { detail.right.dataObjectProperties.setAttribute("style","width:100%;height:100%;display:block;"); }
+      detail.right.dataObjectProperties.setAttribute("style","width:100%;height:100%;display:block;");
 
       detail.hsplitter.setHandleColor(this.getBackgroundHighliteColor());
       detail.hsplitter.resize();
@@ -14019,11 +13406,11 @@ var DataDetailMediator = new Class({
       detail.left.dataParentDetail.hsplitter = null;
       detail.right.dataChildDetail.hsplitter = null;
       //detail.hsplitter.left.dataObjectNTD.setHeader(DataParentNTD.HEADER_ID, ParentNTD.HEADER_VALUE);
-      if (detail.left.dataObjectNTD)         { detail.left.dataObjectNTD.setHeader(DataObjectNTD.HEADER_ID, ParentNTD.HEADER_VALUE); }
-      if (detail.left.dataObjectNTD)         { detail.left.dataObjectNTD.setAttribute("style","width:100%;height:100%;display:block;"); }
+      detail.left.dataObjectNTD.setHeader(DataObjectNTD.HEADER_ID, ParentNTD.HEADER_VALUE);
+      detail.left.dataObjectNTD.setAttribute("style","width:100%;height:100%;display:block;");
       //detail.left.dataObjectNTD.header.innerHTML = ParentNTD.HEADER_VALUE;
       //detail.hsplitter.right.dataObjectProperties.setHeader(DataParentProperties.HEADER_ID, DataParentProperties.HEADER_VALUE);
-      if (detail.right.dataObjectProperties) { detail.right.dataObjectProperties.setAttribute("style","width:100%;height:100%;display:block;"); }
+      detail.right.dataObjectProperties.setAttribute("style","width:100%;height:100%;display:block;");
       detail.hsplitter.setHandleColor(this.getBackgroundHighliteColor());
       detail.hsplitter.resize();
       this.sendNotification(SjamayeeFacade.GRID_DATA_RESIZE,SjamayeeFacade.SIZE_NORMAL);
@@ -14032,9 +13419,9 @@ var DataDetailMediator = new Class({
       case SjamayeeFacade.GRID_DATA_PARENTANDCHILD_SHOW:
       this.hide();
       //detail.left.dataParentDetail.setHeader(DataParentNTD.HEADER_ID, "PPPPPPPPPP");
-      if (detail.left.dataParentDetail) { detail.left.dataParentDetail.setAttribute("style","width:100%;height:100%;display:block;"); }
+      detail.left.dataParentDetail.setAttribute("style","width:100%;height:100%;display:block;");
       //detail.left.dataChildDetail.setHeader(DataChildNTD.HEADER_ID, "CCCCCCCCC");
-      if (detail.right.dataChildDetail) { detail.right.dataChildDetail.setAttribute("style","width:100%;height:100%;display:block;"); }    
+      detail.right.dataChildDetail.setAttribute("style","width:100%;height:100%;display:block;");      
       detail.hsplitter.setHandleColor(this.getBackgroundHighliteColor());
       detail.hsplitter.resize();
       this.setState(DetailMediator.STATE_PARENT_CHILD);
@@ -14093,11 +13480,11 @@ var DataDetailMediator = new Class({
       detail.left.dataParentDetail.hsplitter = null;
       detail.right.dataChildDetail.hsplitter = null;
       //detail.hsplitter.left.dataObjectNTD.setHeader(DataChildNTD.HEADER_ID, ChildNTD.HEADER_VALUE);
-      if (detail.left.dataObjectNTD)         { detail.left.dataObjectNTD.setHeader(DataObjectNTD.HEADER_ID, ChildNTD.HEADER_VALUE); }
-      if (detail.left.dataObjectNTD)         { detail.left.dataObjectNTD.setAttribute("style","width:100%;height:100%;display:block;"); }
+      detail.left.dataObjectNTD.setHeader(DataObjectNTD.HEADER_ID, ChildNTD.HEADER_VALUE);
+      detail.left.dataObjectNTD.setAttribute("style","width:100%;height:100%;display:block;");
       //detail.left.dataObjectNTD.header.innerHTML = ChildNTD.HEADER_VALUE;
       //detail.hsplitter.right.dataObjectProperties.setHeader(DataChildProperties.HEADER_ID, DataChildProperties.HEADER_VALUE);
-      if (detail.right.dataObjectProperties) { detail.right.dataObjectProperties.setAttribute("style","width:100%;height:100%;display:block;"); }
+      detail.right.dataObjectProperties.setAttribute("style","width:100%;height:100%;display:block;");
       detail.hsplitter.setHandleColor(this.getBackgroundHighliteColor());
       detail.hsplitter.resize();
       this.sendNotification(SjamayeeFacade.GRID_DATA_RESIZE,SjamayeeFacade.SIZE_NORMAL);
@@ -14107,18 +13494,7 @@ var DataDetailMediator = new Class({
   },
   getBackgroundHighliteColor: function() {
     return DataDetailMediator.BACKGROUND_HIGHLITE_COLOR; //'black'
-  }/*,
-  hide: function() {
-    var detail = this.getViewComponent();
-    //detail.left.dataObjectNTD.setAttribute("style","display:none;");
-    detail.left.dataParentDetail.setAttribute("style","display:none;");
-    //detail.left.modelObjectNTD.setAttribute("style","display:none;");
-    //detail.left.modelParentDetail.setAttribute("style","display:none;");
-    detail.right.dataChildDetail.setAttribute("style","display:none;");
-    //detail.right.dataObjectProperties.setAttribute("style","display:none;");
-    //detail.right.modelChildDetail.setAttribute("style","display:none;");
-    //detail.right.modelObjectProperties.setAttribute("style","display:none;");
-  }*/
+  }
 });
 DataDetailMediator.BACKGROUND_HIGHLITE_COLOR = "lightblue"; //"inherit"; //""#F2F2F2"; //""#D7E5FE";
 
@@ -14149,11 +13525,11 @@ var ModelDetailMediator = new Class({
       this.hide();
       //detail.setAttribute("style","width:100%;height:"+Detail.NORMAL_SIZE+"px;display:block");      
       //detail.hsplitter.left.modelObjectNTD.setHeader(ModelObjectNTD.HEADER_ID, ObjectNTD.HEADER_VALUE);
-      if (detail.left.modelObjectNTD)         { detail.left.modelObjectNTD.setAttribute("style","width:100%;height:100%;display:block;"); }
+      detail.left.modelObjectNTD.setAttribute("style","width:100%;height:100%;display:block;");
       //detail.left.modelObjectNTD.header.innerHTML = ObjectNTD.HEADER_VALUE;
-      if (detail.left.modelObjectNTD)         { detail.left.modelObjectNTD.setHeader(ModelObjectNTD.HEADER_ID, ObjectNTD.HEADER_VALUE); }
+      detail.left.modelObjectNTD.setHeader(ModelObjectNTD.HEADER_ID, ObjectNTD.HEADER_VALUE);
       //detail.hsplitter.right.modelObjectProperties.setHeader(ModelObjectProperties.HEADER_ID, ObjectProperties.HEADER_VALUE);
-      if (detail.right.modelObjectProperties) { detail.right.modelObjectProperties.setAttribute("style","width:100%;height:100%;display:block;"); }
+      detail.right.modelObjectProperties.setAttribute("style","width:100%;height:100%;display:block;");
       detail.hsplitter.setHandleColor(this.getBackgroundHighliteColor());
       detail.hsplitter.resize();
       var objectPropertiesMediator = this.facade.retrieveMediator(ModelObjectPropertiesMediator.ID);
@@ -14180,11 +13556,11 @@ var ModelDetailMediator = new Class({
       //detail.hsplitter = null;
       //detail.hsplitter.left.modelObjectNTD.setHeader(ModelParentNTD.HEADER_ID, ParentNTD.HEADER_VALUE);
 
-      if (detail.left.modelObjectNTD)         { detail.left.modelObjectNTD.setAttribute("style","width:100%;height:100%;display:block;"); }
+      detail.left.modelObjectNTD.setAttribute("style","width:100%;height:100%;display:block;");
       //detail.left.modelObjectNTD.header.innerHTML = ParentNTD.HEADER_VALUE;
-      if (detail.left.modelObjectNTD)         { detail.left.modelObjectNTD.setHeader(ModelObjectNTD.HEADER_ID, ParentNTD.HEADER_VALUE); }
+      detail.left.modelObjectNTD.setHeader(ModelObjectNTD.HEADER_ID, ParentNTD.HEADER_VALUE);
       //detail.hsplitter.right.modelObjectProperties.setHeader(ModelParentProperties.HEADER_ID, ModelParentProperties.HEADER_VALUE);
-      if (detail.right.modelObjectProperties) { detail.right.modelObjectProperties.setAttribute("style","width:100%;height:100%;display:block;"); }
+      detail.right.modelObjectProperties.setAttribute("style","width:100%;height:100%;display:block;");
       detail.hsplitter.setHandleColor(this.getBackgroundHighliteColor());
       detail.hsplitter.resize();
       this.sendNotification(SjamayeeFacade.GRID_MODEL_RESIZE,SjamayeeFacade.SIZE_NORMAL);
@@ -14192,8 +13568,8 @@ var ModelDetailMediator = new Class({
       break;
       case SjamayeeFacade.GRID_MODEL_PARENTANDCHILD_SHOW:
       this.hide();
-      if (detail.left.modelParentDetail) { detail.left.modelParentDetail.setAttribute("style","width:100%;height:100%;display:block;"); }
-      if (detail.right.modelChildDetail) { detail.right.modelChildDetail.setAttribute("style","width:100%;height:100%;display:block;"); }
+      detail.left.modelParentDetail.setAttribute("style","width:100%;height:100%;display:block;");
+      detail.right.modelChildDetail.setAttribute("style","width:100%;height:100%;display:block;");
       detail.hsplitter.setHandleColor(this.getBackgroundHighliteColor());
       detail.hsplitter.resize();
       this.sendNotification(SjamayeeFacade.GRID_MODEL_RESIZE,SjamayeeFacade.SIZE_NORMAL);
@@ -14204,11 +13580,11 @@ var ModelDetailMediator = new Class({
       //detail.hsplitter = null;
       //detail.hsplitter.left.modelObjectNTD.setHeader(ModelChildNTD.HEADER_ID, ChildNTD.HEADER_VALUE);
 
-      if (detail.left.modelObjectNTD)         { detail.left.modelObjectNTD.setAttribute("style","width:100%;height:100%;display:block;"); }
+      detail.left.modelObjectNTD.setAttribute("style","width:100%;height:100%;display:block;");
       //detail.left.modelObjectNTD.header.innerHTML = ChildNTD.HEADER_VALUE;
-      if (detail.left.modelObjectNTD)         { detail.left.modelObjectNTD.setHeader(ModelObjectNTD.HEADER_ID, ChildNTD.HEADER_VALUE); }
+      detail.left.modelObjectNTD.setHeader(ModelObjectNTD.HEADER_ID, ChildNTD.HEADER_VALUE);
       //detail.hsplitter.right.modelObjectProperties.setHeader(ModelChildProperties.HEADER_ID, ModelChildProperties.HEADER_VALUE);
-      if (detail.right.modelObjectProperties) { detail.right.modelObjectProperties.setAttribute("style","width:100%;height:100%;display:block;"); }
+      detail.right.modelObjectProperties.setAttribute("style","width:100%;height:100%;display:block;");
       detail.hsplitter.setHandleColor(this.getBackgroundHighliteColor());
       detail.hsplitter.resize();
       this.sendNotification(SjamayeeFacade.GRID_MODEL_RESIZE,SjamayeeFacade.SIZE_NORMAL);
@@ -14218,18 +13594,7 @@ var ModelDetailMediator = new Class({
   },
   getBackgroundHighliteColor: function() {
     return ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR; //'white'
-  }/*,
-  hide: function() {
-    var detail = this.getViewComponent();
-    //detail.left.dataObjectNTD.setAttribute("style","display:none;");
-    //detail.left.dataParentDetail.setAttribute("style","display:none;");
-    //detail.left.modelObjectNTD.setAttribute("style","display:none;");
-    detail.left.modelParentDetail.setAttribute("style","display:none;");
-    //detail.right.dataChildDetail.setAttribute("style","display:none;");
-    //detail.right.dataObjectProperties.setAttribute("style","display:none;");
-    detail.right.modelChildDetail.setAttribute("style","display:none;");
-    //detail.right.modelObjectProperties.setAttribute("style","display:none;");
-  }*/
+  }
 });
 ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR = "#FAE4DB";
 
@@ -17489,7 +16854,7 @@ var ModelObjectsToolBar = new Class({
     this.parent(ModelObjectsToolBar.ID);
   }  
 });
-ModelObjectsToolBar.ID = "modelObjectsTB";
+ModelObjectsToolBar.ID = "modelObjectsToolBar";
 
 //Class: ModelRelationsToolBar
 var ModelRelationsToolBar = new Class({
@@ -17498,7 +16863,7 @@ var ModelRelationsToolBar = new Class({
     this.parent(ModelRelationsToolBar.ID);
   }
 });
-ModelRelationsToolBar.ID = "modelRelationsTB";
+ModelRelationsToolBar.ID = "modelRelationsToolBar";
 
 //Abstract
 //Class: ModelTextsToolBar
@@ -17508,7 +16873,7 @@ var ModelTextsToolBar = new Class({
     this.parent(name);
   }
 });
-ModelTextsToolBar.ID = "modelTextsTB";
+ModelTextsToolBar.ID = "modelTextsToolBar";
 
 //Class: ModelObjectsTextsToolBar
 var ModelObjectsTextsToolBar = new Class({
@@ -17517,7 +16882,7 @@ var ModelObjectsTextsToolBar = new Class({
     this.parent(ModelObjectsTextsToolBar.ID);
   }
 });
-ModelObjectsTextsToolBar.ID = "modelObjectsTextsTB";
+ModelObjectsTextsToolBar.ID = "modelObjectsTextsToolBar";
 
 //Class: ModelRelationsTextsToolBar
 var ModelRelationsTextsToolBar = new Class({
@@ -17526,7 +16891,7 @@ var ModelRelationsTextsToolBar = new Class({
     this.parent(ModelRelationsTextsToolBar.ID);
   }
 });
-ModelRelationsTextsToolBar.ID = "modelRelationsTextsTB";
+ModelRelationsTextsToolBar.ID = "modelRelationsTextsToolBar";
 
 //////////////////////////////////////////////////////////////////////////
 /////////////////////////////// MEDIATORS ////////////////////////////////
@@ -18146,9 +17511,8 @@ var ModelRelationsGridMediator = new Class({
   Extends: RelationsGridMediator,
   initialize: function(viewComponent) {
     this.parent(ModelRelationsGridMediator.ID,viewComponent);
-    //var gridList = this.getViewComponent();
-    //this.gridUIC = gridList.modelRelationsGrid;
-    this.gridUIC = this.getViewComponent();
+    var gridList = this.getViewComponent();
+    this.gridUIC = gridList.modelRelationsGrid;
     this.gridUIC.addEvent(SjamayeeFacade.GRID_CLICK, this.onGridClick);
     this.gridUIC.addEvent(SjamayeeFacade.GRID_CELL_CLICK, this.onCellClick);
     this.gridUIC.addEvent(SjamayeeFacade.GRID_CELL_MOUSEOVER, this.onCellMouseOver);
@@ -18509,9 +17873,8 @@ var ModelObjectsListMediator = new Class({
   Extends: ObjectsListMediator,
   initialize: function(viewComponent) {
     this.parent(ModelObjectsListMediator.ID,viewComponent);
-    //var gridList = this.getViewComponent();
-    //this.listUIC = gridList.modelObjectsList;
-    this.listUIC = this.getViewComponent();
+    var gridList = this.getViewComponent();
+    this.listUIC = gridList.modelObjectsList;
     this.listUIC.addEvent(SjamayeeFacade.LIST_CLICK, this.onListClick);
     this.listUIC.addEvent(SjamayeeFacade.LINE_CLICK, this.onLineClick);
     this.listUIC.addEvent(SjamayeeFacade.LINE_MOUSEOVER, this.onLineMouseOver);
@@ -21261,7 +20624,7 @@ var DataObjectsToolBar = new Class({
     this.parent(DataObjectsToolBar.ID);
   }
 });
-DataObjectsToolBar.ID = "dataObjectsTB";
+DataObjectsToolBar.ID = "dataObjectsToolBar";
 
 //Class: DataRelationsToolBar
 var DataRelationsToolBar = new Class({
@@ -21270,7 +20633,7 @@ var DataRelationsToolBar = new Class({
     this.parent(DataRelationsToolBar.ID);
   }
 });
-DataRelationsToolBar.ID = "dataRelationsTB";
+DataRelationsToolBar.ID = "dataRelationsToolBar";
 
 //////////////////////////////////////////////////////////////////////////
 /////////////////////////////// MEDIATORS ////////////////////////////////
@@ -21565,8 +20928,8 @@ var DataGridListMediator = new Class({
   listNotificationInterests: function() {
     var result = this.parent();
     return result.concat([
-      //SjamayeeFacade.OLIST_DATA_SHOW,
-      //SjamayeeFacade.GRID_DATA_SHOW,
+      SjamayeeFacade.OLIST_DATA_SHOW,
+      SjamayeeFacade.GRID_DATA_SHOW,
       SjamayeeFacade.FOCUS
     ]);
   },
@@ -21607,9 +20970,8 @@ var DataRelationsGridMediator = new Class({
   Extends: RelationsGridMediator,
   initialize: function(viewComponent) {
     this.parent(DataRelationsGridMediator.ID,viewComponent);
-    //var gridList = this.getViewComponent();
-    //this.gridUIC = gridList.dataRelationsGrid;
-    this.gridUIC = this.getViewComponent();
+    var gridList = this.getViewComponent();   
+    this.gridUIC = gridList.dataRelationsGrid;
     this.gridUIC.addEvent(SjamayeeFacade.GRID_CLICK, this.onGridClick);
     this.gridUIC.addEvent(SjamayeeFacade.GRID_CELL_CLICK, this.onCellClick);
     this.gridUIC.addEvent(SjamayeeFacade.GRID_CELL_MOUSEOVER, this.onCellMouseOver);
@@ -21631,7 +20993,7 @@ var DataRelationsGridMediator = new Class({
     var result = this.parent();
     return result.concat([
       SjamayeeFacade.DATA_TYPES_RELOAD,
-      //SjamayeeFacade.GRID_DATA_SHOW,
+      SjamayeeFacade.GRID_DATA_SHOW,
       SjamayeeFacade.GRID_DATA_REFRESH,
       SjamayeeFacade.GRID_DATA_ENTITY_CHANGE,
       SjamayeeFacade.GRID_DATA_TYPE_CHANGE,
@@ -21948,9 +21310,8 @@ var DataObjectsListMediator = new Class({
   Extends: ObjectsListMediator,
   initialize: function(viewComponent) {
     this.parent(DataObjectsListMediator.ID,viewComponent);
-    //var gridList = this.getViewComponent();
-    //this.listUIC = gridList.dataObjectsList;
-    this.listUIC = this.getViewComponent();
+    var gridList = this.getViewComponent();
+    this.listUIC = gridList.dataObjectsList;
     this.listUIC.addEvent(SjamayeeFacade.LIST_CLICK, this.onListClick);
     this.listUIC.addEvent(SjamayeeFacade.LINE_CLICK, this.onLineClick);
     this.listUIC.addEvent(SjamayeeFacade.LINE_MOUSEOVER, this.onLineMouseOver);
@@ -21965,7 +21326,7 @@ var DataObjectsListMediator = new Class({
   listNotificationInterests: function() {
     var result = this.parent();
     return result.concat([
-      //SjamayeeFacade.OLIST_DATA_SHOW,
+      SjamayeeFacade.OLIST_DATA_SHOW,
       SjamayeeFacade.OLIST_DATA_REFRESH,
       SjamayeeFacade.OLIST_DATA_RESIZE,
       SjamayeeFacade.OLIST_DATA_TYPE_CHANGE,
