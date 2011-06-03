@@ -1,0 +1,76 @@
+body {
+  padding:3em;
+}
+
+#container {
+  position:relative;
+  border:1px solid #f00;
+  height:500px;
+  width:500px;
+  background-color:lightblue;
+}
+
+#dragger {
+  cursor:move;
+  border:1px solid #777;
+  background-color:#ffc;
+  font-weight:bold;
+  padding:1em;
+}
+
+#container2 {
+  position:relative;
+  border:1px solid #f00;
+  height:500px;
+  width:500px;
+  background-color:lightgreen;
+}
+
+#dragger2 {
+  cursor:move;
+  border:1px solid #777;
+  background-color:#fad;
+  font-weight:bold;
+  padding:1em;
+}
+
+#header {
+  position:relative;
+  cursor:move;
+  border:1px solid #777;
+  background-color:yellow;
+  font-weight:bold;
+  padding:1em;
+  height:26px;
+  width:100%;
+}
+#gridList {
+  position:relative;
+  cursor:move;
+  border:1px solid #777;
+  background-color:red;
+  font-weight:bold;
+  padding:1em;
+  height:25%;
+  width:100%;
+}
+#toolBar {
+  position:relative;
+  cursor:move;
+  border:1px solid #777;
+  background-color:lime;
+  font-weight:bold;
+  padding:1em;
+  height:28px;
+  width:100%;
+}
+#detail {
+  position:relative;
+  cursor:move;
+  border:1px solid #777;
+  background-color:lightgray;
+  font-weight:bold;
+  padding:1em;
+  height:35%;
+  width:100%;
+}

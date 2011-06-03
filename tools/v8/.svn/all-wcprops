@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 24
+/svn/!svn/ver/7427/trunk
+END
+LICENSE
+K 25
+svn:wc:ra_dav:version-url
+V 32
+/svn/!svn/ver/6387/trunk/LICENSE
+END
+AUTHORS
+K 25
+svn:wc:ra_dav:version-url
+V 32
+/svn/!svn/ver/7322/trunk/AUTHORS
+END
+.gitignore
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/svn/!svn/ver/7427/trunk/.gitignore
+END
+LICENSE.valgrind
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/6662/trunk/LICENSE.valgrind
+END
+ChangeLog
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/7427/trunk/ChangeLog
+END
+SConstruct
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/svn/!svn/ver/7427/trunk/SConstruct
+END
+LICENSE.strongtalk
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/6662/trunk/LICENSE.strongtalk
+END
+LICENSE.v8
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/svn/!svn/ver/6662/trunk/LICENSE.v8
+END

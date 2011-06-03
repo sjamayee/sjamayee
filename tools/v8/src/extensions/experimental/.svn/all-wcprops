@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/7079/trunk/src/extensions/experimental
+END
+break-iterator.cc
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/7079/trunk/src/extensions/experimental/break-iterator.cc
+END
+i18n-extension.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/6061/trunk/src/extensions/experimental/i18n-extension.h
+END
+break-iterator.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/7079/trunk/src/extensions/experimental/break-iterator.h
+END
+experimental.gyp
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/7077/trunk/src/extensions/experimental/experimental.gyp
+END
+i18n-extension.cc
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/7077/trunk/src/extensions/experimental/i18n-extension.cc
+END

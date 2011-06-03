@@ -1,0 +1,52 @@
+10
+
+dir
+7486
+http://v8.googlecode.com/svn/trunk/test
+http://v8.googlecode.com/svn
+
+
+
+2011-03-30T08:52:27.845513Z
+7427
+lrn@chromium.org
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ce2b1a6d-e550-0410-aec6-3dcde31c8c00
+
+es5conform
+dir
+
+message
+dir
+
+cctest
+dir
+
+mozilla
+dir
+
+mjsunit
+dir
+
+test262
+dir
+
+benchmarks
+dir
+
+sputnik
+dir
+

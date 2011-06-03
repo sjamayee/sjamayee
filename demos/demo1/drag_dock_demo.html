@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"> 
+	<head> 
+		<title>Drag.Dock Demo</title> 
+		
+		<link rel="stylesheet" href="style.css" /> 
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/mootools/1.2.4/mootools-yui-compressed.js"></script> 
+		<script type="text/javascript" src="../../src/externs/js/mootools_1_2_4_4_more_nc.js"></script> 
+		<script type="text/javascript" src="../../src/externs/js/drag.dock.js"></script> 
+		
+		<script type="text/javascript"> 
+		/*window.addEvent('domready',function(){
+			this.dock = new Drag.Dock('dragger', {
+				proximity: 50,
+				container: $('container')
+			}).dock('left').dock('middle');
+		});*/
+		window.addEvent('domready',DragDock__header);
+		window.addEvent('domready',DragDock__gridList);
+		window.addEvent('domready',DragDock__toolBar);
+		window.addEvent('domready',DragDock__detail);
+		
+		function DragDock__header() {
+			this.dock = new Drag.Dock('header', {
+				proximity: 50,
+				container: $('container')
+			}).dock('left').dock('middle');
+		}		
+		function DragDock__gridList() {
+			this.dock = new Drag.Dock('gridList', {
+				proximity: 50,
+				container: $('container')
+			}).dock('left').dock('middle');
+		}		
+		function DragDock__toolBar() {
+			this.dock = new Drag.Dock('toolBar', {
+				proximity: 50,
+				container: $('container')
+			}).dock('left').dock('middle');
+		}		
+		function DragDock__detail() {
+			this.dock = new Drag.Dock('detail', {
+				proximity: 50,
+				container: $('container')
+			}).dock('left').dock('middle');
+		}		
+
+/*
+		window.addEvent('domready',DragDock__dock);
+		
+		window.addEvent('mousedown',function() {
+			DragDock__dock(this.id);
+		});
+		
+		function DragDock__dock(did,cid) {
+		  if (did === undefined || did === null) { did = 'dragger'; }
+		  if (cid === undefined || cid === null) { cid = 'container'; }
+			this.dock = new Drag.Dock(did, {
+				proximity: 50,
+				container: $(cid)
+			}).dock('left').dock('middle');
+		}
+*/
+		</script> 
+	</head> 
+	<body> 
+		<img src="drag.dock.png" alt="Drag.Dock" /> 
+		<div id="container"> 
+			<div id="header"> 
+				header*header
+			</div> 
+			<div id="gridList"> 
+				gridList-gridList-gridList
+			</div> 
+			<div id="toolBar"> 
+				toolBar/toolBar/toolBar
+			</div> 
+			<div id="detail"> 
+				Detail *** Detail
+			</div> 
+		</div> 
+		<div id="container2"> 
+			<div id="dragger2"> 
+				Drag Me around a container.
+			</div> 
+		</div> 
+	</body> 
+</html>

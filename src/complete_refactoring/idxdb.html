@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="UTF-8"/>
+  <title>idxdb</title>
+  <!--/*Google Chrome Frame*/-->
+	<!--[if IE]>
+	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+	<script src="http://s12.in/cfinstall.js"></script><![endif]-->
+	<!--/*GCF Fallback*/-->
+	<!--[if lt IE 9]>
+	<script src="http://s12.in/html5/shiv.js"></script><![endif]-->
+	<!--[if lt IE 8]>
+	<script src="http://s12.in/ie.js"></script><![endif]-->
+	<!-- link rel="stylesheet" href="http://s12.in/html5/default.css"/ -->
+	<link rel="stylesheet" href="html5_default.css"/>
+	
+  <script type="text/javascript" src="../../src/externs/js/mootools_1_2_5_core_nc.js"></script>
+  <script type="text/javascript" src="../../src/externs/js/mootools_1_2_4_4_more_nc.js"></script>	
+
+  <script type="application/javascript">
+	 //Initialising the window.IndexedDB Object
+	 //window.indexedDB = window.moz_indexedDB || window.webkitIndexedDB;
+	 window.indexedDB = window.mozIndexedDB || window.webkitIndexedDB;
+	 window.IDBKeyRange = window.webkitIDBKeyRange;
+	 var DAO = {};
+
+	 document.write("Trying to open database ...");
+	 var request = window.indexedDB.open("BookShop", "My Book Shop database");
+	 request.onsuccess = function(event){
+	   DAO.db = request.result;
+		 DAO.db.version = "0";
+	   document.write("Database Opened", DAO.db);
+	 };
+	 request.onerror = function(e){
+	   writeError(e);
+	 };
+
+	 document.write("Create object store (BookList) ...");
+   var request = DAO.db.setVersion(parseInt(DAO.db.version) + 1);
+   request.onsuccess = function(e){
+     document.write("Version changed to ", DAO.db.version, ", so trying to create a database now.");
+     DAO.objectStore = DAO.db.createObjectStore("BookList", {"keyPath": "id"}, true);
+     document.write("Object store created: ", DAO.objectStore);
+   };
+   request.onerror = function(e){
+     document.write("Could not set the version, so cannot create database", e);
+   };
+
+   document.write("Opening an Object Store using a transaction.");
+   DAO.newTransactionObjectStore = function(){
+     try {
+       var transaction = DAO.db.transaction(["BookList"], 0 /*Read-Write*/, 1000 /*Time out in ms*/);
+       transaction.oncomplete = function(e){
+         delete DAO.objectStore;
+         document.write("===== Transaction Complete");
+       };
+       transaction.onabort = function(e){
+         document.write("===== Transaction Aborted");
+       };
+       DAO.objectStore = transaction.objectStore("BookList");
+       document.write("==== New Transaction", DAO.objectStore);
+     } catch (e) {
+       document.write("Could not open objectStore. You may have to create it first");
+       writeError(e);
+     }
+   };
+   DAO.newTransactionObjectStore();
+   document.write("Object Store Opened", DAO.objectStore);
+
+   document.write("List of Object Stores", DAO.db.objectStoreNames);
+/*
+   var request = DAO.db.setVersion(parseInt(Math.random() * 100));
+   request.onsuccess = function(e){
+     DAO.db.deleteObjectStore("BookList");
+     write("Deleted Object store Booklist. The remaining object stores are ", DAO.db.objectStoreNames);
+   };
+*/
+	 document.write("Save data to object store...");
+	 var data = {
+     "bookName": "Book-" + Math.random(),
+     "author": "asdasd",
+     "price": parseInt(Math.random() * 1000),
+     "rating": (Math.random() > 0.5 ? "good" : "bad"),
+     "id": new Date().getTime()
+   };
+   DAO.newTransactionObjectStore();
+   document.write("Trying to save...", data);
+   var request = DAO.objectStore.add(data);
+   request.onsuccess = function(event){
+     document.write("Saved id ", event.result)
+       DAO.objectId = event.result;
+   };
+   request.onerror = function(e){
+     writeError(e);
+     DAO.transaction.abort();
+   };
+
+	 document.write("Get data from object store...");
+   DAO.newTransactionObjectStore();
+   document.write("Trying to get the last saved object using saved example with id ", DAO.objectId);
+   var request = DAO.objectStore.get(DAO.objectId);
+   request.onsuccess = function(event){
+     document.write("Got data ", event.result)
+       DAO.objectId = event.result.id;
+   };
+   request.onerror = function(e){
+     document.write("Could not get object");
+     writeError(e);
+   };
+  </script>	
+ </head>
+ <body>
+	<h1>Indexed DB </h1>
+ </body>
+</html>
