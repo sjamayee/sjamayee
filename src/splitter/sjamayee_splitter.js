@@ -113,6 +113,8 @@ var Splitter = new Class({
   	if (handleColor == 'lightgray') {
   	  pseudoHandleColor = handleColor;
   	}
+    var pseudoHandleBorder = (opaqueResize)?'solid':'dotted';
+    var pseudoHandleOpacity = (opaqueResize)?0.25:1;
   	
   //handle.addEvent('mousedown', this.mousedown);
   //handle.addEvent('mousedown', SjamayeeFacade.getInstance().hello);
@@ -124,7 +126,8 @@ var Splitter = new Class({
   			//'styles': {'position':'absolute', 'left':this.offsetLeft, 'top':this.offsetTop, 'border':'1px dashed lightgray', 'font-size':'0'} //black
   			//'styles': {'position':'absolute', 'left':this.offsetLeft, 'top':this.offsetTop, 'border':'1px dashed '+pseudoHandleColor, 'font-size':'0'} //black
   			//'styles': {'position':'absolute', 'left':this.offsetLeft, 'top':this.offsetTop, 'border':'28px dashed '+pseudoHandleColor, 'font-size':'0', 'background':'transparent'} //black
-  			'styles': {'position':'absolute', 'left':this.offsetLeft, 'top':this.offsetTop, 'border':handleWidth+'px dashed '+pseudoHandleColor, 'font-size':'0'} //black
+  			//'styles': {'position':'absolute', 'left':this.offsetLeft, 'top':this.offsetTop, 'border':handleWidth+'px dashed '+pseudoHandleColor, 'font-size':'0', 'opacity':pseudoHandleOpacity} //black
+  			'styles': {'position':'absolute', 'left':this.offsetLeft, 'top':this.offsetTop, 'border':handleWidth+'px '+pseudoHandleBorder+' '+pseudoHandleColor, 'font-size':'0', 'opacity':pseudoHandleOpacity} //black
   		});
   		parent.appendChild(pseudoHandle);
   		pseudoHandle.setStyles(orientation?{'height':parent.handleHeight - 2,'width':this.offsetWidth - 2}
@@ -257,7 +260,8 @@ var Splitter = new Class({
 
     var pseudoHandleOpacity = (opaqueResize)?0.25:1;
     
-    if (widget.hasClass('splitter')) {    
+    //Only for vertical splitter !?
+    if (orientation && widget.hasClass('splitter')) {    
       widgetWrapper.addEvent('mousedown', function() {
   		  var parent = this.parentNode;
     		var orientation = parent.orientation;
@@ -6643,8 +6647,6 @@ var Sjamayee = new Class({
   Extends: UIComponent,
   initialize: function(element, properties) {
     this.appName = "Sjamayee!";
-    //this.top = null;
-    //this.bottom = null;
     this.header = null;
     this.dataObjectsPane = null;
     this.dataRelationsPane = null;
@@ -6657,11 +6659,6 @@ var Sjamayee = new Class({
     this.parent(Sjamayee.FORM,{height:$pick(window.getHeight(),document.body.clientHeight)});
   },
   initializeChildren: function() {
-    //this.parent();
-    /*this.top = new TopPane();
-    this.addChild(this.top);
-    this.bottom = new BottomPane();
-    this.addChild(this.bottom);*/
     this.header = new Header();
     this.addChild(this.header);
     this.dataObjectsPane = new DataObjectsPane();
@@ -6674,35 +6671,6 @@ var Sjamayee = new Class({
     this.addChild(this.modelRelationsPane);
   },
   initializationComplete: function() {
-    /*this.vsplitter = new Splitter($(Sjamayee.FORM), {
-      //'id':'splitTopBottom',
-      'handleWidth':5,
-      'handleColor':'red', //'inherit', //'yellow', //'inherit',
-      'handleBorder':'none',
-      'orientation':1,
-      'minimumSize':'100%',
-      'maximumSize':'100%',
-      'initialSize':'100%',
-      'opaqueResize':1});	
-		this.vsplitter.addWidget($(TopPane.ID), {
-      'handleWidth':0,
-      //'handleColor':'yellow', //'inherit',
-      //'handleBorder':'none', //'0px solid red',
-      'orientation':1,
-      'minimumSize':'28px',
-      'maximumSize':'100%', //'897px', //(925-28)
-      'initialSize':'100%', //'400px', //'50%',
-      'opaqueResize':1});
-		this.vsplitter.addWidget($(BottomPane.ID), {
-      'handleWidth':5,
-      //'handleColor':'yellow', //'inherit',
-      //'handleBorder':'none', //'0px solid red',
-      'orientation':1,
-      'minimumSize':'28px',
-      'maximumSize':'100%', //'897px', //(925-28)
-      'initialSize':'100%', //'497px', //'50%',
-      'opaqueResize':1});
-    this.vsplitter.resize();*/
     //STARTUP !!!
     this.facade.startup(this);    
   }
@@ -6727,25 +6695,7 @@ var SjamayeeUIComponent = new Class({
     }
   }
 });
-/*
-//Class: TopPane
-var TopPane = new Class({
-  Extends: SjamayeeUIComponent,
-  initialize: function(properties) {
-    this.header = null;
-    this.gridList = null;
-    //this.parent(TopPane.ID,{html: html});
-    this.parent(TopPane.ID);
-  },
-  initializeChildren: function() {
-    this.header = new Header();
-    this.addChild(this.header);
-    this.gridList = new GridList();
-    this.addChild(this.gridList);
-  }
-});
-TopPane.ID = "topPane";
-*/
+
 //Class: DataObjectsPane
 var DataObjectsPane = new Class({
   Extends: SjamayeeUIComponent,
@@ -6763,23 +6713,20 @@ var DataObjectsPane = new Class({
   initializationComplete: function() {
     this.vsplitter = new Splitter($(DataObjectsPane.ID), {
       'handleWidth':0,
-      'handleColor':DataDetailMediator.BACKGROUND_HIGHLITE_COLOR, //'inherit', //'yellow', //'inherit',
+      'handleColor':DataDetailMediator.BACKGROUND_HIGHLITE_COLOR,
       'handleBorder':'none',
       'orientation':1,
       'minimumSize':'100%',
       'maximumSize':'100%',
-      'initialSize':'100%'});/*,
-      'opaqueResize':0});*/
+      'initialSize':'100%'});
 		this.vsplitter.addWidget($(DataObjectsList.ID), {
       'handleWidth':5,
       'orientation':1,
       'minimumSize':'10%',
       'maximumSize':'100%',
-      'initialSize':'100%'});/*,,
-      'opaqueResize':0});*/
+      'initialSize':'100%'});
 		this.vsplitter.addWidget($(DataObjectsBottomPane.ID), {
       'handleWidth':5,
-      //'handleColor':'red', //'inherit', //'yellow', //'inherit',
       'orientation':1,
       'minimumSize':'10%',
       'maximumSize':'100%',
@@ -6813,8 +6760,6 @@ var ModelObjectsPane = new Class({
   initialize: function(properties) {
     this.list = null;
     this.bottom = null;
-    //this.toolBar = null;
-    //this.detail = null;
     this.parent(ModelObjectsPane.ID);
   },
   initializeChildren: function() {
@@ -6822,31 +6767,24 @@ var ModelObjectsPane = new Class({
     this.addChild(this.list);
     this.bottom = new ModelObjectsBottomPane();
     this.addChild(this.bottom);
-    /*this.toolBar = new ToolBar();
-    this.addChild(this.toolBar);
-    this.detail = new Detail(); //ModelObjectsDetail();
-    this.addChild(this.detail);*/
   },
   initializationComplete: function() {
     this.vsplitter = new Splitter($(ModelObjectsPane.ID), {
       'handleWidth':0,
-      'handleColor':ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR, //'inherit', //'yellow', //'inherit',
+      'handleColor':ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR,
       'handleBorder':'none',
       'orientation':1,
       'minimumSize':'100%',
       'maximumSize':'100%',
-      'initialSize':'100%'});/*,,
-      'opaqueResize':0});*/	
+      'initialSize':'100%'});
 		this.vsplitter.addWidget($(ModelObjectsList.ID), {
       'handleWidth':5,
       'orientation':1,
       'minimumSize':'10%',
       'maximumSize':'100%',
-      'initialSize':'100%'});/*,,
-      'opaqueResize':0});*/
+      'initialSize':'100%'});
 		this.vsplitter.addWidget($(ModelObjectsBottomPane.ID), {
       'handleWidth':5,
-      //'handleColor':'red', //'inherit', //'yellow', //'inherit',
       'orientation':1,
       'minimumSize':'10%',
       'maximumSize':'100%',
@@ -6879,8 +6817,6 @@ var DataRelationsPane = new Class({
   Extends: SjamayeeUIComponent,
   initialize: function(properties) {
     this.grid = null;
-    //this.toolBar = null;
-    //this.detail = null;
     this.bottom = null;
     this.parent(DataRelationsPane.ID);
   },
@@ -6889,36 +6825,29 @@ var DataRelationsPane = new Class({
     this.addChild(this.grid);
     this.bottom = new DataRelationsBottomPane();
     this.addChild(this.bottom);
-    /*this.toolBar = new ToolBar();
-    this.addChild(this.toolBar);
-    this.detail = new Detail(); //DataObjectsDetail();
-    this.addChild(this.detail);*/
   },
   initializationComplete: function() {
     this.vsplitter = new Splitter($(DataRelationsPane.ID), {
       'handleWidth':0,
-      'handleColor':DataDetailMediator.BACKGROUND_HIGHLITE_COLOR, //'inherit', //'yellow', //'inherit',
+      'handleColor':DataDetailMediator.BACKGROUND_HIGHLITE_COLOR,
       'handleBorder':'none',
       'orientation':1,
       'minimumSize':'100%',
       'maximumSize':'100%',
-      'initialSize':'100%'});/*,
-      'opaqueResize':0});*/
+      'initialSize':'100%'});
 		this.vsplitter.addWidget($(DataRelationsGrid.ID), {
       'handleWidth':5,
       'orientation':1,
       'minimumSize':'10%',
       'maximumSize':'100%',
-      'initialSize':'100%'});/*,
-      'opaqueResize':0});*/
+      'initialSize':'100%'});
 		this.vsplitter.addWidget($(DataRelationsBottomPane.ID), {
       'handleWidth':5,
-      //'handleColor':'red', //'inherit', //'yellow', //'inherit',
       'orientation':1,
       'minimumSize':'10%',
       'maximumSize':'100%',
-      'initialSize':'100%'});/*,
-      'opaqueResize':0});*/
+      'initialSize':'100%',
+      'opaqueResize':1});
     this.vsplitter.resize();
   }
 });
@@ -6964,28 +6893,25 @@ var ModelRelationsPane = new Class({
   initializationComplete: function() {
     this.vsplitter = new Splitter($(ModelRelationsPane.ID), {
       'handleWidth':0,
-      'handleColor':ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR, //'inherit', //'yellow', //'inherit',
+      'handleColor':ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR,
       'handleBorder':'none',
       'orientation':1,
       'minimumSize':'100%',
       'maximumSize':'100%',
-      'initialSize':'100%'});/*,
-      'opaqueResize':0});*/
+      'initialSize':'100%'});
 		this.vsplitter.addWidget($(ModelRelationsGrid.ID), {
       'handleWidth':5,
       'orientation':1,
       'minimumSize':'10%',
       'maximumSize':'100%',
-      'initialSize':'100%'});/*,
-      'opaqueResize':0});*/
+      'initialSize':'100%'});
 		this.vsplitter.addWidget($(ModelRelationsBottomPane.ID), {
       'handleWidth':5,
-      //'handleColor':'red', //'inherit', //'yellow', //'inherit',
       'orientation':1,
       'minimumSize':'10%',
       'maximumSize':'100%',
-      'initialSize':'100%'});/*,
-      'opaqueResize':0});*/
+      'initialSize':'100%',
+      'opaqueResize':1});
     this.vsplitter.resize();
   }
 });
@@ -8212,81 +8138,19 @@ ModelRelationsTextsEditor.PARENT_TEXT_BUTTON_VALUE = "Parent";
 ModelRelationsTextsEditor.CHILD_TEXT_BUTTON_ID = "childTextButton";
 ModelRelationsTextsEditor.CHILD_TEXT_BUTTON_VALUE = "Child";
 
+// OBSOLETE !!!!!!!!!!!!!!!!!!!!!!!!!!!
+//
+// Check globals first !!! GridList.XXX_SIZE
+//
 //Class: GridList
 var GridList = new Class({
-  Extends: SjamayeeUIComponent,
-  initialize: function(name,properties) {
-    this.dataObjectsList = null;
-    this.dataRelationsGrid = null;
-    this.modelObjectsList = null;
-    this.modelObjectsTextsEditor = null;
-    this.modelRelationsGrid = null;
-    this.modelRelationsTextsEditor = null;
-    this.toolBar = null;
-    //this.parent(GridList.ID);
-    //this.gridListSplitter = null;
-
-    //var html = '<div style="background-color:yellow">'+
-    var html = '<div id="'+DataObjectsList.ID+'" class="'+GridList.CLASS_ID+'"></div>'+
-    //var html = '<div id="'+GridList.ID+'" style="width:100%;height:100%;background-color:lightblue;position:relative;align:left;">'+
-               '<div id="'+DataRelationsGrid.ID+'" class="'+GridList.CLASS_ID+'"></div>'+
-               '<div id="'+ModelObjectsList.ID+'" class="'+GridList.CLASS_ID+'"></div>'+
-               '<div id="'+ModelObjectsTextsEditor.ID+'" class="'+GridList.CLASS_ID+'"></div>'+
-               '<div id="'+ModelRelationsGrid.ID+'" class="'+GridList.CLASS_ID+'"></div>'+
-               '<div id="'+ModelRelationsTextsEditor.ID+'" class="'+GridList.CLASS_ID+'"></div>';
-//             '</div>';
-//             '</div>'+ //;
-    this.parent(GridList.ID, {html: html});
-  },
-  initializeChildren: function() {
-    this.parent();
-    this.dataObjectsList = new DataObjectsList();
-    this.addChild(this.dataObjectsList);
-    this.dataRelationsGrid = new DataRelationsGrid();
-    this.addChild(this.dataRelationsGrid);
-    this.modelObjectsList = new ModelObjectsList();
-    this.addChild(this.modelObjectsList);
-    this.modelObjectsTextsEditor = new ModelObjectsTextsEditor();
-    this.addChild(this.modelObjectsTextsEditor);
-    this.modelRelationsGrid = new ModelRelationsGrid();
-    this.addChild(this.modelRelationsGrid);
-    this.modelRelationsTextsEditor = new ModelRelationsTextsEditor();
-    this.addChild(this.modelRelationsTextsEditor);
-  },
-  initializationComplete: function() {
-    /*this.hsplitter = new Splitter($(GridList.ID), {
-      'handleWidth':5,
-      'handleColor':'inherit',
-      'handleBorder':'none',
-      'orientation':0,
-      'minimumSize':'100%',
-      'maximumSize':'100%',
-      'initialSize':'100%',
-      'opaqueResize':1});		
-		this.hsplitter.addWidget($("listPaneLeft"), {
-      'handleWidth':0,
-      'handleColor':'inherit',
-      'handleBorder':'none', //'0px solid red',
-      'orientation':0,
-      'minimumSize':'0%',
-      'maximumSize':'100%',
-      'initialSize':'300px', //'30%',
-      'opaqueResize':1});
-		this.hsplitter.addWidget($("listPaneRight"), {
-      'handleWidth':5,
-      'handleColor':'inherit',
-      'handleBorder':'none', //'0px solid red',
-      'orientation':0,
-      'minimumSize':'0%',
-      'maximumSize':'100%',
-      'initialSize':'500px', //'70%',
-      'opaqueResize':1});*/
-  }
+  Extends: SjamayeeUIComponent
 });
 GridList.ID = "listPane";
 GridList.CLASS_ID = "gridlist";
 GridList.NORMAL_SIZE = 0.50; /*220;*/
 GridList.MAXIMUM_SIZE = 0.75; /*437;*/
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 //Abstract
 //Class: ObjectsList
@@ -8334,7 +8198,7 @@ var ObjectsList = new Class({
     //Add column splitters.
     this.hsplitter = new Splitter($(this.id), {
       'handleWidth':1,
-		  'handleColor':'lightgray' //this.getBackgroundHighliteColor()
+		  'handleColor':'lightgray'
     });
 		this.hsplitter.addWidget($(this.id+ObjectsList.REF_COLUMN_ID),  { 'handleWidth':0, 'handleColor':'inherit', 'initialSize':'10%' });
 		this.hsplitter.addWidget($(this.id+ObjectsList.NAME_COLUMN_ID), { 'handleWidth':1, 'initialSize':'20%' });
@@ -8622,7 +8486,7 @@ var RelationsGrid = new Class({
     //var widths = [1,2,3,4,5,6,7,8];
     this.hsplitter = new Splitter($(this.id), {
       'handleWidth':1,
-		  'handleColor':'lightgray' //this.getBackgroundHighliteColor()      
+		  'handleColor':'lightgray'
     });
     for (var col = Position.COLUMN_FIRST(); col < Position.COLUMNS_MAX(); col++) {
       var column = $(this.getColumnId(col));
@@ -9436,8 +9300,6 @@ TextsToolBar.CANCEL_BUTTON_VALUE = "Cancel";
 var Detail = new Class({
   Extends: SjamayeeUIComponent,
   initialize: function(name,properties) {
-  //var html = '<div id="'+DetailLeft.ID+'" style="width:100%;height:100%;background-color:inherit;"></div>'+
-  //           '<div id="'+DetailRight.ID+'" style="width:100%;height:100%;background-color:inherit;"></div>';
     this.name = (name)?name:Detail.ID;
     var html = '';
     switch (this.name) {
@@ -9477,45 +9339,34 @@ var Detail = new Class({
       this.addClass('model');
     } else {
       this.addClass('data');
-    }    
+    }
+    var handleColor = 'lightgray';
+    if (this.name == Detail.MODEL_OBJECTS_ID || this.name == Detail.MODEL_RELATIONS_ID) {
+      handleColor = ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR;
+    } else {
+      handleColor = DataDetailMediator.BACKGROUND_HIGHLITE_COLOR;
+    }
     this.hsplitter = new Splitter($(this.name), {
-      'handleWidth':5,
-      'handleColor':'inherit', //'white', //'red', //'inherit',
+      'handleWidth':1,
+      'handleColor':handleColor,
       'handleBorder':'none',
       'orientation':0,
       'minimumSize':'100%',
       'maximumSize':'100%',
-      'initialSize':'100%'});/*,
-      'opaqueResize':0});*/
+      'initialSize':'100%'});
   	this.hsplitter.addWidget($(this.name+'Left'), {
       'handleWidth':0,
-      //'handleColor':'black', //'inherit',
-      //'handleBorder':'none', //'0px solid red',
       'orientation':0,
       'minimumSize':'0%',
       'maximumSize':'100%',
-      'initialSize':'100%'});/*, //'200px';
-      'opaqueResize':0});*/
+      'initialSize':'100%'});
   	this.hsplitter.addWidget($(this.name+'Right'), {
       'handleWidth':5,
-      //'handleColor':'black', //'inherit',
-      //'handleBorder':'none', //'0px solid red',
       'orientation':0,
       'minimumSize':'0%',
       'maximumSize':'100%',
-      'initialSize':'100%'});/*, //'400px';
-      'opaqueResize':0});*/
-    //this.hsplitter.setHandleColor('red');
-    switch (this.name) {
-      case Detail.DATA_OBJECTS_ID:
-      case Detail.DATA_RELATIONS_ID:
-      this.hsplitter.setHandleColor(DataDetailMediator.BACKGROUND_HIGHLITE_COLOR);
-      break;
-      case Detail.MODEL_OBJECTS_ID:
-      case Detail.MODEL_RELATIONS_ID:
-      this.hsplitter.setHandleColor(ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR);
-      break;
-    }
+      'initialSize':'100%',
+      'opaqueResize':1});
     this.hsplitter.resize();
   },  
   detail_blurHandler: function()  {
@@ -9895,7 +9746,6 @@ var DataParentDetail = new Class({
     this.parent(DataParentDetail.ID,{html:html});
   },  
   initializeChildren: function() {
-    //alert("DataParentDetail/initializeChildren");
     this.ntd = new DataParentNTD();
     this.addChild(this.ntd);
     this.properties = new DataParentProperties();
@@ -9905,34 +9755,24 @@ var DataParentDetail = new Class({
     this.addClass('data');
     this.hsplitter = new Splitter($(this.id), {
       'handleWidth':2,
-      'handleColor':'lightblue', //'white', //'inherit', //DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR, //'lightblue',
-      //'handleBorder':'3px solid inherit'+DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR,
+      'handleColor':DataDetailMediator.BACKGROUND_HIGHLITE_COLOR, //'lightblue',
       'orientation':0,
-      //'minimumSize':100,
       'minimumSize':'10%',
       'maximumSize':'90%',
-      'initialSize':'100%'});/*,
-      'opaqueResize':0});*/
+      'initialSize':'100%'});
 		this.hsplitter.addWidget($(DataParentNTD.ID), {
       'handleWidth':0,
-      //'handleColor':'green', //'inherit', //DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR, //'lightblue',
-      //'handleBorder':'3px solid inherit'+DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR,
       'orientation':0,
-      //'minimumSize':100,
       'minimumSize':'10%',
       'maximumSize':'90%',
-      'initialSize':'100%'});/*,
-      'opaqueResize':0});*/
+      'initialSize':'100%'});
 		this.hsplitter.addWidget($(DataParentProperties.ID), {
       'handleWidth':2,
-      //'handleColor':'green', //'inherit', //DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR, //'lightblue',
-      //'handleBorder':'3px solid inherit'+DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR,
       'orientation':0,
-      //'minimumSize':100,
       'minimumSize':'10%',
       'maximumSize':'90%',
-      'initialSize':'100%'});/*,
-      'opaqueResize':0});*/
+      'initialSize':'100%',
+      'opaqueResize':1});
     this.hsplitter.resize();
   },  
 });
@@ -9947,7 +9787,6 @@ var ModelParentDetail = new Class({
     this.parent(ModelParentDetail.ID,{html:html});
   },
   initializeChildren: function() {
-    //alert("ModelParentDetail/initializeChildren");
     this.ntd = new ModelParentNTD();
     this.addChild(this.ntd);
     this.properties = new ModelParentProperties();
@@ -9956,35 +9795,25 @@ var ModelParentDetail = new Class({
   initializationComplete: function() {
     this.addClass('model');
     this.hsplitter = new Splitter($(this.id), {
-      'handleWidth':2,
-      'handleColor':ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR, //'white', 'red',
-      //'handleBorder':'3px solid '+ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR,
+      'handleWidth':1,
+      'handleColor':ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR,
       'orientation':0,
-      //'minimumSize':150,
       'minimumSize':'10%',
       'maximumSize':'90%',
-      'initialSize':'100%'});/*,
-      'opaqueResize':0});*/
+      'initialSize':'100%'});
 		this.hsplitter.addWidget($(ModelParentNTD.ID), {
       'handleWidth':0,
-      //'handleColor':'red', //ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR, //'red',
-      //'handleBorder':'3px solid '+ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR,
       'orientation':0,
-      //'minimumSize':150,
       'minimumSize':'10%',
       'maximumSize':'90%',
-      'initialSize':'100%'});/*,
-      'opaqueResize':0});*/
+      'initialSize':'100%'});
 		this.hsplitter.addWidget($(ModelParentProperties.ID), {
       'handleWidth':2,
-      //'handleColor':'red', //ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR, //'red',
-      //'handleBorder':'3px solid '+ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR,
       'orientation':0,
-      //'minimumSize':150,
       'minimumSize':'10%',
       'maximumSize':'90%',
-      'initialSize':'100%'});/*,
-      'opaqueResize':0});*/
+      'initialSize':'100%',
+      'opaqueResize':1});
     this.hsplitter.resize();      
   }
 });
@@ -10143,35 +9972,25 @@ var DataChildDetail = new Class({
   },
   initializationComplete: function() {
     this.hsplitter = new Splitter($(this.id), {
-      'handleWidth':2,
-      'handleColor':'lightblue', //'white', //DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR, //'lightgreen',
-      //'handleBorder':'3px solid '+DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR,
+      'handleWidth':1,
+      'handleColor':DataDetailMediator.BACKGROUND_HIGHLITE_COLOR, //'lightblue',
       'orientation':0,
-      //'minimumSize':200,
       'minimumSize':'10%',
       'maximumSize':'90%',
-      'initialSize':'100%'});/*,
-      'opaqueResize':0});*/
+      'initialSize':'100%'});
 		this.hsplitter.addWidget($(DataChildNTD.ID), {
       'handleWidth':0,
-      //'handleColor':'green', //DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR, //'lightgreen',
-      //'handleBorder':'3px solid '+DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR,
       'orientation':0,
-      //'minimumSize':200,
       'minimumSize':'10%',
       'maximumSize':'90%',
-      'initialSize':'100%'});/*,
-      'opaqueResize':0});*/
+      'initialSize':'100%'});
 		this.hsplitter.addWidget($(DataChildProperties.ID), {
       'handleWidth':2,
-      //'handleColor':'green', //DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR, //'lightgreen',
-      //'handleBorder':'3px solid '+DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR,
       'orientation':0,
-      //'minimumSize':200,
       'minimumSize':'10%',
       'maximumSize':'90%',
-      'initialSize':'100%'});/*,
-      'opaqueResize':0});*/
+      'initialSize':'100%',
+      'opaqueResize':1});
     this.hsplitter.resize();      
   }
 });
@@ -10193,35 +10012,25 @@ var ModelChildDetail = new Class({
   },
   initializationComplete: function() {
     this.hsplitter = new Splitter($(this.id), {
-      'handleWidth':2,
-      'handleColor':ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR, //'white', 'red',
-      //'handleBorder':'3px solid '+ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR,
+      'handleWidth':1,
+      'handleColor':ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR,
       'orientation':0,
-      //'minimumSize':250,
       'minimumSize':'10%',
       'maximumSize':'90%',
-      'initialSize':'100%'});/*,
-      'opaqueResize':0});*/
+      'initialSize':'100%'});
 		this.hsplitter.addWidget($(ModelChildNTD.ID), {
       'handleWidth':0,
-      //'handleColor':'red', //ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR, //'red',
-      //'handleBorder':'3px solid '+ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR,
       'orientation':0,
-      //'minimumSize':250,
       'minimumSize':'10%',
       'maximumSize':'90%',
-      'initialSize':'100%'});/*,
-      'opaqueResize':0});*/
+      'initialSize':'100%'});
 		this.hsplitter.addWidget($(ModelChildProperties.ID), {
       'handleWidth':2,
-      //'handleColor':'red', //ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR, //'red',
-      //'handleBorder':'3px solid '+ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR,
       'orientation':0,
-      //'minimumSize':250,
       'minimumSize':'10%',
       'maximumSize':'90%',
-      'initialSize':'100%'});/*,
-      'opaqueResize':0});*/
+      'initialSize':'100%',
+      'opaqueResize':1});
     this.hsplitter.resize();      
   }
 });
@@ -11799,7 +11608,7 @@ var AttributeListMediator = new Class({
     }
   },
   getBackgroundHighliteColor: function() {
-    return ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR;
+    return ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR; //ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR;
   }
 });
 AttributeListMediator.BACKGROUND_HIGHLITE_COLOR = "yellow;";
@@ -15144,14 +14953,14 @@ var DataObjectNTDMediator = new Class({
       }
       ntd.goButton.innerHTML = goButtonLabel;
       var noGoStyle = "display:none;"
-      if (objectsMediator.isEdit()) { noGoStyle = "display:block;background-color:lightblue;"; }
+      if (objectsMediator.isEdit()) { noGoStyle = "display:block;background-color:"+DataDetailMediator.BACKGROUND_HIGHLITE_COLOR+";"; } //lightblue;"; }
       ntd.noGoButton.setAttribute("style",noGoStyle);
       break;
     }
   }
 });
 DataObjectNTDMediator.ID = "DataObjectNTDMediator";
-DataObjectNTDMediator.BACKGROUND_HIGHLITE_COLOR = "#D7E5FE;";
+//DataObjectNTDMediator.BACKGROUND_HIGHLITE_COLOR = "#D7E5FE;";
 
 //Class: ModelObjectNTDMediator
 var ModelObjectNTDMediator = new Class({
@@ -15203,14 +15012,14 @@ var ModelObjectNTDMediator = new Class({
       }
       ntd.goButton.innerHTML = goButtonLabel;
       var noGoStyle = "display:none;"
-      if (objectsMediator.isEdit()) { noGoStyle = "display:block;background-color:"+this.getBackgroundHighliteColor(); }
+      if (objectsMediator.isEdit()) { noGoStyle = "display:block;background-color:"+DataDetailMediator.BACKGROUND_HIGHLITE_COLOR; } //this.getBackgroundHighliteColor(); }
       ntd.noGoButton.setAttribute("style",noGoStyle);
       break;
     }
   }
 });
 ModelObjectNTDMediator.ID = "ModelObjectNTDMediator";
-ModelObjectNTDMediator.BACKGROUND_HIGHLITE_COLOR = "#FAE4DB;";
+//ModelObjectNTDMediator.BACKGROUND_HIGHLITE_COLOR = "#FAE4DB;";
 
 //Abstract
 //Class: ObjectPropertiesMediator
@@ -15856,7 +15665,7 @@ var ParentNTDMediator = new Class({
       ntd.goButton.innerHTML = goButtonLabel;
       //ntd.goButton.setAttribute("onclick",goButtonScript);      
       var noGoStyle = "display:none;"
-      if (relationsMediator.isEdit()) { noGoStyle = "display:block;background-color:lightblue;"; }
+      if (relationsMediator.isEdit()) { noGoStyle = "display:block;background-color:"+DataDetailMediator.BACKGROUND_HIGHLITE_COLOR+";"; } //lightblue;"; }
       ntd.noGoButton.setAttribute("style",noGoStyle);
       break;
       case SjamayeeFacade.PARENT_NTD_CLICK:
@@ -18350,11 +18159,11 @@ var ModelObjectsHeaderMediator = new Class({
     }
   },
   getBackgroundHighliteColor: function() {
-    return ModelObjectsHeaderMediator.BACKGROUND_HIGHLITE_COLOR;
+    return ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR; //ModelObjectsHeaderMediator.BACKGROUND_HIGHLITE_COLOR;
   } 
 });
 ModelObjectsHeaderMediator.ID = "ModelObjectsHeaderMediator";
-ModelObjectsHeaderMediator.BACKGROUND_HIGHLITE_COLOR = "#FAE4DB";
+//ModelObjectsHeaderMediator.BACKGROUND_HIGHLITE_COLOR = "#FAE4DB";
 
 //Class: ModelObjectsTextsHeaderMediator
 var ModelObjectsTextsHeaderMediator = new Class({
@@ -18488,11 +18297,11 @@ var ModelRelationsHeaderMediator = new Class({
     return entitySelected;
   },
   getBackgroundHighliteColor: function() {
-    return ModelRelationsHeaderMediator.BACKGROUND_HIGHLITE_COLOR;
+    return ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR; //ModelRelationsHeaderMediator.BACKGROUND_HIGHLITE_COLOR;
   }  
 });
 ModelRelationsHeaderMediator.ID = "ModelRelationsHeaderMediator";
-ModelRelationsHeaderMediator.BACKGROUND_HIGHLITE_COLOR = "#FAE4DB";
+//ModelRelationsHeaderMediator.BACKGROUND_HIGHLITE_COLOR = "#FAE4DB";
 
 //Class: ModelRelationsTextsHeaderMediator
 var ModelRelationsTextsHeaderMediator = new Class({
@@ -19274,11 +19083,11 @@ var ModelRelationsGridMediator = new Class({
     return new ModelRelation(vo);
   },
   getBackgroundHighliteColor: function() {
-    return ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR;
+    return ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR; //ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR;
   }
 });
 ModelRelationsGridMediator.ID = "ModelRelationsGridMediator";
-ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR = "#FAE4DB;";
+//ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR = "#FAE4DB;";
 
 //Class: ModelObjectsListMediator
 var ModelObjectsListMediator = new Class({
@@ -19559,11 +19368,11 @@ var ModelObjectsListMediator = new Class({
     this.setResizeButtonText(resizeButtonText);
   },
   getBackgroundHighliteColor: function() {
-    return ModelObjectsListMediator.BACKGROUND_HIGHLITE_COLOR;
+    return ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR; //ModelObjectsListMediator.BACKGROUND_HIGHLITE_COLOR;
   } 
 });
 ModelObjectsListMediator.ID = "ModelObjectsListMediator";
-ModelObjectsListMediator.BACKGROUND_HIGHLITE_COLOR = "#FAE4DB;";
+//ModelObjectsListMediator.BACKGROUND_HIGHLITE_COLOR = "#FAE4DB;";
 
 //Class: ModelObjectsToolBarMediator
 var ModelObjectsToolBarMediator = new Class({
@@ -22111,11 +21920,11 @@ var DataObjectsHeaderMediator = new Class({
     }
   },
   getBackgroundHighliteColor: function() {
-    return DataObjectsHeaderMediator.BACKGROUND_HIGHLITE_COLOR;
+    return DataDetailMediator.BACKGROUND_HIGHLITE_COLOR; //DataObjectsHeaderMediator.BACKGROUND_HIGHLITE_COLOR;
   }  
 });
 DataObjectsHeaderMediator.ID = "DataObjectsHeaderMediator";
-DataObjectsHeaderMediator.BACKGROUND_HIGHLITE_COLOR = "lightblue";
+//DataObjectsHeaderMediator.BACKGROUND_HIGHLITE_COLOR = "lightblue";
 
 //Class: DataRelationsHeaderMediator
 var DataRelationsHeaderMediator = new Class({
@@ -22207,11 +22016,11 @@ var DataRelationsHeaderMediator = new Class({
     return entitySelected;
   },
   getBackgroundHighliteColor: function() {
-    return DataRelationsHeaderMediator.BACKGROUND_HIGHLITE_COLOR; //'black'
+    return DataDetailMediator.BACKGROUND_HIGHLITE_COLOR; //DataRelationsHeaderMediator.BACKGROUND_HIGHLITE_COLOR; //'black'
   }  
 });
 DataRelationsHeaderMediator.ID = "DataRelationsHeaderMediator";
-DataRelationsHeaderMediator.BACKGROUND_HIGHLITE_COLOR = "lightblue";
+//DataRelationsHeaderMediator.BACKGROUND_HIGHLITE_COLOR = "lightblue";
 
 //Class: DataObjectsToolBarMediator
 var DataObjectsToolBarMediator = new Class({
@@ -22254,7 +22063,8 @@ var DataObjectsToolBarMediator = new Class({
       this.enableButtons();
       //toolBar.setAttribute("style","display:block;");
       var headerMediator = this.facade.retrieveMediator(DataObjectsHeaderMediator.ID);
-      toolBar.setAttribute("style","background-color:"+headerMediator.getBackgroundHighliteColor()+";height:100%;width:100%;display:block;");
+      //toolBar.setAttribute("style","background-color:"+headerMediator.getBackgroundHighliteColor()+";height:100%;width:100%;display:block;");
+      toolBar.setAttribute("style","background-color:"+DataDetailMediator.BACKGROUND_HIGHLITE_COLOR+";height:100%;width:100%;display:block;");
       break;
     }
   }
@@ -22314,7 +22124,8 @@ var DataRelationsToolBarMediator = new Class({
       this.enableButtons();
       //toolBar.setAttribute("style","display:block;");
       var headerMediator = this.facade.retrieveMediator(DataRelationsHeaderMediator.ID);
-      toolBar.setAttribute("style","background-color:"+headerMediator.getBackgroundHighliteColor()+";height:100%;width:100%;display:block;");
+      //toolBar.setAttribute("style","background-color:"+headerMediator.getBackgroundHighliteColor()+";height:100%;width:100%;display:block;");
+      toolBar.setAttribute("style","background-color:"+DataDetailMediator.BACKGROUND_HIGHLITE_COLOR+";height:100%;width:100%;display:block;");
       break;
       case SjamayeeFacade.GRID_DATA_RESIZED:
       var sizeNormal = note.getBody();
@@ -22713,11 +22524,11 @@ var DataRelationsGridMediator = new Class({
     return new DataRelation(vo);
   },
   getBackgroundHighliteColor: function() {
-    return DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR;
+    return DataDetailMediator.BACKGROUND_HIGHLITE_COLOR; //DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR;
   }
 });
 DataRelationsGridMediator.ID = "DataRelationsGridMediator";
-DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR = "#D7E5FE;";
+//DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR = "#D7E5FE;";
 
 //Class: DataObjectsListMediator
 var DataObjectsListMediator = new Class({
@@ -22927,8 +22738,8 @@ var DataObjectsListMediator = new Class({
     this.setResizeButtonText(resizeButtonText);
   },
   getBackgroundHighliteColor: function() {
-    return DataObjectsListMediator.BACKGROUND_HIGHLITE_COLOR;
+    return DataDetailMediator.BACKGROUND_HIGHLITE_COLOR; //DataObjectsListMediator.BACKGROUND_HIGHLITE_COLOR;
   } 
 });
 DataObjectsListMediator.ID = "DataObjectsListMediator";
-DataObjectsListMediator.BACKGROUND_HIGHLITE_COLOR = "#D7E5FE;";
+//DataObjectsListMediator.BACKGROUND_HIGHLITE_COLOR = "#D7E5FE;";
