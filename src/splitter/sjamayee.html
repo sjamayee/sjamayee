@@ -275,6 +275,25 @@
       }
       //alert("loadLog/loadDataRelations - loaded: "+i);
     }
+
+		/*****************************************************************************************
+		* Disable Text Selection script- © Dynamic Drive DHTML code library (www.dynamicdrive.com)
+		* This notice MUST stay intact for legal use
+		* Visit Dynamic Drive at http://www.dynamicdrive.com/ for full source code
+		*****************************************************************************************/
+		function disableSelection(target) {
+			if (typeof target.onselectstart!="undefined") //IE route
+				target.onselectstart = function(){ return false }
+			else if (typeof target.style.MozUserSelect!="undefined") //Firefox route
+				target.style.MozUserSelect="none"
+			else //All other route (ie: Opera)
+				target.onmousedown = function(){ return false }
+		  target.style.cursor = "default"
+		}
+		//Sample usages
+		//disableSelection(document.body) //Disable text selection on entire body
+		//disableSelection(document.getElementById("mydiv")) //Disable text selection on element with id="mydiv"
+		</script>
   </script>
   <script type="text/javascript" src="http://sjamayee-explorer.googlecode.com/files/demo_project_planning_typesJson.js"></script>
   <script type="text/javascript" src="http://sjamayee-explorer.googlecode.com/files/demo_project_planning_modelEntitiesJson.js"></script>
@@ -304,41 +323,41 @@
   <div style="margin:10px 10px 0px 10px;border:none;">
    <div id="sjamayeeForm" style="width:100%;height:925px;">
     <div id="headerPane" style="width:100%;height:28px;display:block;"></div>
-    <div id="dataObjects" style="width:100%;height:100%;background-color:lightblue;display:block;">
-     <div id="dataObjectsList" style="width:100%;height:100%;position:relative;align:top;"></div>
-     <div id="dataObjectsBottom" class="listPane" style="width:100%;height:100%;">
-      <div id="dataObjectsToolBar" class="toolBar" style="width:100%;height:28px;cursor:ns-resize;"></div> <!-- onmousedown="alert('mousedown on DOTB!!!');"></div -->
-      <div id="dataObjectsDetail" class="listPane" style="width:100%;height:100%;">
+    <div id="dataObjects" style="width:100%;height:863px;background-color:lightblue;display:block;">
+     <div id="dataObjectsList" class="data" style="width:100%;height:100%;position:relative;align:top;"></div>
+     <div id="dataObjectsBottom" class="listPane data splitter" style="width:100%;height:100%;">
+      <div id="dataObjectsToolBar" class="toolBar data" style="width:100%;height:28px;cursor:ns-resize;"></div> <!-- onmousedown="SjamayeeFacade.getInstance().hello() / alert('mousedown on DOTB!!!');" //  onmousedown="$('dataObjects_splitter').mousedown()"></div --> 
+      <div id="dataObjectsDetail" class="listPane data" style="width:100%;height:100%;">
 	     <div id="dataObjectsDetailLeft" style="height:100%;width:100%;background-color:lightblue;position:relative;align:left;float:left;">111</div>
 	     <div id="dataObjectsDetailRight" style="height:100%;width:100%;background-color:blue;position:relative;align:left;float:left;">222</div>
       </div>
 		 </div>
     </div>
-    <div id="dataRelations" style="width:100%;height:100%;background-color:lightgreen;display:block;">
-     <div id="dataRelationsGrid" style="width:100%;height:100%;position:relative;align:top;"></div>
-     <div id="dataRelationsBottom" class="listPane" style="width:100%;height:100%;">
-      <div id="dataRelationsToolBar" class="toolBar" style="width:100%;height:28px;cursor:ns-resize;"></div> <!-- onmousedown="alert('mousedown on DOTB!!!');"></div -->
-      <div id="dataRelationsDetail" class="listPane" style="width:100%;height:100%;">
+    <div id="dataRelations" style="width:100%;height:863px;background-color:lightgreen;display:block;">
+     <div id="dataRelationsGrid" class="data" style="width:100%;height:100%;position:relative;align:top;"></div>
+     <div id="dataRelationsBottom" class="listPane data splitter" style="width:100%;height:100%;">
+      <div id="dataRelationsToolBar" class="toolBar data" style="width:100%;height:28px;cursor:ns-resize;"></div> <!-- onmousedown="alert('mousedown on DRTB!!!');" // onmousedown="SjamayeeFacade.getInstance().hello()"></div -->
+      <div id="dataRelationsDetail" class="listPane data" style="width:100%;height:100%;">
 	     <div id="dataRelationsDetailLeft" style="height:100%;width:100%;background-color:lightblue;position:relative;align:left;float:left;">111</div>
 	     <div id="dataRelationsDetailRight" style="height:100%;width:100%;background-color:blue;position:relative;align:left;float:left;">222</div>
       </div>
 		 </div>
     </div>
-    <div id="modelObjects" style="width:100%;height:100%;background-color:yellow;display:block;">
-     <div id="modelObjectsList" style="width:100%;height:100%;position:relative;align:top;"></div>
-     <div id="modelObjectsBottom" class="listPane" style="width:100%;height:100%;">
-      <div id="modelObjectsToolBar" class="toolBar" style="width:100%;height:28px;cursor:ns-resize;"></div> <!-- onmousedown="alert('mousedown on DOTB!!!');"></div -->
-      <div id="modelObjectsDetail" class="listPane" style="width:100%;height:100%;">
+    <div id="modelObjects" style="width:100%;height:863px;background-color:yellow;display:block;">
+     <div id="modelObjectsList" class="model" style="width:100%;height:100%;position:relative;align:top;"></div>
+     <div id="modelObjectsBottom" class="listPane model splitter" style="width:100%;height:100%;">
+      <div id="modelObjectsToolBar" class="toolBar model" style="width:100%;height:28px;cursor:ns-resize;"></div> <!-- onmousedown="alert('mousedown on MOTB!!!');" // onmousedown="SjamayeeFacade.getInstance().hello()"></div -->
+      <div id="modelObjectsDetail" class="listPane model" style="width:100%;height:100%;">
 	     <div id="modelObjectsDetailLeft" style="height:100%;width:100%;background-color:lightblue;position:relative;align:left;float:left;">111</div>
 	     <div id="modelObjectsDetailRight" style="height:100%;width:100%;background-color:blue;position:relative;align:left;float:left;">222</div>
       </div>
 		 </div>
     </div>
-    <div id="modelRelations" style="width:100%;height:100%;background-color:red;display:block;">
-     <div id="modelRelationsGrid" style="width:100%;height:100%;position:relative;align:top;"></div>
-     <div id="modelRelationsBottom" class="listPane" style="width:100%;height:100%;">
-      <div id="modelRelationsToolBar" class="toolBar" style="width:100%;height:28px;cursor:ns-resize;"></div> <!-- onmousedown="alert('mousedown on DOTB!!!');"></div -->
-      <div id="modelRelationsDetail" class="listPane" style="width:100%;height:100%;">
+    <div id="modelRelations" style="width:100%;height:863px;background-color:red;display:block;">
+     <div id="modelRelationsGrid" class="model" style="width:100%;height:100%;position:relative;align:top;"></div>
+     <div id="modelRelationsBottom" class="listPane model splitter" style="width:100%;height:100%;">
+      <div id="modelRelationsToolBar" class="toolBar model" style="width:100%;height:28px;cursor:ns-resize;"></div> <!-- onmousedown="alert('mousedown on MRTB!!!');" // onmousedown="SjamayeeFacade.getInstance().hello()"></div -->
+      <div id="modelRelationsDetail" class="listPane model" style="width:100%;height:100%;">
 	     <div id="modelRelationsDetailLeft" style="height:100%;width:100%;background-color:lightblue;position:relative;align:left;float:left;">111</div>
 	     <div id="modelRelationsDetailRight" style="height:100%;width:100%;background-color:blue;position:relative;align:left;float:left;">222</div>
       </div>
@@ -348,4 +367,7 @@
    <div id="googleBranding" style="width:100%;height:20px;"></div>
   </div>
  </body>
+ <script type="text/javascript">
+  disableSelection(document.body); //disable text selection on entire body of page
+ </script>
 </html>

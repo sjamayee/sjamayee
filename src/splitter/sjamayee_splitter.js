@@ -58,8 +58,7 @@ var Splitter = new Class({
 		  setSizes: this.setSizes,
 		  getSizes: this.getSizes,
 		  setHandleColor: this.setHandleColor,
-		  setHandlePosition: this.setHandlePosition,
-		  handleMouseDown: this.handleMouseDown
+		  setHandlePosition: this.setHandlePosition
 		});
 		wrapper.orientation = wrapper_orientation;
 		wrapper.handleWidth = wrapper_handleWidth;
@@ -110,11 +109,22 @@ var Splitter = new Class({
   															:{'border-width':'0 '+handleWidth+'px','cursor':'ew-resize','width':handleWidth+'px','height':this.offsetHeight});  
   	handle.num = numWidgets;
   	handle.handleWidth = handleWidth;            //ADDED !!!
+    var pseudoHandleColor = widget.hasClass('model')?ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR:DataDetailMediator.BACKGROUND_HIGHLITE_COLOR;
+  	if (handleColor == 'lightgray') {
+  	  pseudoHandleColor = handleColor;
+  	}
+  	
+  //handle.addEvent('mousedown', this.mousedown);
+  //handle.addEvent('mousedown', SjamayeeFacade.getInstance().hello);
+  //handle.addEvent('mousedown', this.mousedown());
     handle.addEvent('mousedown', function() {
-  		var parent = this.parentNode;
+		  var parent = this.parentNode;
   		var orientation = parent.orientation;
   		var pseudoHandle = new Element('div',{
-  			'styles': {'position':'absolute', 'left':this.offsetLeft, 'top':this.offsetTop, 'border':'1px dashed black', 'font-size':'0'}
+  			//'styles': {'position':'absolute', 'left':this.offsetLeft, 'top':this.offsetTop, 'border':'1px dashed lightgray', 'font-size':'0'} //black
+  			//'styles': {'position':'absolute', 'left':this.offsetLeft, 'top':this.offsetTop, 'border':'1px dashed '+pseudoHandleColor, 'font-size':'0'} //black
+  			//'styles': {'position':'absolute', 'left':this.offsetLeft, 'top':this.offsetTop, 'border':'28px dashed '+pseudoHandleColor, 'font-size':'0', 'background':'transparent'} //black
+  			'styles': {'position':'absolute', 'left':this.offsetLeft, 'top':this.offsetTop, 'border':handleWidth+'px dashed '+pseudoHandleColor, 'font-size':'0'} //black
   		});
   		parent.appendChild(pseudoHandle);
   		pseudoHandle.setStyles(orientation?{'height':parent.handleHeight - 2,'width':this.offsetWidth - 2}
@@ -219,7 +229,6 @@ var Splitter = new Class({
   		document.addEvent('mousemove',mousemove);
   		document.addEvent('mouseup',mouseup);
   	});
-
   	//WidgetWrapper
   	var wwHeight = 0;
   	var wwWidth = 0;
@@ -237,6 +246,138 @@ var Splitter = new Class({
   		'class': 'splitterPanel',
   		'styles': {'position': 'absolute', 'height': wwHeight+'px', 'width': wwWidth+'px'} //, 'overflow': 'hidden'} //''auto'}
   	});
+    widgetWrapper.setAttribute("id",widget.id+"_widget");
+    widgetWrapper.handle = handle; //Added!!!
+    pseudoHandleColor = widget.hasClass('model')?ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR:DataDetailMediator.BACKGROUND_HIGHLITE_COLOR;
+
+  	if (handleColor == 'lightgray') {
+  	  pseudoHandleColor = handleColor;
+  	}
+	  //pseudoHandleColor = 'transparent';
+
+    var pseudoHandleOpacity = (opaqueResize)?0.25:1;
+    
+    if (widget.hasClass('splitter')) {    
+      widgetWrapper.addEvent('mousedown', function() {
+  		  var parent = this.parentNode;
+    		var orientation = parent.orientation;
+    		var pseudoHandle = new Element('div',{
+    			//'styles': {'position':'absolute', 'left':this.handle.offsetLeft, 'top':this.handle.offsetTop, 'border':'1px dashed lightgray', 'font-size':'0'} //black
+    			//'styles': {'position':'absolute', 'left':this.handle.offsetLeft, 'top':this.handle.offsetTop, 'border':'1px dashed '+pseudoHandleColor, 'font-size':'0'} //black
+    			//'styles': {'position':'absolute', 'left':this.handle.offsetLeft, 'top':this.handle.offsetTop, 'border':'28px dashed '+pseudoHandleColor, 'font-size':'0', 'background':'transparent'} //black
+    			//'styles': {'position':'absolute', 'left':this.handle.offsetLeft, 'top':this.handle.offsetTop, 'border':'28px solid '+pseudoHandleColor, 'font-size':'0', 'opacity':0.25} //black
+    			'styles': {'position':'absolute', 'left':this.handle.offsetLeft, 'top':this.handle.offsetTop, 'border':'28px solid '+pseudoHandleColor, 'font-size':'0', 'opacity':pseudoHandleOpacity} //black
+    		});
+    		parent.appendChild(pseudoHandle);
+    		pseudoHandle.setStyles(orientation?{'height':parent.handleHeight - 2,'width':this.offsetWidth - 2}
+    																			:{'width':parent.handleWidth - 2,'height':this.offsetHeight - 2});
+    		var xoffset = parent.getPosition().x;
+    		var yoffset = parent.getPosition().y;
+    		var min = 0;
+    		var max = 0;
+    		if (orientation) {
+    			var x = this.handle.offsetTop;
+    			var offsetHeight = 0;
+    			if (initialSize.charAt(initialSize.length-1) == '%') {
+        	  var i = Number(initialSize.substr(0,initialSize.length-1));
+        	  var percent = (i / 100);        	  
+  			    offsetHeight = parent.offsetHeight * percent;
+  			  } else {
+  			    offsetHeight = Number(initialSize.substr(0,initialSize.length-2));
+  			  }
+    			max = (parent.handleWidth !== 0)?parent.offsetHeight - parent.handleWidth:offsetHeight;
+    		}	else {
+    			var x = this.offsetLeft;
+    			var offsetWidth = 0;
+    			if (initialSize.charAt(initialSize.length-1) == '%') {
+        	  var i = Number(initialSize.substr(0,initialSize.length-1));
+        	  var percent = (i / 100);
+  			    offsetWidth = parent.offsetWidth * percent;
+  			  } else {
+  			    offsetWidth = Number(initialSize.substr(0,initialSize.length-2));
+  			  }
+    			max = (parent.handleWidth !== 0)?parent.offsetWidth - parent.handleWidth:offsetWidth;
+    		}
+    		if (this.num > 1) {
+    		  if (parent.handleWidth !== 0) {
+    		    min = (orientation?parent.handles[this.num - 1].offsetTop:parent.handles[this.num - 1].offsetLeft) + handle.handleWidth; //parent.handleWidth;
+    		  } else {
+      			if (initialSize.charAt(initialSize.length-1) == '%') {
+          	  var i = Number(initialSize.substr(0,initialSize.length-1));
+          	  var percent = (i / 100);          	  
+    			    min = (orientation?parent.offsetTop:parent.offsetLeft) * percent;
+    			  } else {
+    			    min = Number(initialSize.substr(0,initialSize.length-2));
+    			  }
+    		  }
+    		}
+    		if (this.num < parent.handles.length - 1) {
+    		  if (parent.handleWidth !== 0) {
+    		    max = (orientation?parent.handles[this.num + 1].offsetTop:parent.handles[this.num + 1].offsetLeft) - handle.handleWidth; //parent.handleWidth;
+    		  } else {
+      			if (initialSize.charAt(initialSize.length-1) == '%') {
+          	  var i = Number(initialSize.substr(0,initialSize.length-1));
+          	  var percent = (i / 100);          	  
+    			    max = (orientation?parent.offsetTop:parent.offsetLeft) * percent;
+    			  } else {
+    			    max = Number(initialSize.substr(0,initialSize.length-2));
+    			  }
+    		  }
+    		}
+    		var mousemove = function(e) {
+    			var e = new Event(e),p = {x:0,y:0};
+    			if (window.ie) try { document.selection.empty(); } catch(err) {};
+    			x = orientation?e.page.y - yoffset - p.y:e.page.x - xoffset - p.x;
+    			if (x < min) { x = min;	}
+    			if (x > max) { x = max;	}
+    			var dir = orientation?'top':'left';
+    			pseudoHandle.setStyle(dir,x);
+    		};
+    		var mouseup = function(e) {
+    			var e = new Event(e),p = {x:0,y:0};
+    			if (window.ie) try { document.selection.empty(); } catch(err) {};
+    			x = orientation?e.page.y - yoffset - p.y:e.page.x - xoffset - p.x;
+  			  //var parent = this; //.parentNode; //handle.parentNode;
+  			  var parent = handle.parentNode;
+    			//var diff = x - (orientation?handle.offsetTop:handle.offsetLeft);
+    			//var diff = x - (orientation?this.handle.offsetTop:this.handle.offsetLeft);
+    			//var diff = x - (orientation?this.offsetTop:this.offsetLeft);
+    			var diff = x - (orientation?handle.offsetTop:handle.offsetLeft);
+    			if (diff) {
+    			  var parentMinimumSize = 0;
+      			if (parent.minimumSize.charAt(parent.minimumSize.length-1) == '%') {
+          	  var m = Number(parent.minimumSize.substr(0,parent.minimumSize.length-1));
+          	  var percent = (m / 100);
+    			    parentMinimumSize = (orientation?parent.offsetTop:parent.offsetLeft) * percent;
+    			  } else {
+    			    parentMinimumSize = Number(parent.minimumSize.substr(0,parent.minimumSize.length-2));
+    			  }
+    			  if (diff < parentMinimumSize) { diff = parentMinimumSize; }
+    			  var parentMaximumSize = 0;
+      			if (parent.maximumSize.charAt(parent.maximumSize.length-1) == '%') {
+          	  var m = Number(parent.maximumSize.substr(0,parent.maximumSize.length-1));
+          	  var percent = (m / 100);          	  
+    			    parentMaximumSize = (orientation?parent.offsetTop:parent.offsetLeft) * percent;
+    			  } else {
+    			    parentMaximumSize = Number(parent.maximumSize.substr(0,parent.maximumSize.length-2));
+    			  }
+    			  if (diff > parentMaximumSize) { diff = parentMaximumSize; }
+    			}
+    			var sizes = parent.getSizes();
+    			//sizes[handle.num-1] += diff;
+    			//sizes[handle.num] -= diff;
+    			sizes[handle.num-1] += diff;
+    			sizes[handle.num] -= diff;
+    			parent.setSizes(sizes);
+    			pseudoHandle.destroy();
+    			document.removeEvent('mouseup',mouseup);
+    			document.removeEvent('mousemove',mousemove);
+    			parent.resize();
+    		};
+    		document.addEvent('mousemove',mousemove);
+    		document.addEvent('mouseup',mouseup);
+    	});
+    }
   	var sizes = [];
   	var w = 0;
   	if (numWidgets) w += numWidgets * handle.handleWidth; //this.handleWidth;
@@ -274,6 +415,122 @@ var Splitter = new Class({
   	this.widgets.push(widgetWrapper);
   	this.setSizes(sizes);
   },
+/*mousedown: function() {
+		var parent = this; //this.parentNode;
+    alert("Splitter/mousedown - parent/id: "+parent.id);
+  },*/
+/*mousedown: function() {
+		var parent = this; //this.parentNode;
+		var orientation = parent.orientation;
+		var pseudoHandle = new Element('div',{
+			'styles': {'position':'absolute', 'left':this.offsetLeft, 'top':this.offsetTop, 'border':'1px dashed black', 'font-size':'0'}
+		});
+		parent.appendChild(pseudoHandle);
+		pseudoHandle.setStyles(orientation?{'height':parent.handleHeight - 2,'width':this.offsetWidth - 2}
+																			:{'width':parent.handleWidth - 2,'height':this.offsetHeight - 2});
+		var xoffset = parent.getPosition().x;
+		var yoffset = parent.getPosition().y;
+		var min = 0;
+		var max = 0;
+		if (orientation) {
+			var x = this.offsetTop;
+			var offsetHeight = 0;
+			if (this.initialSize.charAt(this.initialSize.length-1) == '%') {
+    	  var i = Number(this.initialSize.substr(0,this.initialSize.length-1));
+    	  var percent = (i / 100);        	  
+		    offsetHeight = parent.offsetHeight * percent;
+		  } else {
+		    offsetHeight = Number(this.initialSize.substr(0,this.initialSize.length-2));
+		  }
+			max = (parent.handleWidth !== 0)?parent.offsetHeight - parent.handleWidth:offsetHeight;
+		}	else {
+			var x = this.offsetLeft;
+			var offsetWidth = 0;
+			if (this.initialSize.charAt(this.initialSize.length-1) == '%') {
+    	  var i = Number(this.initialSize.substr(0,this.initialSize.length-1));
+    	  var percent = (i / 100);
+		    offsetWidth = parent.offsetWidth * percent;
+		  } else {
+		    offsetWidth = Number(this.initialSize.substr(0,this.initialSize.length-2));
+		  }
+			max = (parent.handleWidth !== 0)?parent.offsetWidth - parent.handleWidth:offsetWidth;
+		}
+		if (this.num > 1) {
+		  if (parent.handleWidth !== 0) {
+		    min = (this.orientation?parent.handles[this.num - 1].offsetTop:parent.handles[this.num - 1].offsetLeft) + handle.handleWidth; //parent.handleWidth;
+		  } else {
+  			if (this.initialSize.charAt(initialSize.length-1) == '%') {
+      	  var i = Number(this.initialSize.substr(0,this.initialSize.length-1));
+      	  var percent = (i / 100);          	  
+			    min = (this.orientation?parent.offsetTop:parent.offsetLeft) * percent;
+			  } else {
+			    min = Number(this.initialSize.substr(0,this.initialSize.length-2));
+			  }
+		  }
+		}
+		if (this.num < parent.handles.length - 1) {
+		  if (parent.handleWidth !== 0) {
+		    max = (this.orientation?parent.handles[this.num + 1].offsetTop:parent.handles[this.num + 1].offsetLeft) - handle.handleWidth; //parent.handleWidth;
+		  } else {
+  			if (this.initialSize.charAt(this.initialSize.length-1) == '%') {
+      	  var i = Number(initialSize.substr(0,this.initialSize.length-1));
+      	  var percent = (i / 100);          	  
+			    max = (this.orientation?parent.offsetTop:parent.offsetLeft) * percent;
+			  } else {
+			    max = Number(this.initialSize.substr(0,this.initialSize.length-2));
+			  }
+		  }
+		}
+		var mousemove = function(e) {
+			var e = new Event(e),p = {x:0,y:0};
+			if (window.ie) try { document.selection.empty(); } catch(err) {};
+			x = this.orientation?e.page.y - yoffset - p.y:e.page.x - xoffset - p.x;
+			if (x < min) { x = min;	}
+			if (x > max) { x = max;	}
+			var dir = this.orientation?'top':'left';
+			pseudoHandle.setStyle(dir,x);
+		};
+		var mouseup = function(e) {
+			var e = new Event(e),p = {x:0,y:0};
+			if (window.ie) try { document.selection.empty(); } catch(err) {};
+			x = this.orientation?e.page.y - yoffset - p.y:e.page.x - xoffset - p.x;
+		  var parent = this; //handle.parentNode;
+			//var diff = x - (this.orientation?handle.offsetTop:handle.offsetLeft);
+			var diff = x - (this.orientation?this.offsetTop:this.offsetLeft);
+			if (diff) {
+			  var parentMinimumSize = 0;
+  			if (parent.minimumSize.charAt(parent.minimumSize.length-1) == '%') {
+      	  var m = Number(parent.minimumSize.substr(0,parent.minimumSize.length-1));
+      	  var percent = (m / 100);
+			    parentMinimumSize = (this.orientation?parent.offsetTop:parent.offsetLeft) * percent;
+			  } else {
+			    parentMinimumSize = Number(parent.minimumSize.substr(0,parent.minimumSize.length-2));
+			  }
+			  if (diff < parentMinimumSize) { diff = parentMinimumSize; }
+			  var parentMaximumSize = 0;
+  			if (parent.maximumSize.charAt(parent.maximumSize.length-1) == '%') {
+      	  var m = Number(parent.maximumSize.substr(0,parent.maximumSize.length-1));
+      	  var percent = (m / 100);          	  
+			    parentMaximumSize = (this.orientation?parent.offsetTop:parent.offsetLeft) * percent;
+			  } else {
+			    parentMaximumSize = Number(parent.maximumSize.substr(0,parent.maximumSize.length-2));
+			  }
+			  if (diff > parentMaximumSize) { diff = parentMaximumSize; }
+			}
+			var sizes = parent.getSizes();
+			//sizes[handle.num-1] += diff;
+			//sizes[handle.num] -= diff;
+			sizes[0] += diff;
+			sizes[1] -= diff;
+			parent.setSizes(sizes);
+			pseudoHandle.destroy();
+			document.removeEvent('mouseup',mouseup);
+			document.removeEvent('mousemove',mousemove);
+			parent.resize();
+		};
+		document.addEvent('mousemove',mousemove);
+		document.addEvent('mouseup',mouseup);
+	},*/
   parentResized: function() {
   	var parent = this.parentNode;
   	var w = parent.offsetWidth, h = parent.offsetHeight;
@@ -369,10 +626,10 @@ var Splitter = new Class({
   		handle.setStyles({'background-color':_color});
   	}
   },
-  handleMouseDown: function() {
+  /*mousedown: function() {
     var _handleNumber = 1;
     this.handles[_handleNumber].mousedown();
-  }
+  }*/
 });
 
 ////////////////////////////
@@ -538,6 +795,11 @@ var SjamayeeFacade = function() {
     this.registerCommand(SjamayeeFacade.CHILD_SHOW, ShowChildCommand);
     this.registerCommand(SjamayeeFacade.ADD_RELATION, AddRelationCommand);
     this.registerCommand(SjamayeeFacade.DELETE_RELATION, DeleteRelationCommand);*/
+  },
+  this.hello = function() {
+    alert("SjamayeeFacade/Hello!");
+    var app = this.getApplication();
+    //app.dataObjectsPane.vsplitter.mousedown();
   }
 };
 //SjamayeeFacade = new Class(new SjamayeeFacade());
@@ -6506,15 +6768,15 @@ var DataObjectsPane = new Class({
       'orientation':1,
       'minimumSize':'100%',
       'maximumSize':'100%',
-      'initialSize':'100%',
-      'opaqueResize':1});	
+      'initialSize':'100%'});/*,
+      'opaqueResize':0});*/
 		this.vsplitter.addWidget($(DataObjectsList.ID), {
       'handleWidth':5,
       'orientation':1,
       'minimumSize':'10%',
       'maximumSize':'100%',
-      'initialSize':'100%',
-      'opaqueResize':1});
+      'initialSize':'100%'});/*,,
+      'opaqueResize':0});*/
 		this.vsplitter.addWidget($(DataObjectsBottomPane.ID), {
       'handleWidth':5,
       //'handleColor':'red', //'inherit', //'yellow', //'inherit',
@@ -6522,7 +6784,7 @@ var DataObjectsPane = new Class({
       'minimumSize':'10%',
       'maximumSize':'100%',
       'initialSize':'100%',
-      'opaqueResize':1});    
+      'opaqueResize':1});
     this.vsplitter.resize();
   }
 });
@@ -6573,15 +6835,15 @@ var ModelObjectsPane = new Class({
       'orientation':1,
       'minimumSize':'100%',
       'maximumSize':'100%',
-      'initialSize':'100%',
-      'opaqueResize':1});	
+      'initialSize':'100%'});/*,,
+      'opaqueResize':0});*/	
 		this.vsplitter.addWidget($(ModelObjectsList.ID), {
       'handleWidth':5,
       'orientation':1,
       'minimumSize':'10%',
       'maximumSize':'100%',
-      'initialSize':'100%',
-      'opaqueResize':1});
+      'initialSize':'100%'});/*,,
+      'opaqueResize':0});*/
 		this.vsplitter.addWidget($(ModelObjectsBottomPane.ID), {
       'handleWidth':5,
       //'handleColor':'red', //'inherit', //'yellow', //'inherit',
@@ -6589,7 +6851,7 @@ var ModelObjectsPane = new Class({
       'minimumSize':'10%',
       'maximumSize':'100%',
       'initialSize':'100%',
-      'opaqueResize':1});    
+      'opaqueResize':1});
     this.vsplitter.resize();
   }  
 });
@@ -6640,23 +6902,23 @@ var DataRelationsPane = new Class({
       'orientation':1,
       'minimumSize':'100%',
       'maximumSize':'100%',
-      'initialSize':'100%',
-      'opaqueResize':1});	
+      'initialSize':'100%'});/*,
+      'opaqueResize':0});*/
 		this.vsplitter.addWidget($(DataRelationsGrid.ID), {
       'handleWidth':5,
       'orientation':1,
       'minimumSize':'10%',
       'maximumSize':'100%',
-      'initialSize':'100%',
-      'opaqueResize':1});
+      'initialSize':'100%'});/*,
+      'opaqueResize':0});*/
 		this.vsplitter.addWidget($(DataRelationsBottomPane.ID), {
       'handleWidth':5,
       //'handleColor':'red', //'inherit', //'yellow', //'inherit',
       'orientation':1,
       'minimumSize':'10%',
       'maximumSize':'100%',
-      'initialSize':'100%',
-      'opaqueResize':1});    
+      'initialSize':'100%'});/*,
+      'opaqueResize':0});*/
     this.vsplitter.resize();
   }
 });
@@ -6707,23 +6969,23 @@ var ModelRelationsPane = new Class({
       'orientation':1,
       'minimumSize':'100%',
       'maximumSize':'100%',
-      'initialSize':'100%',
-      'opaqueResize':1});	
+      'initialSize':'100%'});/*,
+      'opaqueResize':0});*/
 		this.vsplitter.addWidget($(ModelRelationsGrid.ID), {
       'handleWidth':5,
       'orientation':1,
       'minimumSize':'10%',
       'maximumSize':'100%',
-      'initialSize':'100%',
-      'opaqueResize':1});
+      'initialSize':'100%'});/*,
+      'opaqueResize':0});*/
 		this.vsplitter.addWidget($(ModelRelationsBottomPane.ID), {
       'handleWidth':5,
       //'handleColor':'red', //'inherit', //'yellow', //'inherit',
       'orientation':1,
       'minimumSize':'10%',
       'maximumSize':'100%',
-      'initialSize':'100%',
-      'opaqueResize':1});    
+      'initialSize':'100%'});/*,
+      'opaqueResize':0});*/
     this.vsplitter.resize();
   }
 });
@@ -7354,7 +7616,7 @@ var AttributeListUIComponent = new Class({
         headerValue = properties['header_value'];
       }
     }
-    var html = '<div id="'+name+AttributeListUIComponent.HEADER_ID+'" class="'+AttributeListUIComponent.HEADER_CLASS_ID+'" onmousedown="alert(\'properties/header!!!\')">'+headerValue+'</div>'+
+    var html = '<div id="'+name+AttributeListUIComponent.HEADER_ID+'" class="'+AttributeListUIComponent.HEADER_CLASS_ID+'">'+headerValue+'</div>'+ //alert(\'properties/header!!!\') /*SjamayeeFacade.getInstance().hello()*/ /* onmousedown="$(\'dataObjects_splitter\').mousedown()"*/
                '<div id="'+name+AttributeListUIComponent.BODY_ID+'" style="position:relative;float:top;top:23px;height:100%;">'+
                '<div id="'+name+AttributeListUIComponent.NAMES_ID+'" class="'+AttributeListUIComponent.NAMES_CLASS_ID+'">'+
                ' <div id="'+name+AttributeListUIComponent.NAME_HEADER_ID+'" class="'+AttributeListUIComponent.NAME_HEADER_CLASS_ID+'">'+AttributeListUIComponent.NAME_HEADER_VALUE+'</div>'+
@@ -8064,12 +8326,26 @@ var ObjectsList = new Class({
     this.setCells(cells);
   },
   initializationComplete: function() {
+    /*if (this instanceof ModelObjectsList) {
+      this.addClass('model');
+    } else {
+      this.addClass('data');
+    }*/
     //Add column splitters.
-    this.hsplitter = new Splitter($(this.id), {'handleWidth':1,'handleColor':'lightgray'});
-		this.hsplitter.addWidget($(this.id+ObjectsList.REF_COLUMN_ID), {'initialSize':'10%'});
-		this.hsplitter.addWidget($(this.id+ObjectsList.NAME_COLUMN_ID), {'initialSize':'20%'});
-		this.hsplitter.addWidget($(this.id+ObjectsList.TYPE_COLUMN_ID), {'initialSize':'20%'});
-		this.hsplitter.addWidget($(this.id+ObjectsList.DESC_COLUMN_ID), {'handleWidth':5,'handleColor':'lightgray','initialSize':'50%'});
+    this.hsplitter = new Splitter($(this.id), {
+      'handleWidth':1,
+		  'handleColor':'lightgray' //this.getBackgroundHighliteColor()
+    });
+		this.hsplitter.addWidget($(this.id+ObjectsList.REF_COLUMN_ID),  { 'handleWidth':0, 'handleColor':'inherit', 'initialSize':'10%' });
+		this.hsplitter.addWidget($(this.id+ObjectsList.NAME_COLUMN_ID), { 'handleWidth':1, 'initialSize':'20%' });
+		this.hsplitter.addWidget($(this.id+ObjectsList.TYPE_COLUMN_ID), { 'handleWidth':1, 'initialSize':'20%' });
+		//this.hsplitter.addWidget($(this.id+ObjectsList.DESC_COLUMN_ID), { 'handleWidth':5,'handleColor':'lightgray','initialSize':'50%' });
+		this.hsplitter.addWidget($(this.id+ObjectsList.DESC_COLUMN_ID), {
+		  'handleWidth':5,
+		  'handleColor':this.getBackgroundHighliteColor(),
+		  'initialSize':'50%',
+      'opaqueResize':1
+		});
 		this.hsplitter.resize();
   },
   getRefCellId: function(index,name)  {
@@ -8154,7 +8430,7 @@ var ObjectsList = new Class({
                  '</div>'+
                  '<div id="'+name+ObjectsList.TYPE_COLUMN_ID+'" class="'+ObjectsListMediator.COLUMN_CLASS_ID+" "+ObjectsList.COLUMN_TYPE_CLASS_ID+'" style="width:23%;display:block;">'+
                  ' <div id="'+name+ObjectsList.TYPE_COLUMN_ID+'h" class="'+ObjectsListMediator.COLUMN_HEADER_CLASS_ID+" "+ObjectsList.COLUMN_HEADER_TYPE_CLASS_ID+'">'+
-              //'  <a id="'+name+ObjectsList.TYPE_COLUMN_ID+'ha" href="" style="padding:0px 0px 0px 19px;" tabindex="-1" onclick="">Type</a>'+
+               //'  <a id="'+name+ObjectsList.TYPE_COLUMN_ID+'ha" href="" style="padding:0px 0px 0px 19px;" tabindex="-1" onclick="">Type</a>'+
                  '  <a id="'+name+ObjectsList.TYPE_COLUMN_ID+'ha" href="" tabindex="-1" onclick="">Type</a>'+
                  ' </div>'+
                  ' <div id="listColumnTypeCells" style="background-color:white">'+typeCells+'</div>'+
@@ -8166,7 +8442,9 @@ var ObjectsList = new Class({
                  ' <div id="listColumnDescriptionCells" style="background-color:white">'+descriptionCells+'</div>'+
                  '</div>';
     return result;    
-  }
+  },
+  //Abstract
+  getBackgroundHighliteColor: function() {}
 });
 ObjectsList.REF_COLUMN_ID = "lcreference";
 ObjectsList.REF_ANCHOR_ID = "lcrefa";
@@ -8194,7 +8472,10 @@ var DataObjectsList = new Class({
     //this.keyboardEvents[SjamayeeFacade.HOME] = this.keydownHandler;
     //this.keyboard.removeEvents();
     //this.keyboard.addEvents(this.keyboardEvents);
-  }
+  },
+  getBackgroundHighliteColor: function() {
+    return DataDetailMediator.BACKGROUND_HIGHLITE_COLOR;
+  }  
 });
 DataObjectsList.ID = "dataObjectsList";
 
@@ -8207,7 +8488,10 @@ var ModelObjectsList = new Class({
     //this.keyboardEvents[SjamayeeFacade.END] = this.keydownHandler;
     //this.keyboard.removeEvents();
     //this.keyboard.addEvents(this.keyboardEvents);
-  }
+  },
+  getBackgroundHighliteColor: function() {
+    return ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR;
+  }    
 });
 ModelObjectsList.ID = "modelObjectsList";
 
@@ -8328,18 +8612,32 @@ var RelationsGrid = new Class({
     this.setCells(cells);
   },
   initializationComplete: function() {
+    if (this instanceof ModelRelationsGrid) {
+      this.addClass('model');
+    } else {
+      this.addClass('data');
+    }
     //Add column splitters.
     //var colors = ['red','yellow','blue','gray','green','brown','lightblue','lightgray','black'];
     //var widths = [1,2,3,4,5,6,7,8];
-    this.hsplitter = new Splitter($(this.id), {'handleWidth':1});
+    this.hsplitter = new Splitter($(this.id), {
+      'handleWidth':1,
+		  'handleColor':'lightgray' //this.getBackgroundHighliteColor()      
+    });
     for (var col = Position.COLUMN_FIRST(); col < Position.COLUMNS_MAX(); col++) {
       var column = $(this.getColumnId(col));
       var gridColumn = _grid.getColumnByIndex(col);
-      var handleWidth = (gridColumn && gridColumn.getNivo() == Position.NIVO_ROOT()+1)?1:5;
-      var handleColor = (gridColumn && gridColumn.getNivo() == Position.NIVO_ROOT()+1)?'red':'lightgray';
+      var handleWidth = (gridColumn && gridColumn.getNivo() == Position.NIVO_ROOT()+1)?5:1;
+      //var handleColor = (gridColumn && gridColumn.getNivo() == Position.NIVO_ROOT()+1)?'red':'lightgray';
+      var handleColor = (gridColumn && gridColumn.getNivo() == Position.NIVO_ROOT()+1)?this.getBackgroundHighliteColor():'lightgray';
+      var handleOpaqueResize = (gridColumn && gridColumn.getNivo() == Position.NIVO_ROOT()+1)?1:0;
+      if (col == Position.COLUMN_FIRST()) {
+        handleWidth = 0;
+        handleColor = 'inherit';
+      }
 		  if (column.getStyle('display') != 'none') {
 		    //this.hsplitter.addWidget(column, {'handleWidth':widths[col],'handleColor':colors[col]});
-		    this.hsplitter.addWidget(column, {'handleWidth':handleWidth,'handleColor':handleColor});
+		    this.hsplitter.addWidget(column, { 'handleWidth':handleWidth,'handleColor':handleColor,'opaqueResize':handleOpaqueResize });
 		  }
 		}
     this.hsplitter.resize();		
@@ -8463,7 +8761,9 @@ var RelationsGrid = new Class({
     $(id).removeClass(GridColumn.WHAT_USED_LEFT_CLASS_ID);
     $(id).removeClass(GridColumn.WHAT_USED_LEFT_4C_CLASS_ID);
     $(id).removeClass(GridColumn.WHAT_USED_LEFT_4X_CLASS_ID);
-  }
+  },
+  //Abstract
+  getBackgroundHighliteColor: function() {}
 });
 RelationsGrid.COLUMN_ID = Grid.COLUMN_ID;
 RelationsGrid.LAST_COLUMN_ID = Grid.COLUMN_WHAT_ID;
@@ -8484,7 +8784,10 @@ var DataRelationsGrid = new Class({
     //this.keyboardEvents[SjamayeeFacade.LEFT] = this.keydownHandler;
     //this.keyboard.removeEvents();
     //this.keyboard.addEvents(this.keyboardEvents);
-  }
+  },
+  getBackgroundHighliteColor: function() {
+    return DataDetailMediator.BACKGROUND_HIGHLITE_COLOR;
+  }  
 });
 DataRelationsGrid.ID = "dataRelationsGrid";
 
@@ -8497,7 +8800,10 @@ var ModelRelationsGrid = new Class({
     //this.keyboardEvents[SjamayeeFacade.RIGHT] = this.keydownHandler;
     //this.keyboard.removeEvents();
     //this.keyboard.addEvents(this.keyboardEvents);
-  }
+  },
+  getBackgroundHighliteColor: function() {
+    return ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR;
+  }  
 });
 ModelRelationsGrid.ID = "modelRelationsGrid";
 /*
@@ -8539,10 +8845,10 @@ var ToolBar = new Class({
     //           '<div id="'+DataRelationsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>';
     
     this.name = (name)?name:ToolBar.ID;
-    var html = '';
+    /*var html = '';
     switch (this.name) {
       case ToolBar.DATA_OBJECTS_ID:
-      html += '<div id="'+DataObjectsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>';
+      html += '<div id="'+DataObjectsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"  onmousedown="alert(\'mousedown on DOTB!!!\');"></div>';
       break;
       case ToolBar.DATA_RELATIONS_ID:
       html += '<div id="'+DataRelationsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>';
@@ -8552,10 +8858,10 @@ var ToolBar = new Class({
               '<div id="'+ModelObjectsTextsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>';
       break;
       case ToolBar.MODEL_RELATIONS_ID:
-      html += '<div id="'+ModelRelationsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>'; /*+
-              '<div id="'+ModelRelationsTextsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>';*/
+      html += '<div id="'+ModelRelationsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>'; **+
+              '<div id="'+ModelRelationsTextsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>';**
       break;
-    }
+    }*/
 
     /*if (SjamayeeFacade.APPLICATION_TYPE == SjamayeeFacade.COMPOSER) {               
       **html += '<div id="'+ModelObjectsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>'+
@@ -8573,7 +8879,8 @@ var ToolBar = new Class({
         break;
       }      
     }*/
-    this.parent(this.name,{html: html});
+    //this.parent(this.name,{html: html});
+    this.parent(this.name);
     this.dataObjectsToolBar = null;
     this.dataRelationsToolBar = null;
     this.modelObjectsToolBar = null;
@@ -9166,6 +9473,11 @@ var Detail = new Class({
     this.addEvent(SjamayeeFacade.BLUR, this.detail_blurHandler);
   },
   initializationComplete: function() {
+    if (this.name == Detail.MODEL_OBJECTS_ID || this.name == Detail.MODEL_RELATIONS_ID) {
+      this.addClass('model');
+    } else {
+      this.addClass('data');
+    }    
     this.hsplitter = new Splitter($(this.name), {
       'handleWidth':5,
       'handleColor':'inherit', //'white', //'red', //'inherit',
@@ -9173,8 +9485,8 @@ var Detail = new Class({
       'orientation':0,
       'minimumSize':'100%',
       'maximumSize':'100%',
-      'initialSize':'100%',
-      'opaqueResize':1});		
+      'initialSize':'100%'});/*,
+      'opaqueResize':0});*/
   	this.hsplitter.addWidget($(this.name+'Left'), {
       'handleWidth':0,
       //'handleColor':'black', //'inherit',
@@ -9182,8 +9494,8 @@ var Detail = new Class({
       'orientation':0,
       'minimumSize':'0%',
       'maximumSize':'100%',
-      'initialSize':'100%', //'200px';
-      'opaqueResize':1});
+      'initialSize':'100%'});/*, //'200px';
+      'opaqueResize':0});*/
   	this.hsplitter.addWidget($(this.name+'Right'), {
       'handleWidth':5,
       //'handleColor':'black', //'inherit',
@@ -9191,8 +9503,8 @@ var Detail = new Class({
       'orientation':0,
       'minimumSize':'0%',
       'maximumSize':'100%',
-      'initialSize':'100%', //'400px';
-      'opaqueResize':1});
+      'initialSize':'100%'});/*, //'400px';
+      'opaqueResize':0});*/
     //this.hsplitter.setHandleColor('red');
     switch (this.name) {
       case Detail.DATA_OBJECTS_ID:
@@ -9221,10 +9533,6 @@ Detail.NORMAL_SIZE = 0.50; /*1.00;*/ /*217;*/
 var DetailLeft = new Class({
   Extends: SjamayeeUIComponent,
   initialize: function(name,properties) {
-   /*var html = '<div id="'+DataObjectNTD.ID+'" class="'+ObjectNTD.CLASS_ID+'"></div>'+
-               '<div id="'+DataParentDetail.ID+'" class="'+ParentDetail.CLASS_ID+'"></div>'+
-               '<div id="'+ModelObjectNTD.ID+'" class="'+ObjectNTD.CLASS_ID+'"></div>'+
-               '<div id="'+ModelParentDetail.ID+'" class="'+ParentDetail.CLASS_ID+'"></div>';*/
     this.name = (name)?name:DetailLeft.ID;
     var html = '';
     switch (this.name) {
@@ -9248,15 +9556,6 @@ var DetailLeft = new Class({
     this.modelParentDetail = null;
   },
   initializeChildren: function() {
-  /*//alert("DetailLeft/initializeChildren");
-    this.dataObjectNTD = new DataObjectNTD();
-    this.addChild(this.dataObjectNTD);
-    this.dataParentDetail = new DataParentDetail();
-    this.addChild(this.dataParentDetail);
-    this.modelObjectNTD = new ModelObjectNTD();
-    this.addChild(this.modelObjectNTD);
-    this.modelParentDetail = new ModelParentDetail();
-    this.addChild(this.modelParentDetail);*/
     switch (this.name) {
       case DetailLeft.DATA_OBJECTS_ID:
       this.dataObjectNTD = new DataObjectNTD();
@@ -9287,10 +9586,6 @@ DetailLeft.MODEL_RELATIONS_ID = "modelRelationsDetailLeft";
 var DetailRight = new Class({
   Extends: SjamayeeUIComponent,
   initialize: function(name,properties) {
-   	/*var html = '<div id="'+DataObjectProperties.ID+'" class="'+ObjectProperties.CLASS_ID+'"></div>'+
-               '<div id="'+DataChildDetail.ID+'" class="'+ChildDetail.CLASS_ID+'"></div>'+
-               '<div id="'+ModelObjectProperties.ID+'" class="'+ObjectProperties.CLASS_ID+'"></div>'+
-               '<div id="'+ModelChildDetail.ID+'" class="'+ChildDetail.CLASS_ID+'"></div>';*/
     this.name = (name)?name:DetailRight.ID;
     var html = '';
     switch (this.name) {
@@ -9314,15 +9609,6 @@ var DetailRight = new Class({
     this.modelChildDetail = null;
   },
   initializeChildren: function() {
-  /*//alert("DetailRight/initializeChildren");
-    this.dataObjectProperties = new DataObjectProperties();
-    this.addChild(this.dataObjectProperties);
-    this.dataChildDetail = new DataChildDetail();
-    this.addChild(this.dataChildDetail);
-    this.modelObjectProperties = new ModelObjectProperties();
-    this.addChild(this.modelObjectProperties);
-    this.modelChildDetail = new ModelChildDetail();
-    this.addChild(this.modelChildDetail);*/
     switch (this.name) {
       case DetailRight.DATA_OBJECTS_ID:
       this.dataObjectProperties = new DataObjectProperties();
@@ -9464,7 +9750,7 @@ DetailNTD.CANCEL_BUTTON_LABEL = "Cancel";
 var ObjectNTD = new Class({
   Extends: DetailNTD,
   initialize: function(name,properties) {
-    var html = '<div id="'+name+ObjectNTD.HEADER_ID+'" class="'+DetailNTD.HEADER_CLASS_ID+'" onmousedown="alert(\'objectNTD/header!!!\')">'+ObjectNTD.HEADER_VALUE+'</div>'+
+    var html = '<div id="'+name+ObjectNTD.HEADER_ID+'" class="'+DetailNTD.HEADER_CLASS_ID+'">'+ObjectNTD.HEADER_VALUE+'</div>'+ //alert(\'objectNTD/header!!!\') /*SjamayeeFacade.getInstance().hello()*/ /* onmousedown="$(\'dataObjects_splitter\').mousedown()"*/
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
                ' <label for="'+name+ObjectNTD.NAME_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.NAME_FIELD_LABEL+'</label>'+
                ' <div id="'+name+ObjectNTD.NAME_ID+'" class="'+DetailNTD.NAME_FIELD_CLASS_ID+'">Sjamayee is in the house! The time is now!</div>'+
@@ -9475,7 +9761,7 @@ var ObjectNTD = new Class({
                '</div><br/>'+
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
                ' <label for="'+name+ObjectNTD.DESC_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.DESC_FIELD_LABEL+'</label>'+
-               ' <div id="'+name+ObjectNTD.DESC_ID+'" class="'+DetailNTD.DESC_FIELD_CLASS_ID+'">Sjamayee is now *** Object *** jssjsj dldldld mfmfmfmf kekeke mdmdmdm kqkqkqk l lsslsl 123456790 14226 djdjjd jkfkfkfkf skksks lqlqlql zyzzyu hdhdhd jfff jfjjf fjfjfjf vcvc dsds 123</div>'+
+               ' <div id="'+name+ObjectNTD.DESC_ID+'" class="'+DetailNTD.DESC_FIELD_CLASS_ID+'" onoverflowchanged="alert(\'*** OveRFloW ***\')">Sjamayee is now *** Object *** jssjsj dldldld mfmfmfmf kekeke mdmdmdm kqkqkqk l lsslsl 123456790 14226 djdjjd jkfkfkfkf skksks lqlqlql zyzzyu hdhdhd jfff jfjjf fjfjfjf vcvc dsds 123</div>'+
                '</div>'+
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
                ' <label for="'+name+ObjectNTD.CBY_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.CBY_FIELD_LABEL+'</label>'+
@@ -9616,6 +9902,7 @@ var DataParentDetail = new Class({
     this.addChild(this.properties);
   },
   initializationComplete: function() {
+    this.addClass('data');
     this.hsplitter = new Splitter($(this.id), {
       'handleWidth':2,
       'handleColor':'lightblue', //'white', //'inherit', //DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR, //'lightblue',
@@ -9624,8 +9911,8 @@ var DataParentDetail = new Class({
       //'minimumSize':100,
       'minimumSize':'10%',
       'maximumSize':'90%',
-      'initialSize':'100%',
-      'opaqueResize':0});
+      'initialSize':'100%'});/*,
+      'opaqueResize':0});*/
 		this.hsplitter.addWidget($(DataParentNTD.ID), {
       'handleWidth':0,
       //'handleColor':'green', //'inherit', //DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR, //'lightblue',
@@ -9634,8 +9921,8 @@ var DataParentDetail = new Class({
       //'minimumSize':100,
       'minimumSize':'10%',
       'maximumSize':'90%',
-      'initialSize':'100%',
-      'opaqueResize':0});
+      'initialSize':'100%'});/*,
+      'opaqueResize':0});*/
 		this.hsplitter.addWidget($(DataParentProperties.ID), {
       'handleWidth':2,
       //'handleColor':'green', //'inherit', //DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR, //'lightblue',
@@ -9644,8 +9931,8 @@ var DataParentDetail = new Class({
       //'minimumSize':100,
       'minimumSize':'10%',
       'maximumSize':'90%',
-      'initialSize':'100%',
-      'opaqueResize':0});
+      'initialSize':'100%'});/*,
+      'opaqueResize':0});*/
     this.hsplitter.resize();
   },  
 });
@@ -9667,6 +9954,7 @@ var ModelParentDetail = new Class({
     this.addChild(this.properties);
   },
   initializationComplete: function() {
+    this.addClass('model');
     this.hsplitter = new Splitter($(this.id), {
       'handleWidth':2,
       'handleColor':ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR, //'white', 'red',
@@ -9675,8 +9963,8 @@ var ModelParentDetail = new Class({
       //'minimumSize':150,
       'minimumSize':'10%',
       'maximumSize':'90%',
-      'initialSize':'100%',
-      'opaqueResize':0});
+      'initialSize':'100%'});/*,
+      'opaqueResize':0});*/
 		this.hsplitter.addWidget($(ModelParentNTD.ID), {
       'handleWidth':0,
       //'handleColor':'red', //ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR, //'red',
@@ -9685,8 +9973,8 @@ var ModelParentDetail = new Class({
       //'minimumSize':150,
       'minimumSize':'10%',
       'maximumSize':'90%',
-      'initialSize':'100%',
-      'opaqueResize':0});
+      'initialSize':'100%'});/*,
+      'opaqueResize':0});*/
 		this.hsplitter.addWidget($(ModelParentProperties.ID), {
       'handleWidth':2,
       //'handleColor':'red', //ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR, //'red',
@@ -9695,8 +9983,8 @@ var ModelParentDetail = new Class({
       //'minimumSize':150,
       'minimumSize':'10%',
       'maximumSize':'90%',
-      'initialSize':'100%',
-      'opaqueResize':0});
+      'initialSize':'100%'});/*,
+      'opaqueResize':0});*/
     this.hsplitter.resize();      
   }
 });
@@ -9707,7 +9995,7 @@ ModelParentDetail.ID = "modelParentDetail";
 var ParentNTD = new Class({
   Extends: DetailNTD,
   initialize: function(name,properties) {
-    var html = '<div id="'+name+ParentNTD.HEADER_ID+'" class="'+DetailNTD.HEADER_CLASS_ID+'" onmousedown="alert(\'parentNTD/header!!!\')">'+ParentNTD.HEADER_VALUE+'</div>'+
+    var html = '<div id="'+name+ParentNTD.HEADER_ID+'" class="'+DetailNTD.HEADER_CLASS_ID+'">'+ParentNTD.HEADER_VALUE+'</div>'+ //alert(\'parentNTD/header!!!\') // onmousedown="SjamayeeFacade.getInstance().hello()"
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
                ' <label for="'+name+ParentNTD.NAME_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.NAME_FIELD_LABEL+'</label>'+
                ' <div id="'+name+ParentNTD.NAME_ID+'" class="'+DetailNTD.NAME_FIELD_CLASS_ID+'">Parent *** Sjamayee *** Parent 1234567890 123456789012 345678901234 567890ABC DEFGHIJKLMNO</div>'+
@@ -9862,8 +10150,8 @@ var DataChildDetail = new Class({
       //'minimumSize':200,
       'minimumSize':'10%',
       'maximumSize':'90%',
-      'initialSize':'100%',
-      'opaqueResize':0});
+      'initialSize':'100%'});/*,
+      'opaqueResize':0});*/
 		this.hsplitter.addWidget($(DataChildNTD.ID), {
       'handleWidth':0,
       //'handleColor':'green', //DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR, //'lightgreen',
@@ -9872,8 +10160,8 @@ var DataChildDetail = new Class({
       //'minimumSize':200,
       'minimumSize':'10%',
       'maximumSize':'90%',
-      'initialSize':'100%',
-      'opaqueResize':0});
+      'initialSize':'100%'});/*,
+      'opaqueResize':0});*/
 		this.hsplitter.addWidget($(DataChildProperties.ID), {
       'handleWidth':2,
       //'handleColor':'green', //DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR, //'lightgreen',
@@ -9882,8 +10170,8 @@ var DataChildDetail = new Class({
       //'minimumSize':200,
       'minimumSize':'10%',
       'maximumSize':'90%',
-      'initialSize':'100%',
-      'opaqueResize':0});
+      'initialSize':'100%'});/*,
+      'opaqueResize':0});*/
     this.hsplitter.resize();      
   }
 });
@@ -9912,8 +10200,8 @@ var ModelChildDetail = new Class({
       //'minimumSize':250,
       'minimumSize':'10%',
       'maximumSize':'90%',
-      'initialSize':'100%',
-      'opaqueResize':0});
+      'initialSize':'100%'});/*,
+      'opaqueResize':0});*/
 		this.hsplitter.addWidget($(ModelChildNTD.ID), {
       'handleWidth':0,
       //'handleColor':'red', //ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR, //'red',
@@ -9922,8 +10210,8 @@ var ModelChildDetail = new Class({
       //'minimumSize':250,
       'minimumSize':'10%',
       'maximumSize':'90%',
-      'initialSize':'100%',
-      'opaqueResize':0});
+      'initialSize':'100%'});/*,
+      'opaqueResize':0});*/
 		this.hsplitter.addWidget($(ModelChildProperties.ID), {
       'handleWidth':2,
       //'handleColor':'red', //ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR, //'red',
@@ -9932,8 +10220,8 @@ var ModelChildDetail = new Class({
       //'minimumSize':250,
       'minimumSize':'10%',
       'maximumSize':'90%',
-      'initialSize':'100%',
-      'opaqueResize':0});
+      'initialSize':'100%'});/*,
+      'opaqueResize':0});*/
     this.hsplitter.resize();      
   }
 });
@@ -9944,7 +10232,7 @@ ModelChildDetail.ID = "modelChildDetail";
 var ChildNTD = new Class({
   Extends: DetailNTD,
   initialize: function(name,properties) {
-    var html = '<div id="'+name+ChildNTD.HEADER_ID+'" class="'+DetailNTD.HEADER_CLASS_ID+'" onmousedown="alert(\'childNTD/header!!!\')">'+ChildNTD.HEADER_VALUE+'</div>'+
+    var html = '<div id="'+name+ChildNTD.HEADER_ID+'" class="'+DetailNTD.HEADER_CLASS_ID+'">'+ChildNTD.HEADER_VALUE+'</div>'+ //alert(\'childNTD/header!!!\') // onmousedown="SjamayeeFacade.getInstance().hello()"
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
                ' <label for="'+name+ChildNTD.NAME_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.NAME_FIELD_LABEL+'</label>'+
                ' <div id="'+name+ChildNTD.NAME_ID+'" class="'+DetailNTD.NAME_FIELD_CLASS_ID+'">Child *** Sjamayee *** Sjamayee *** Child 123456 78 90123 45 6789 012345 678 90</div>'+
@@ -10301,24 +10589,512 @@ var HeaderMediator = new Class({
 HeaderMediator.ID = "HeaderMediator";
 
 //Abstract
-//Class: ListGridMediator
-var ListGridMediator = new Class({
+//Class: ORMediator
+var ORMediator = new Class({
   Extends: SjamayeeMediator,
   initialize: function(name,viewComponent)  {
     this.parent(name,viewComponent);
   },
   hide: function() {
+    this.listSize = null;
+    //this.objectsListLeftWidth = 300; //null;
+    //this.relationsGridLeftWidth = 400; //null;
+    this.splitterStyle = null;
+    //Command Buffers
+    this.commandBuffer = null;
+    this.rootCommandBuffer = null;  
+    this.lastRootCommand = null;  
+    //For command naming ?!
+    this.sourceName = null;
+    this.groupId = null;
+    //MODE: Edit/Display
+    this.mode = null;
     var app = this.facade.getApplication();
     app.dataObjectsPane.setAttribute("style","display:none;");
     app.dataRelationsPane.setAttribute("style","display:none;");
     app.modelObjectsPane.setAttribute("style","display:none;");
     app.modelRelationsPane.setAttribute("style","display:none;");
-  }   
+    //this.setSplitterStyle(null);
+  },
+/*setMessageText: function(messageText) {
+    if (this.messageText === null) {
+      var mediator = null;
+      if (this instanceof ModelObjectsListMediator) {
+        mediator = this.facade.retrieveMediator(ModelObjectsToolBarMediator.ID);
+      } else {
+        mediator = this.facade.retrieveMediator(DataObjectsToolBarMediator.ID);
+      }
+      if (mediator) {
+        this.messageText = mediator.getViewComponent().messageText;
+      }
+    }
+    if (this.messageText) {
+      this.messageText.value = messageText;
+    }
+  },*/
+  setMessageText: function(messageText) {
+    this.messageText = this.getViewComponent().messageText;
+    if (this.messageText) {
+      this.messageText.value = messageText;
+    }
+  },
+  getListSize: function() {
+    if (this.listSize === undefined || this.listSize === null) {
+      this.setListSize(SjamayeeFacade.SIZE_NORMAL);
+    }
+    return this.listSize;
+  },
+  setListSize: function(listSize) {
+    this.listSize = listSize;
+  },
+  getSplitterStyle: function() {
+    if (this.splitterStyle === null) {
+      //splitterStyle = "background-color:white;width:100%;height:100%;display:block;";
+      this.splitterStyle = "display:block;";
+    }
+    return this.splitterStyle;
+  },
+  setSplitterStyle: function(splitterStyle) {
+    this.splitterStyle = splitterStyle;
+  },
+  getMode: function() {
+    if ((this.mode === undefined) || (this.mode === null)) {
+      this.mode = ORMediator.MODE_DISPLAY;
+    }
+    return this.mode;
+  },
+  setMode: function(mode,forced) {
+    var _forced = (forced !== undefined && forced !== null)?forced:false;
+    var response = null;
+    if (_forced === false) {
+      var currentMode = this.getMode();
+      if (currentMode) {
+        if (currentMode == ORMediator.MODE_EDIT) {
+          response = confirm("Updates will be lost!\n\nAre you sure?");
+        }
+      }
+    }
+    if (response === null || response === true) {
+      this.mode = mode;
+    }
+    return this.getMode();
+  },
+  setEdit: function(forced) {
+    return this.setMode(ORMediator.MODE_EDIT,forced);
+  },
+  setDisplay: function(forced) {
+    return this.setMode(ORMediator.MODE_DISPLAY,forced);
+  },
+  isEdit: function()    { return (this.getMode() == ORMediator.MODE_EDIT); },
+  isDisplay: function() { return (this.getMode() == ORMediator.MODE_DISPLAY); },
+  getCommandBuffer: function() {
+    if (this.commandBuffer === undefined) {
+      this.commandBuffer = null;
+    }
+    return this.commandBuffer;
+  },
+  setCommandBuffer: function(commandBuffer) {
+    if (commandBuffer) {
+      this.commandBuffer = commandBuffer;
+    }
+  },
+  getRootCommandBuffer: function() {
+    if (this.rootCommandBuffer === undefined) {
+      this.rootCommandBuffer = null;
+    }
+    return this.rootCommandBuffer;
+  },
+  setRootCommandBuffer: function(rootCommandBuffer) {
+    if (rootCommandBuffer) {
+      this.rootCommandBuffer = rootCommandBuffer;
+    }
+  },
+  getLastRootCommand: function() {
+    var result = null;
+    if (this.lastRootCommand !== undefined) {
+      result = this.lastRootCommand;
+    }
+    return result;
+  },
+  setLastRootCommand: function(lastRootCommand,append) {
+    var _append = (append !== undefined && append !== null)?append:false;
+    var _lastRootCommand = (lastRootCommand !== undefined && lastRootCommand !== null)?lastRootCommand:false;
+    this.lastRootCommand = _lastRootCommand;
+    if (this.lastRootCommand) {
+      if (_append === true) {
+        //Push into rootcommand buffer.
+        var rootCommandBuffer = this.getRootCommandBuffer();
+        if (this.lastRootCommand.getId() === null) {
+          rootCommandBuffer.push(this.lastRootCommand);
+        } else {
+          rootCommandBuffer.update(this.lastRootCommand);
+        }
+      }
+    }
+  },
+  getLastRealCommand: function() {
+    /////////////////////////////////////////////
+    //      Real Commands: ADD,DEL,EDT,EXT,CPY //
+    //    Unreal Commands: PST                 //
+    //   Virtual Commands: GRP,UND,RDO         //
+    //CheckPoint Commands: CKP                 //
+    //      Root Commands: ROOT                //
+    /////////////////////////////////////////////
+    var result = null;
+    var commandBuffer = this.getCommandBuffer();
+    if (commandBuffer) {
+      result = commandBuffer.getLastReal();
+    }
+    return result;
+  },
+  getLastRealCommandDone: function() {
+    var result = null;
+    var commandBuffer = this.getCommandBuffer();
+    if (commandBuffer) {
+      result = commandBuffer.getLastRealDone();
+    }
+    return result;
+  },
+  getLastCommandDone: function() {
+    var result = null;
+    var commandBuffer = this.getCommandBuffer();
+    if (commandBuffer) {
+      result = commandBuffer.getLastDone();
+    }
+    return result;
+  },
+  getLastCommand: function() {
+    if (this.lastCommand === undefined) {
+      this.lastCommand = null;
+    }
+    return this.lastCommand;
+  },
+  getLastGroupCommand: function(command) {
+    var _command = (command !== undefined)?command:null;
+    var result = null;
+    var commandBuffer = this.getCommandBuffer();
+    if (commandBuffer) {
+      result = commandBuffer.getLastGroupCommand(_command);
+    }
+    return result;
+  },
+  setLastCommand: function(lastCommand,append) {
+    var _lastCommand = (lastCommand !== undefined)?lastCommand:null;
+    var _append = (append !== undefined && append !== null)?append:false;
+    try {
+      if (_lastCommand === null) {
+        this.lastCommand = _lastCommand;
+        this.checkPoint = _lastCommand;
+      } else {
+        //Set lastCommand/checkPoint
+        if (_lastCommand.getName() == Command.CKP) {
+          this.checkPoint = _lastCommand;
+        } else {
+          this.lastCommand = _lastCommand;
+        }
+        var commandBuffer = this.getCommandBuffer();
+        if (commandBuffer) {
+          //Push into command buffer.
+          if (_append === true) {
+            //Wipe-out ALL navigation commands!
+            if (_lastCommand.getName() in Utils.arrayHash([Command.ADD,Command.CPY,Command.DEL,Command.EDT,Command.EXT,Command.PST])) {
+              commandBuffer.removeNavigationCommands();
+            }
+            if (_lastCommand.getId() === null) {
+              if (_lastCommand.getName() == Command.CKP) {
+                commandBuffer.push(this.checkPoint);
+              } else if (_lastCommand.getName() == Command.DEL) {  // !!!!!!!!!!!!!!!! UPDATE DELETE (undone) !!!!!!!!!!!!!!!!!!!!!!!!
+                //Try to update or append!!!
+                commandBuffer.update(this.lastCommand);
+              } else if (_lastCommand.getName() == Command.CPY) {
+                //Try to update or append!!!
+                commandBuffer.update(this.lastCommand);               
+              } else if (_lastCommand.getName() == Command.EXT) {
+                //Try to update or append!!!
+                commandBuffer.update(this.lastCommand);
+              } else {
+                if (_lastCommand.getName() != Command.NAV) {
+                  commandBuffer.push(this.lastCommand);                 
+                } else {
+                  /////////////////////////////////////////////////////////////////////////////////////////////////
+                  //   3 Situations                                                                                //
+                  //1. First navigation - append                                                                 //
+                  //2. Second navigation - append (ex. 11,17 / 16,12)                                            //
+                  //3. Third navigation - append/insert depending on previous sequence                           //
+                  //                      11,17: ASC - 13 => 11,13,17 / 19 => 11,13,17,19 / 10 => 10,11,13,17,19 //
+                  //                      16,12: DSC - 13 => 16,13,12 / 19 => 19,16,13,12 / 10 => 19,16,13,12,10 //
+                  /////////////////////////////////////////////////////////////////////////////////////////////////
+                  //Calculate location of lastCommand.
+                  var lastCommandLocation = ((_lastCommand.getNivo() * 1000) +
+                                             (_lastCommand.getPosition().getColumn() * 100) +
+                                              _lastCommand.getPosition().getRow());
+                  //Insert navigation command in correct sequence/position!
+                  var j = null;
+                  var iLow = null;
+                  var iHigh = null;
+                  var commandLocation = null;
+                  var insertMode = null; //NavigationCommand.INSERT_ASC;
+                  var buffer = commandBuffer.getBuffer();
+                  for (var i = 0; i < buffer.length; i++) {                   
+                    if (buffer[i]) {
+                      var command = buffer[i];
+                      if (command.getName() != Command.NAV) { continue; }
+                      //Calculate location of command.
+                      commandLocation = ((command.getNivo() * 1000) +
+                                         (command.getPosition().getColumn() * 100) +
+                                          command.getPosition().getRow());
+                      if (commandLocation < lastCommandLocation) {
+                        if (iLow === null)  { iLow = i; }
+                      } else {
+                        if (iHigh === null) { iHigh = i; }
+                      }
+                      if (j !== null) {
+                        //Determine insertMode (ASC/DSC)
+                        var prevNavCmd = buffer[(j)];
+                        var prevNavCmdLocation = ((prevNavCmd.getNivo() * 1000) +
+                                                  (prevNavCmd.getPosition().getColumn() * 100) +
+                                                   prevNavCmd.getPosition().getRow());
+                        if (prevNavCmdLocation < commandLocation) {
+                          insertMode = NavigationCommand.INSERT_ASC;
+                        } else {
+                          insertMode = NavigationCommand.INSERT_DSC;
+                        }
+                      }
+                      //Save previous index.
+                      j = i;
+                    }
+                  }
+                  //Determine insert/append depending on insertMode!
+                  var insert = false;
+                  if (commandLocation) {
+                    if (insertMode !== null) {
+                      if (insertMode == NavigationCommand.INSERT_ASC) {
+                        if (lastCommandLocation < commandLocation) {
+                          insert = true;
+                        }
+                      } else {
+                        if (lastCommandLocation > commandLocation) {
+                          insert = true;
+                        }
+                      }
+                    }
+                  }
+                  var removeOnTop = true;
+                  if (insert === true) {
+                    if (insertMode == NavigationCommand.INSERT_ASC) {
+                      commandBuffer.insert(iHigh,this.lastCommand);                     
+                      removeOnTop = (iHigh > (buffer.length/2))?true:false;                     
+                    } else {
+                      commandBuffer.insert(iLow,this.lastCommand);                      
+                      removeOnTop = (iLow > (buffer.length/2))?false:true;                                            
+                    }
+                    /*alert("SjamayeeForm/setLastCommand - append: "+append+" lastCommand: "+lastCommand+
+                          "\ni: "+i+
+                          "\nbuffer.length/2: "+(buffer.length/2)+
+                          "\nremoveOnTop: "+removeOnTop);*/
+                  } else {
+                    commandBuffer.push(this.lastCommand);                   
+                  }
+                  _cNc = (_cNc + 1);                                                       //TODO: _cNc - global !!!
+                  //Remove some earlier(#oldest) navigation command!
+                  commandBuffer.removeNavigationOnTopOrBottom(removeOnTop);
+                }
+              }
+            } else {
+              commandBuffer.update(this.lastCommand);
+            }
+          }
+        }
+      }
+    } catch(error) {
+      Utils.alert("ORMediator/setLastCommand Error: "+error.message,Utils.LOG_LEVEL_ERROR);
+    }
+  },
+  navigationOnRelationExists: function(relation,nivo) {
+    var _relation = (relation !== undefined)?relation:null;
+    var _nivo = (nivo !== undefined)?nivo:null;
+    var result = false;
+    try {
+      if (_relation) {
+        var commandBuffer = this.getCommandBuffer();
+        if (commandBuffer) {
+          if (commandBuffer.isEmpty() === false) {      
+            var buffer = commandBuffer.getBuffer();
+            for (var i = 0; i < buffer.length; i++) {
+              if (buffer[i]) {
+                var command = buffer[i];
+                if (command.getName() != Command.NAV) { continue; }
+                if (command.getNivo() != _nivo) { continue; }
+                var r1 = command.getRelation();
+                if (r1) {
+                  if (r1.getId() == _relation.getId()) {
+                    result = true;
+                    break;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    } catch(error) {
+      Utils.alert("ORMediator/navigationOnRelationExists Error: "+error.message,Utils.LOG_LEVEL_ERROR);
+    } finally {
+      return result;
+    }
+  },
+  _writeCheckPointCommand: function() {
+    var result = null;
+    try {
+      var writeCheckPoint = false;
+      var commandBuffer = this.getCommandBuffer();
+      if (commandBuffer) {
+        var checkPoints = 0;
+        var checkPointRecords = 0;
+        var checkPointSize = (CommandBuffer.SIZE_LIMIT * (CommandBuffer.CKP_NEXT_PERCENT/100));
+        var checkPointStatus = commandBuffer.getCheckPointStatus();
+        if (checkPointStatus && checkPointStatus > 0) {
+          checkPointRecords = (checkPointStatus % CommandBuffer.CKP_SIZE_DIVIDER);
+          checkPoints = Math.floor((checkPointStatus - checkPointRecords) / CommandBuffer.CKP_SIZE_DIVIDER);
+          writeCheckPoint = (checkPoints === 0)?(checkPointRecords > (CommandBuffer.SIZE_LIMIT * (CommandBuffer.CKP_FIRST_PERCENT/100))):(checkPointRecords > checkPointSize);
+          if (writeCheckPoint) {
+            var command = new CheckPointCommand();
+            //command.setSize(checkPointRecords);
+            this.setLastCommand(command,true);
+            result = command;
+          }
+        }
+      }
+      //Utils.alert("ORMediator/_writeCheckPointCommand - result: "+((result)?result.print():"null"));
+    } catch(error) {
+      Utils.alert("ORMediator/_writeCheckPointCommand - error: "+error.message,Utils.LOG_LEVEL_ERROR);
+    } finally {
+      return result;
+    }
+  },
+  writeNavigationCommand: function(list,navigation,rto,rfrom) {
+    var result = null;
+    var _list = (list !== undefined)?list:null;
+    var _navigation = (navigation !== undefined)?navigation:null;
+    var _rto = (rto !== undefined)?rto:null;
+    var _rfrom = (rfrom !== undefined)?rfrom:null;
+    try {
+      var command = new NavigationCommand(Command.NAV);
+      if (command) {
+        var lastNivo = _grid.getWhatUsedNivo();                            //TODO: _grid ??? mediator.grid ???
+        var currentNivo = null;
+        var position = null;
+        command.setNavigation(_navigation);
+        command.setRelationFrom(_rfrom);
+        if (_list) {
+          command.setList(_list);
+          if (_list instanceof GridView) {                                //TODO: _list - GridView - grid/list ???
+            command.setRelation(_rto);
+            currentNivo = _list.getCurrentNivo();
+            command.setNivo(currentNivo);
+            position = _list.getPosition();
+            if (position) {
+              command.setPosition(position);
+            }
+          }
+        }
+        var buffer = null;
+        var commandBuffer = this.getCommandBuffer();
+        if (commandBuffer) {
+          //Delete navigation commands on ENTER (switchRoot).
+          if (command.getNavigation() == NavigationCommand.NAV_ENTER) {
+            commandBuffer.removeNavigationCommands();
+          }
+          buffer = commandBuffer.getBuffer();
+          if (this.navigationOnRelationExists(_rto,currentNivo)) {
+            //Update existing navigation command.
+            for (var i = 0; i < buffer.length; i++) {
+              if (buffer[i1]) {
+                var cmd1 = buffer[i1];
+                if (cmd1.getName() != Command.NAV) { continue; }
+                if (cmd1.getNivo() != currentNivo) { continue; }
+                var r1 = cmd1.getRelation();
+                if (r1) {
+                  if (r1.getId() == _rto.getId()) {
+                    cmd1.setUnDone(false);
+                    cmd1.setNavigation(command.getNavigation());
+                    cmd1.setList(command.getList());
+                    cmd1.setPosition(command.getPosition());
+                    break;
+                  }
+                }
+              }
+            }
+          } else {
+            //Create new navigation command.
+            this.setLastCommand(command,true);
+            command.setSourceName(command.getName()+"_"+command.getId()+"/"+command.getId());
+          }
+          if (command.getNavigation() in Utils.arrayHash([NavigationCommand.NAV_ENTER,NavigationCommand.NAV_SPACE,
+                                                          NavigationCommand.NAV_CLICK,
+                                                          NavigationCommand.NAV_RIGHT,NavigationCommand.NAV_LEFT,
+                                                          NavigationCommand.NAV_HOME,NavigationCommand.NAV_END])) {
+            //Clean-up navigation commands - on left/right navigation !!!
+            // 1. Leave only nav's for saved cells with nivo < lastNivo (whatUsedNivo)
+            if (commandBuffer.isEmpty() === false) {
+              var cmd = null;
+              var cell = null;
+              var column = null;
+              var relation = null;
+              // 1. Leave only nav's for saved cells with nivo < lastNivo (whatUsedNivo)
+              var commandDeleted = true;
+              while (commandDeleted) {
+                commandDeleted = false;
+                for (var i2 = 0; i2 < buffer.length; i2++) {
+                  if (buffer[i2]) {
+                    cmd = buffer[i2];
+                    if (cmd.getName() != Command.NAV) { continue; }
+                    if (cmd.getNivo() <= Position.NIVO_ROOT()) { continue; }
+                    column = _grid.getColumnByNivo(cmd.getNivo());
+                    if (column) {
+                      var masterRelation = column.getMaster().getRelation();
+                      if (masterRelation && masterRelation.getId() == cmd.getRelationFrom().getId()) { continue; } //Keep ALL if same branch.
+                    }
+                    if (command.getNavigation() == NavigationCommand.NAV_RIGHT) {
+                      if (cmd.getId() == command.getId()) { continue; }                                  //Keep only the new command !!!
+                    }
+                    relation = null;
+                    cell = null;
+                    column = _grid.getColumnByNivo(cmd.getNivo());
+                    if (column) {
+                      cell = (column.isSelected)?column.getSavedCell():column.getCell(Position.ROW_TOP());
+                      if (cell) {
+                        relation = cell.getRelation();
+                      }
+                    }
+                    var r2 = cmd.getRelation();
+                    if (relation && r2 && r2.getId() == relation.getId()) { continue; }
+                    buffer.splice(i2,1);
+                    commandDeleted = true;
+                    if (_cNc > 0) { _cNc = (_cNc - 1); }                                                 //TODO: _cNc
+                    break;
+                  }
+                }
+              }
+            }
+          }
+        }
+        result = command;
+      }
+      //Utils.alert("ORMediator/writeNavigationCommand - result: "+((result)?result.print():"null"));   
+    } catch(error) {
+      Utils.alert("ORMediator/writeNavigationCommand - error: "+error.message,Utils.LOG_LEVEL_ERROR);
+    } finally {
+      return result;
+    }
+  }
 });
+ORMediator.MODE_DISPLAY = "DISPLAY";
+ORMediator.MODE_EDIT = "EDIT";
 
 //Class: DataObjectsMediator
 var DataObjectsMediator = new Class({
-  Extends: ListGridMediator, //SjamayeeMediator,
+  Extends: ORMediator, //SjamayeeMediator,
   initialize: function(viewComponent) {
     this.parent(DataObjectsMediator.ID,viewComponent);
     var dataObjectsPane = this.getViewComponent();
@@ -10350,7 +11126,7 @@ DataObjectsMediator.ID = "dataObjectsMediator";
 
 //Class: DataRelationsMediator
 var DataRelationsMediator = new Class({
-  Extends: ListGridMediator, //SjamayeeMediator,
+  Extends: ORMediator, //SjamayeeMediator,
   initialize: function(viewComponent) {
     this.parent(DataRelationsMediator.ID,viewComponent);
     var dataRelationsPane = this.getViewComponent();
@@ -10382,7 +11158,7 @@ DataRelationsMediator.ID = "dataRelationsMediator";
 
 //Class: ModelObjectsMediator
 var ModelObjectsMediator = new Class({
-  Extends: ListGridMediator, //SjamayeeMediator,
+  Extends: ORMediator, //SjamayeeMediator,
   initialize: function(viewComponent) {
     this.parent(ModelObjectsMediator.ID,viewComponent);
     var modelObjectsPane = this.getViewComponent();
@@ -10414,7 +11190,7 @@ DataObjectsMediator.ID = "dataObjectsMediator";
 
 //Class: ModelRelationsMediator
 var ModelRelationsMediator = new Class({
-  Extends: ListGridMediator, //SjamayeeMediator,
+  Extends: ORMediator, //SjamayeeMediator,
   initialize: function(viewComponent) {
     this.parent(ModelRelationsMediator.ID,viewComponent);
     var modelRelationsPane = this.getViewComponent();
