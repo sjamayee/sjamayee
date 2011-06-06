@@ -370,6 +370,23 @@ Utils.writeFile = function(fileName,content) {
   document.write('<br/>'+fileName+'<br/>');
   document.write(content);
 };
+/*****************************************************************************************
+* Disable Text Selection script- © Dynamic Drive DHTML code library (www.dynamicdrive.com)
+* This notice MUST stay intact for legal use
+* Visit Dynamic Drive at http://www.dynamicdrive.com/ for full source code
+*****************************************************************************************/
+Utils.disableSelection = function(target) {
+	if (typeof target.onselectstart != "undefined") //IE route
+		target.onselectstart = function() { return false }
+	else if (typeof target.style.MozUserSelect != "undefined") //Firefox route
+		target.style.MozUserSelect = "none"
+	else //All other route (ie: Opera)
+		target.onmousedown = function(){ return false }
+  target.style.cursor = "default"
+};
+//Sample usages
+//disableSelection(document.body) //Disable text selection on entire body
+//disableSelection(document.getElementById("mydiv")) //Disable text selection on element with id="mydiv"
 Utils.print = function() {
   var i = 0;
   var jso = null;

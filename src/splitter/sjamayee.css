@@ -1523,6 +1523,7 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 }
 .messageText {
 	position:relative;
+	left:2px;
 	float:left;
   display:block;
   width:100%;

@@ -8,12 +8,13 @@ var Splitter = new Class({
 
 		var wrapper_orientation = parameters['orientation']?parameters['orientation']:0; // 0 is horizontal. otherwise, vertical
 		var wrapper_handleWidth = parameters['handleWidth']?parameters['handleWidth']:0; //1;
-		var wrapper_handleColor = parameters['handleColor']?parameters['handleColor']:'lightgray';
+		var wrapper_handleColor = parameters['handleColor']?parameters['handleColor']:SjamayeeFacade.DEFAULT_HANDLE_COLOR;
 		var wrapper_handleBorder = parameters['handleBorder']?parameters['handleBorder']:'none';
 		var wrapper_minimumSize = parameters['minimumSize']?parameters['minimumSize']:'0%';
 		var wrapper_maximumSize = parameters['maximumSize']?parameters['maximumSize']:'100%';
 		var wrapper_initialSize = parameters['initialSize']?parameters['initialSize']:'100%';
 		var wrapper_opaqueResize = parameters['opaqueResize']?parameters['opaqueResize']:0;
+		//var wrapper_cursor = parameters['cursor']?parameters['cursor']:'default';
     
     var w = 0, h = 0;
 		if (parent) {
@@ -44,7 +45,7 @@ var Splitter = new Class({
 
   	//alert("Splitter/initialize pid: "+parent.id);
 
-	  wrapper.setAttribute('id',parent.id+"_splitter");
+	  wrapper.setAttribute('id',parent.id+"_"+SjamayeeFacade.SPLITTER_CLASS_NAME);
 		wrapper.setStyles({'position':'relative', 'background-color':'transparent', 'width':w+'px', 'height':h+'px'}); //, 'overflow':'hidden'}
     if (wrapper_orientation && wrapper_orientation === 1) {
   		wrapper.setStyles({'top':'0px'}); //, 'overflow':'hidden'}
@@ -68,9 +69,10 @@ var Splitter = new Class({
 		wrapper.maximumSize = wrapper_maximumSize;
 		wrapper.initialSize = wrapper_initialSize;
 		wrapper.opaqueResize = wrapper_opaqueResize;
+		//wrapper.cursor = wrapper_cursor;
 		wrapper.widgets=[];
 		wrapper.handles=[];
-		wrapper.addClass('splitter');
+		wrapper.addClass(SjamayeeFacade.SPLITTER_CLASS_NAME);
 		if (parent) parent.appendChild(wrapper);
 		document.addEvent('resize',this.resize);
 		return wrapper;
@@ -95,6 +97,7 @@ var Splitter = new Class({
   	var maximumSize = parameters['maximumSize']?parameters['maximumSize']:'90%'; //this.maximumSize;
   	var initialSize = parameters['initialSize']?parameters['initialSize']:'50%'; //this.initialSize;
   	var opaqueResize = parameters['opaqueResize']?parameters['opaqueResize']:this.opaqueResize;
+  	//var cursor = parameters['cursor']?parameters['cursor']:this.cursor;
   	//var fixed = (minimumSize == maximumSize == initialSize)?1:0;
 		var parent = this.parentNode;
   	var handle = new Element('div',{
@@ -104,17 +107,19 @@ var Splitter = new Class({
   	
   	//alert("Splitter/addWidget pid: "+parent.id+" - wid: "+widget.id);
   	
-    handle.setAttribute("id",parent.id+"_"+widget.id+"_handle");
+    handle.setAttribute("id",parent.id+"_"+widget.id+"_"+SjamayeeFacade.HANDLE_CLASS_NAME);
   	handle.setStyles(orientation?{'border-width':handleWidth+'px 0','cursor':'ns-resize','height':handleWidth+'px','width':this.offsetWidth}
   															:{'border-width':'0 '+handleWidth+'px','cursor':'ew-resize','width':handleWidth+'px','height':this.offsetHeight});  
   	handle.num = numWidgets;
   	handle.handleWidth = handleWidth;            //ADDED !!!
-    var pseudoHandleColor = widget.hasClass('model')?ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR:DataDetailMediator.BACKGROUND_HIGHLITE_COLOR;
-  	if (handleColor == 'lightgray') {
+    var pseudoHandleColor = widget.hasClass(SjamayeeFacade.MODEL_CLASS_NAME)?SjamayeeFacade.MODEL_BACKGROUND_COLOR:SjamayeeFacade.DATA_BACKGROUND_COLOR;
+  	if (handleColor == SjamayeeFacade.DEFAULT_HANDLE_COLOR) {
   	  pseudoHandleColor = handleColor;
   	}
     var pseudoHandleBorder = (opaqueResize)?'solid':'dotted';
     var pseudoHandleOpacity = (opaqueResize)?0.25:1;
+		var pseudoHandleWidth = handleWidth;
+		if (orientation) { pseudoHandleWidth = 28; }
   	
   //handle.addEvent('mousedown', this.mousedown);
   //handle.addEvent('mousedown', SjamayeeFacade.getInstance().hello);
@@ -127,7 +132,7 @@ var Splitter = new Class({
   			//'styles': {'position':'absolute', 'left':this.offsetLeft, 'top':this.offsetTop, 'border':'1px dashed '+pseudoHandleColor, 'font-size':'0'} //black
   			//'styles': {'position':'absolute', 'left':this.offsetLeft, 'top':this.offsetTop, 'border':'28px dashed '+pseudoHandleColor, 'font-size':'0', 'background':'transparent'} //black
   			//'styles': {'position':'absolute', 'left':this.offsetLeft, 'top':this.offsetTop, 'border':handleWidth+'px dashed '+pseudoHandleColor, 'font-size':'0', 'opacity':pseudoHandleOpacity} //black
-  			'styles': {'position':'absolute', 'left':this.offsetLeft, 'top':this.offsetTop, 'border':handleWidth+'px '+pseudoHandleBorder+' '+pseudoHandleColor, 'font-size':'0', 'opacity':pseudoHandleOpacity} //black
+  			'styles': {'position':'absolute', 'left':this.offsetLeft, 'top':this.offsetTop, 'border':pseudoHandleWidth+'px '+pseudoHandleBorder+' '+pseudoHandleColor, 'font-size':'0', 'opacity':pseudoHandleOpacity} //black
   		});
   		parent.appendChild(pseudoHandle);
   		pseudoHandle.setStyles(orientation?{'height':parent.handleHeight - 2,'width':this.offsetWidth - 2}
@@ -251,20 +256,39 @@ var Splitter = new Class({
   	});
     widgetWrapper.setAttribute("id",widget.id+"_widget");
     widgetWrapper.handle = handle; //Added!!!
-    pseudoHandleColor = widget.hasClass('model')?ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR:DataDetailMediator.BACKGROUND_HIGHLITE_COLOR;
-
-  	if (handleColor == 'lightgray') {
+    pseudoHandleColor = widget.hasClass(SjamayeeFacade.MODEL_CLASS_NAME)?SjamayeeFacade.MODEL_BACKGROUND_COLOR:SjamayeeFacade.DATA_BACKGROUND_COLOR;
+  	if (handleColor == SjamayeeFacade.DEFAULT_HANDLE_COLOR) {
   	  pseudoHandleColor = handleColor;
   	}
-	  //pseudoHandleColor = 'transparent';
-
     var pseudoHandleOpacity = (opaqueResize)?0.25:1;
-    
+/*
+    widgetWrapper.addEvent('click', function(e) {
+      alert("CLICK!");
+      return false;
+    });
+*/  
     //Only for vertical splitter !?
-    if (orientation && widget.hasClass('splitter')) {    
-      widgetWrapper.addEvent('mousedown', function() {
+    if (orientation && widget.hasClass(SjamayeeFacade.SPLITTER_CLASS_NAME)) {    
+      widgetWrapper.addEvent('mousedown', function(e) {
   		  var parent = this.parentNode;
-    		var orientation = parent.orientation;
+    		var xoffset = parent.getPosition().x;
+    		var yoffset = parent.getPosition().y;
+  			var e = new Event(e),p = {x:0,y:0};
+  			if (window.ie) try { document.selection.empty(); } catch(err) {};
+  			x = orientation?e.page.y - yoffset - p.y:e.page.x - xoffset - p.x;
+        //alert("Splitter/mousedown - orientation: "+orientation+" x: "+x+" top: "+this.offsetTop);
+  		  if (x > (this.offsetTop + 51)) { return false; }
+/*
+        if (widgetWrapper.handle.style.cursor == 'ew-resize') {
+          widgetWrapper.handle.style.cursor = 'all-scroll';
+        }
+*/		    
+        //alert("Splitter/mousedown - orientation: "+orientation+" x: "+x+" target/parent/id: "+e.target.parentNode.parentNode.id);
+        //alert("Splitter/mousedown - orientation: "+orientation+" x: "+x+" e.x: "+e.x+" e.y: "+e.y);
+        //alert("Splitter/mousedown - orientation: "+orientation+" x: "+x+" x.p/x.c: "+xoffset+"/"+e.client.x+" y.p/y.c: "+yoffset+"/"+e.client.y);
+        //alert("Splitter/mousedown - orientation: "+orientation+" x: "+x+" x.p/x.c: "+e.page.x+"/"+e.client.x+" y.p/y.c: "+e.page.y+"/"+e.client.y);
+        //alert("Splitter/mousedown - orientation: "+orientation+" x: "+x+" top/left/top: "+this.offsetLeft+"/"+this.offsetTop+" y.p/y.c: "+e.page.y+"/"+e.client.y);
+
     		var pseudoHandle = new Element('div',{
     			//'styles': {'position':'absolute', 'left':this.handle.offsetLeft, 'top':this.handle.offsetTop, 'border':'1px dashed lightgray', 'font-size':'0'} //black
     			//'styles': {'position':'absolute', 'left':this.handle.offsetLeft, 'top':this.handle.offsetTop, 'border':'1px dashed '+pseudoHandleColor, 'font-size':'0'} //black
@@ -275,8 +299,6 @@ var Splitter = new Class({
     		parent.appendChild(pseudoHandle);
     		pseudoHandle.setStyles(orientation?{'height':parent.handleHeight - 2,'width':this.offsetWidth - 2}
     																			:{'width':parent.handleWidth - 2,'height':this.offsetHeight - 2});
-    		var xoffset = parent.getPosition().x;
-    		var yoffset = parent.getPosition().y;
     		var min = 0;
     		var max = 0;
     		if (orientation) {
@@ -368,8 +390,6 @@ var Splitter = new Class({
     			  if (diff > parentMaximumSize) { diff = parentMaximumSize; }
     			}
     			var sizes = parent.getSizes();
-    			//sizes[handle.num-1] += diff;
-    			//sizes[handle.num] -= diff;
     			sizes[handle.num-1] += diff;
     			sizes[handle.num] -= diff;
     			parent.setSizes(sizes);
@@ -384,7 +404,7 @@ var Splitter = new Class({
     }
   	var sizes = [];
   	var w = 0;
-  	if (numWidgets) w += numWidgets * handle.handleWidth; //this.handleWidth;
+  	if (numWidgets) w += numWidgets * handle.handleWidth;
   	for (var i = 0; i < numWidgets; ++i) {
   		var panel = this.widgets[i];
   		if (orientation) {
@@ -419,122 +439,6 @@ var Splitter = new Class({
   	this.widgets.push(widgetWrapper);
   	this.setSizes(sizes);
   },
-/*mousedown: function() {
-		var parent = this; //this.parentNode;
-    alert("Splitter/mousedown - parent/id: "+parent.id);
-  },*/
-/*mousedown: function() {
-		var parent = this; //this.parentNode;
-		var orientation = parent.orientation;
-		var pseudoHandle = new Element('div',{
-			'styles': {'position':'absolute', 'left':this.offsetLeft, 'top':this.offsetTop, 'border':'1px dashed black', 'font-size':'0'}
-		});
-		parent.appendChild(pseudoHandle);
-		pseudoHandle.setStyles(orientation?{'height':parent.handleHeight - 2,'width':this.offsetWidth - 2}
-																			:{'width':parent.handleWidth - 2,'height':this.offsetHeight - 2});
-		var xoffset = parent.getPosition().x;
-		var yoffset = parent.getPosition().y;
-		var min = 0;
-		var max = 0;
-		if (orientation) {
-			var x = this.offsetTop;
-			var offsetHeight = 0;
-			if (this.initialSize.charAt(this.initialSize.length-1) == '%') {
-    	  var i = Number(this.initialSize.substr(0,this.initialSize.length-1));
-    	  var percent = (i / 100);        	  
-		    offsetHeight = parent.offsetHeight * percent;
-		  } else {
-		    offsetHeight = Number(this.initialSize.substr(0,this.initialSize.length-2));
-		  }
-			max = (parent.handleWidth !== 0)?parent.offsetHeight - parent.handleWidth:offsetHeight;
-		}	else {
-			var x = this.offsetLeft;
-			var offsetWidth = 0;
-			if (this.initialSize.charAt(this.initialSize.length-1) == '%') {
-    	  var i = Number(this.initialSize.substr(0,this.initialSize.length-1));
-    	  var percent = (i / 100);
-		    offsetWidth = parent.offsetWidth * percent;
-		  } else {
-		    offsetWidth = Number(this.initialSize.substr(0,this.initialSize.length-2));
-		  }
-			max = (parent.handleWidth !== 0)?parent.offsetWidth - parent.handleWidth:offsetWidth;
-		}
-		if (this.num > 1) {
-		  if (parent.handleWidth !== 0) {
-		    min = (this.orientation?parent.handles[this.num - 1].offsetTop:parent.handles[this.num - 1].offsetLeft) + handle.handleWidth; //parent.handleWidth;
-		  } else {
-  			if (this.initialSize.charAt(initialSize.length-1) == '%') {
-      	  var i = Number(this.initialSize.substr(0,this.initialSize.length-1));
-      	  var percent = (i / 100);          	  
-			    min = (this.orientation?parent.offsetTop:parent.offsetLeft) * percent;
-			  } else {
-			    min = Number(this.initialSize.substr(0,this.initialSize.length-2));
-			  }
-		  }
-		}
-		if (this.num < parent.handles.length - 1) {
-		  if (parent.handleWidth !== 0) {
-		    max = (this.orientation?parent.handles[this.num + 1].offsetTop:parent.handles[this.num + 1].offsetLeft) - handle.handleWidth; //parent.handleWidth;
-		  } else {
-  			if (this.initialSize.charAt(this.initialSize.length-1) == '%') {
-      	  var i = Number(initialSize.substr(0,this.initialSize.length-1));
-      	  var percent = (i / 100);          	  
-			    max = (this.orientation?parent.offsetTop:parent.offsetLeft) * percent;
-			  } else {
-			    max = Number(this.initialSize.substr(0,this.initialSize.length-2));
-			  }
-		  }
-		}
-		var mousemove = function(e) {
-			var e = new Event(e),p = {x:0,y:0};
-			if (window.ie) try { document.selection.empty(); } catch(err) {};
-			x = this.orientation?e.page.y - yoffset - p.y:e.page.x - xoffset - p.x;
-			if (x < min) { x = min;	}
-			if (x > max) { x = max;	}
-			var dir = this.orientation?'top':'left';
-			pseudoHandle.setStyle(dir,x);
-		};
-		var mouseup = function(e) {
-			var e = new Event(e),p = {x:0,y:0};
-			if (window.ie) try { document.selection.empty(); } catch(err) {};
-			x = this.orientation?e.page.y - yoffset - p.y:e.page.x - xoffset - p.x;
-		  var parent = this; //handle.parentNode;
-			//var diff = x - (this.orientation?handle.offsetTop:handle.offsetLeft);
-			var diff = x - (this.orientation?this.offsetTop:this.offsetLeft);
-			if (diff) {
-			  var parentMinimumSize = 0;
-  			if (parent.minimumSize.charAt(parent.minimumSize.length-1) == '%') {
-      	  var m = Number(parent.minimumSize.substr(0,parent.minimumSize.length-1));
-      	  var percent = (m / 100);
-			    parentMinimumSize = (this.orientation?parent.offsetTop:parent.offsetLeft) * percent;
-			  } else {
-			    parentMinimumSize = Number(parent.minimumSize.substr(0,parent.minimumSize.length-2));
-			  }
-			  if (diff < parentMinimumSize) { diff = parentMinimumSize; }
-			  var parentMaximumSize = 0;
-  			if (parent.maximumSize.charAt(parent.maximumSize.length-1) == '%') {
-      	  var m = Number(parent.maximumSize.substr(0,parent.maximumSize.length-1));
-      	  var percent = (m / 100);          	  
-			    parentMaximumSize = (this.orientation?parent.offsetTop:parent.offsetLeft) * percent;
-			  } else {
-			    parentMaximumSize = Number(parent.maximumSize.substr(0,parent.maximumSize.length-2));
-			  }
-			  if (diff > parentMaximumSize) { diff = parentMaximumSize; }
-			}
-			var sizes = parent.getSizes();
-			//sizes[handle.num-1] += diff;
-			//sizes[handle.num] -= diff;
-			sizes[0] += diff;
-			sizes[1] -= diff;
-			parent.setSizes(sizes);
-			pseudoHandle.destroy();
-			document.removeEvent('mouseup',mouseup);
-			document.removeEvent('mousemove',mousemove);
-			parent.resize();
-		};
-		document.addEvent('mousemove',mousemove);
-		document.addEvent('mouseup',mouseup);
-	},*/
   parentResized: function() {
   	var parent = this.parentNode;
   	var w = parent.offsetWidth, h = parent.offsetHeight;
@@ -554,7 +458,6 @@ var Splitter = new Class({
   	for (var i = 0; i < sizes.length; ++i) {
   		w += sizes[i];
   	}
-  	//var h = (sizes.length > 1)?this.handleWidth * (sizes.length-1):0;
     var h = 0;
     if (sizes.length > 0) {
   	  for (var i = 1; i < sizes.length ; ++i) {
@@ -604,10 +507,6 @@ var Splitter = new Class({
 																							  :{'left':x,'top':0,'height':this.offsetHeight,'width':sizes[i]}); //,'overflow':'hidden'});
 		  x += sizes[i];
   	}
-  	/*var children = $ES('*',this);
-  	children.each(function(child) {
-  		if (child.parentResized) child.parentResized();
-  	});*/
     var children = this.getElements('*');
   	children.each(function(child) {
 		  if (child.parentResized) child.parentResized();
@@ -629,11 +528,7 @@ var Splitter = new Class({
   		}
   		handle.setStyles({'background-color':_color});
   	}
-  },
-  /*mousedown: function() {
-    var _handleNumber = 1;
-    this.handles[_handleNumber].mousedown();
-  }*/
+  }
 });
 
 ////////////////////////////
@@ -819,6 +714,19 @@ SjamayeeFacade.COLOR_DOT_ROOT = "white";
 SjamayeeFacade.COLOR_DOT_ROOT_FOCUSED = "black";
 SjamayeeFacade.NAVIGATION_CONTROL_ID = "navigationControl";
 SjamayeeFacade.PAGE_MULTIPLIER = 3;
+
+SjamayeeFacade.DATA_CLASS_NAME = "data";
+SjamayeeFacade.MODEL_CLASS_NAME = "model";
+SjamayeeFacade.SPLITTER_CLASS_NAME = "splitter";
+SjamayeeFacade.HANDLE_CLASS_NAME = "handle";
+
+SjamayeeFacade.DATA_BACKGROUND_COLOR = "lightblue";
+SjamayeeFacade.MODEL_BACKGROUND_COLOR = "#FAE4DB";
+SjamayeeFacade.OBJECT_BACKGROUND_COLOR = "lightgray";
+SjamayeeFacade.PARENT_BACKGROUND_COLOR = "lightgray";
+SjamayeeFacade.CHILD_BACKGROUND_COLOR = "lightgray";
+SjamayeeFacade.DEFAULT_HANDLE_COLOR = "lightgray";
+//SjamayeeFacade.ATTRIBUTE_BACKGROUND_COLOR = "yellow;";
 
 SjamayeeFacade.DATA = "Data";
 SjamayeeFacade.MODEL = "Model";
@@ -6693,6 +6601,12 @@ var SjamayeeUIComponent = new Class({
     if ($(id) !== null) {
       $(id).innerHTML = value;
     }
+  },
+  setClassName: function(className) {
+    if (className) { this.className = className; }
+  },
+  getClassName: function() {
+    return this.className;
   }
 });
 
@@ -6713,7 +6627,7 @@ var DataObjectsPane = new Class({
   initializationComplete: function() {
     this.vsplitter = new Splitter($(DataObjectsPane.ID), {
       'handleWidth':0,
-      'handleColor':DataDetailMediator.BACKGROUND_HIGHLITE_COLOR,
+      'handleColor':SjamayeeFacade.DATA_BACKGROUND_COLOR,
       'handleBorder':'none',
       'orientation':1,
       'minimumSize':'100%',
@@ -6771,7 +6685,7 @@ var ModelObjectsPane = new Class({
   initializationComplete: function() {
     this.vsplitter = new Splitter($(ModelObjectsPane.ID), {
       'handleWidth':0,
-      'handleColor':ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR,
+      'handleColor':SjamayeeFacade.MODEL_BACKGROUND_COLOR,
       'handleBorder':'none',
       'orientation':1,
       'minimumSize':'100%',
@@ -6829,7 +6743,7 @@ var DataRelationsPane = new Class({
   initializationComplete: function() {
     this.vsplitter = new Splitter($(DataRelationsPane.ID), {
       'handleWidth':0,
-      'handleColor':DataDetailMediator.BACKGROUND_HIGHLITE_COLOR,
+      'handleColor':SjamayeeFacade.DATA_BACKGROUND_COLOR,
       'handleBorder':'none',
       'orientation':1,
       'minimumSize':'100%',
@@ -6893,7 +6807,7 @@ var ModelRelationsPane = new Class({
   initializationComplete: function() {
     this.vsplitter = new Splitter($(ModelRelationsPane.ID), {
       'handleWidth':0,
-      'handleColor':ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR,
+      'handleColor':SjamayeeFacade.MODEL_BACKGROUND_COLOR,
       'handleBorder':'none',
       'orientation':1,
       'minimumSize':'100%',
@@ -7542,7 +7456,7 @@ var AttributeListUIComponent = new Class({
         headerValue = properties['header_value'];
       }
     }
-    var html = '<div id="'+name+AttributeListUIComponent.HEADER_ID+'" class="'+AttributeListUIComponent.HEADER_CLASS_ID+'">'+headerValue+'</div>'+ //alert(\'properties/header!!!\') /*SjamayeeFacade.getInstance().hello()*/ /* onmousedown="$(\'dataObjects_splitter\').mousedown()"*/
+    var html = '<div id="'+name+AttributeListUIComponent.HEADER_ID+'" class="'+AttributeListUIComponent.HEADER_CLASS_ID+" "+this.getClassName()+'">'+headerValue+'</div>'+ //alert(\'properties/header!!!\') /*SjamayeeFacade.getInstance().hello()*/ /* onmousedown="$(\'dataObjects_splitter\').mousedown()"*/
                '<div id="'+name+AttributeListUIComponent.BODY_ID+'" style="position:relative;float:top;top:23px;height:100%;">'+
                '<div id="'+name+AttributeListUIComponent.NAMES_ID+'" class="'+AttributeListUIComponent.NAMES_CLASS_ID+'">'+
                ' <div id="'+name+AttributeListUIComponent.NAME_HEADER_ID+'" class="'+AttributeListUIComponent.NAME_HEADER_CLASS_ID+'">'+AttributeListUIComponent.NAME_HEADER_VALUE+'</div>'+
@@ -7667,7 +7581,7 @@ var AttributeListUIComponent = new Class({
   },
   initializationComplete: function() {
     //Add splitter.
-    this.hsplitter = new Splitter($(this.id+AttributeListUIComponent.BODY_ID), {'handleWidth':1,'handleColor':'lightgray','initialSize':'100%'});
+    this.hsplitter = new Splitter($(this.id+AttributeListUIComponent.BODY_ID), {'handleWidth':1,'handleColor':SjamayeeFacade.DEFAULT_HANDLE_COLOR,'initialSize':'100%'});
 		this.hsplitter.addWidget($(this.id+AttributeListUIComponent.NAMES_ID), {'initialSize':'100%'});
 		this.hsplitter.addWidget($(this.id+AttributeListUIComponent.VALUES_ID), {'initialSize':'100%'});
   },
@@ -8190,15 +8104,10 @@ var ObjectsList = new Class({
     this.setCells(cells);
   },
   initializationComplete: function() {
-    /*if (this instanceof ModelObjectsList) {
-      this.addClass('model');
-    } else {
-      this.addClass('data');
-    }*/
     //Add column splitters.
     this.hsplitter = new Splitter($(this.id), {
       'handleWidth':1,
-		  'handleColor':'lightgray'
+		  'handleColor':SjamayeeFacade.DEFAULT_HANDLE_COLOR
     });
 		this.hsplitter.addWidget($(this.id+ObjectsList.REF_COLUMN_ID),  { 'handleWidth':0, 'handleColor':'inherit', 'initialSize':'10%' });
 		this.hsplitter.addWidget($(this.id+ObjectsList.NAME_COLUMN_ID), { 'handleWidth':1, 'initialSize':'20%' });
@@ -8280,26 +8189,26 @@ var ObjectsList = new Class({
       typeCells += '<div id="'+this.getTypeCellId(i,name)+'" class="'+cellClass+'">&nbsp;</div>';
       descriptionCells += '<div id="'+this.getDescCellId(i,name)+'" class="'+cell01Class+'">&nbsp;</div>';
     }
-    var result = '<div id="'+name+ObjectsList.REF_COLUMN_ID+'" class="'+ObjectsListMediator.COLUMN_CLASS_ID+" "+ObjectsList.COLUMN_REF_CLASS_ID+'" style="width:12%;display:block;">'+
+    var result = '<div id="'+name+ObjectsList.REF_COLUMN_ID+'" class="'+ObjectsListMediator.COLUMN_CLASS_ID+" "+ObjectsList.COLUMN_REF_CLASS_ID+" "+this.getClassName()+'" style="width:12%;display:block;">'+
                  ' <div id="'+name+ObjectsList.REF_COLUMN_ID+'h" class="'+ObjectsListMediator.COLUMN_HEADER_01_CLASS_ID+" "+ObjectsList.COLUMN_HEADER_REF_CLASS_ID+'">'+
                  '  <a id="'+name+ObjectsList.REF_COLUMN_ID+'ha" href="" tabindex="-1" onclick="">Ref.</a>'+
                  ' </div>'+
                  ' <div id="listColumnReferenceCells" style="background-color:white">'+referenceCells+'</div>'+
                  '</div>'+
-                 '<div id="'+name+ObjectsList.NAME_COLUMN_ID+'" class="'+ObjectsListMediator.COLUMN_CLASS_ID+" "+ObjectsList.COLUMN_NAME_CLASS_ID+'" style="width:65%;display:block;">'+
+                 '<div id="'+name+ObjectsList.NAME_COLUMN_ID+'" class="'+ObjectsListMediator.COLUMN_CLASS_ID+" "+ObjectsList.COLUMN_NAME_CLASS_ID+" "+this.getClassName()+'" style="width:65%;display:block;">'+
                  ' <div id="'+name+ObjectsList.NAME_COLUMN_ID+'h" class="'+ObjectsListMediator.COLUMN_HEADER_CLASS_ID+" "+ObjectsList.COLUMN_HEADER_NAME_CLASS_ID+'">'+
                  '  <a id="'+name+ObjectsList.NAME_COLUMN_ID+'ha" href="" tabindex="-1" onclick="">Name</a>'+
                  ' </div>'+
                  ' <div id="listColumnNameCells" style="background-color:white">'+nameCells+'</div>'+
                  '</div>'+
-                 '<div id="'+name+ObjectsList.TYPE_COLUMN_ID+'" class="'+ObjectsListMediator.COLUMN_CLASS_ID+" "+ObjectsList.COLUMN_TYPE_CLASS_ID+'" style="width:23%;display:block;">'+
+                 '<div id="'+name+ObjectsList.TYPE_COLUMN_ID+'" class="'+ObjectsListMediator.COLUMN_CLASS_ID+" "+ObjectsList.COLUMN_TYPE_CLASS_ID+" "+this.getClassName()+'" style="width:23%;display:block;">'+
                  ' <div id="'+name+ObjectsList.TYPE_COLUMN_ID+'h" class="'+ObjectsListMediator.COLUMN_HEADER_CLASS_ID+" "+ObjectsList.COLUMN_HEADER_TYPE_CLASS_ID+'">'+
                //'  <a id="'+name+ObjectsList.TYPE_COLUMN_ID+'ha" href="" style="padding:0px 0px 0px 19px;" tabindex="-1" onclick="">Type</a>'+
                  '  <a id="'+name+ObjectsList.TYPE_COLUMN_ID+'ha" href="" tabindex="-1" onclick="">Type</a>'+
                  ' </div>'+
                  ' <div id="listColumnTypeCells" style="background-color:white">'+typeCells+'</div>'+
                  '</div>'+
-                 '<div id="'+name+ObjectsList.DESC_COLUMN_ID+'" class="'+ObjectsListMediator.COLUMN_CLASS_ID+" "+ObjectsListMediator.COLUMN_DESC_CLASS_ID+'" style="width:100%;display:block;">'+
+                 '<div id="'+name+ObjectsList.DESC_COLUMN_ID+'" class="'+ObjectsListMediator.COLUMN_CLASS_ID+" "+ObjectsListMediator.COLUMN_DESC_CLASS_ID+" "+this.getClassName()+'" style="width:100%;display:block;">'+
                  ' <div id="'+name+ObjectsList.DESC_COLUMN_ID+'h" class="'+ObjectsListMediator.COLUMN_HEADER_CLASS_ID+" "+ObjectsListMediator.COLUMN_HEADER_DESC_CLASS_ID+'">'+
                  '  <a id="'+name+ObjectsList.DESC_COLUMN_ID+'ha" href="" tabindex="-1" onclick="">Description</a>'+
                  ' </div>'+
@@ -8331,14 +8240,19 @@ ObjectsList.COLUMN_HEADER_DESC_CLASS_ID = "listColumnHeaderDescription";
 var DataObjectsList = new Class({
   Extends: ObjectsList,
   initialize: function(name,properties) {
+    this.setClassName(SjamayeeFacade.DATA_CLASS_NAME);
     this.parent(DataObjectsList.ID, properties);
     //Extend keyboard.
     //this.keyboardEvents[SjamayeeFacade.HOME] = this.keydownHandler;
     //this.keyboard.removeEvents();
     //this.keyboard.addEvents(this.keyboardEvents);
   },
+  initializationComplete: function() {
+    this.addClass(SjamayeeFacade.DATA_CLASS_NAME);
+    this.parent();
+  },
   getBackgroundHighliteColor: function() {
-    return DataDetailMediator.BACKGROUND_HIGHLITE_COLOR;
+    return SjamayeeFacade.DATA_BACKGROUND_COLOR;
   }  
 });
 DataObjectsList.ID = "dataObjectsList";
@@ -8347,14 +8261,19 @@ DataObjectsList.ID = "dataObjectsList";
 var ModelObjectsList = new Class({
   Extends: ObjectsList,
   initialize: function(name,properties) {
+    this.setClassName(SjamayeeFacade.MODEL_CLASS_NAME);
     this.parent(ModelObjectsList.ID, properties);
     //Extend keyboard.
     //this.keyboardEvents[SjamayeeFacade.END] = this.keydownHandler;
     //this.keyboard.removeEvents();
     //this.keyboard.addEvents(this.keyboardEvents);
   },
+  initializationComplete: function() {
+    this.addClass(SjamayeeFacade.MODEL_CLASS_NAME);
+    this.parent();
+  },
   getBackgroundHighliteColor: function() {
-    return ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR;
+    return SjamayeeFacade.MODEL_BACKGROUND_COLOR;
   }    
 });
 ModelObjectsList.ID = "modelObjectsList";
@@ -8476,24 +8395,19 @@ var RelationsGrid = new Class({
     this.setCells(cells);
   },
   initializationComplete: function() {
-    if (this instanceof ModelRelationsGrid) {
-      this.addClass('model');
-    } else {
-      this.addClass('data');
-    }
     //Add column splitters.
     //var colors = ['red','yellow','blue','gray','green','brown','lightblue','lightgray','black'];
     //var widths = [1,2,3,4,5,6,7,8];
     this.hsplitter = new Splitter($(this.id), {
       'handleWidth':1,
-		  'handleColor':'lightgray'
+		  'handleColor':SjamayeeFacade.DEFAULT_HANDLE_COLOR
     });
     for (var col = Position.COLUMN_FIRST(); col < Position.COLUMNS_MAX(); col++) {
       var column = $(this.getColumnId(col));
       var gridColumn = _grid.getColumnByIndex(col);
       var handleWidth = (gridColumn && gridColumn.getNivo() == Position.NIVO_ROOT()+1)?5:1;
       //var handleColor = (gridColumn && gridColumn.getNivo() == Position.NIVO_ROOT()+1)?'red':'lightgray';
-      var handleColor = (gridColumn && gridColumn.getNivo() == Position.NIVO_ROOT()+1)?this.getBackgroundHighliteColor():'lightgray';
+      var handleColor = (gridColumn && gridColumn.getNivo() == Position.NIVO_ROOT()+1)?this.getBackgroundHighliteColor():SjamayeeFacade.DEFAULT_HANDLE_COLOR;
       var handleOpaqueResize = (gridColumn && gridColumn.getNivo() == Position.NIVO_ROOT()+1)?1:0;
       if (col == Position.COLUMN_FIRST()) {
         handleWidth = 0;
@@ -8550,7 +8464,7 @@ var RelationsGrid = new Class({
       var columnId = this.getColumnId(col,name);
       var nivo = (nivoBase + col);
       var columnHeader = nivo;
-      var columnClass = GridColumn.CLASS_ID+" "+GridColumn.WHERE_USED_CLASS_ID+" "+GridColumn.WHERE_USED_4C_CLASS_ID;
+      var columnClass = GridColumn.CLASS_ID+" "+GridColumn.WHERE_USED_CLASS_ID+" "+GridColumn.WHERE_USED_4C_CLASS_ID+" "+this.getClassName();
       var columnHeaderClass = GridColumn.HEADER_CLASS_ID;
       //var cellClass = GridCell.CLASS_ID;
       var cellClass = RelationsGrid.CELL_CLASS_ID;
@@ -8559,9 +8473,9 @@ var RelationsGrid = new Class({
         //cellClass = RelationsGrid.CELL_CLASS_ID; //+" "+GridCell.LEFT_CLASS_ID;
       }
       if (nivo == Position.NIVO_ROOT()) {
-        columnClass = GridColumn.CLASS_ID+" "+GridColumn.WHERE_USED_CLASS_ID+" "+GridColumn.ROOT_4C_CLASS_ID;
+        columnClass = GridColumn.CLASS_ID+" "+GridColumn.WHERE_USED_CLASS_ID+" "+GridColumn.ROOT_4C_CLASS_ID+" "+this.getClassName();
       } else if (nivo > Position.NIVO_ROOT()) {
-        columnClass = GridColumn.CLASS_ID+" "+GridColumn.WHAT_USED_LEFT_CLASS_ID+" "+GridColumn.WHAT_USED_LEFT_4C_CLASS_ID;
+        columnClass = GridColumn.CLASS_ID+" "+GridColumn.WHAT_USED_LEFT_CLASS_ID+" "+GridColumn.WHAT_USED_LEFT_4C_CLASS_ID+" "+this.getClassName();
         //columnClass = GridColumn.CLASS_ID+" "+GridColumn.WHAT_USED_CLASS_ID;
         //columnHeaderClass = GridColumn.HEADER_CLASS_ID+" "+GridColumn.HEADER_FIRST_CLASS_ID+" "+GridColumn.HEADER_WHAT_USED_CLASS_ID;
       }
@@ -8643,14 +8557,18 @@ RelationsGrid.COLUMN_VALUE = 999;
 var DataRelationsGrid = new Class({
   Extends: RelationsGrid,
   initialize: function(name,properties) {
+    this.setClassName(SjamayeeFacade.DATA_CLASS_NAME);
     this.parent(DataRelationsGrid.ID, properties);
     //Extend keyboard.
     //this.keyboardEvents[SjamayeeFacade.LEFT] = this.keydownHandler;
     //this.keyboard.removeEvents();
     //this.keyboard.addEvents(this.keyboardEvents);
   },
+  initializationComplete: function() {
+    this.parent();
+  },  
   getBackgroundHighliteColor: function() {
-    return DataDetailMediator.BACKGROUND_HIGHLITE_COLOR;
+    return SjamayeeFacade.DATA_BACKGROUND_COLOR;
   }  
 });
 DataRelationsGrid.ID = "dataRelationsGrid";
@@ -8659,36 +8577,22 @@ DataRelationsGrid.ID = "dataRelationsGrid";
 var ModelRelationsGrid = new Class({
   Extends: RelationsGrid,
   initialize: function(name,properties) {
+    this.setClassName(SjamayeeFacade.MODEL_CLASS_NAME);
     this.parent(ModelRelationsGrid.ID, properties);
     //Extend keyboard.
     //this.keyboardEvents[SjamayeeFacade.RIGHT] = this.keydownHandler;
     //this.keyboard.removeEvents();
     //this.keyboard.addEvents(this.keyboardEvents);
   },
+  initializationComplete: function() {
+    this.parent();
+  },
   getBackgroundHighliteColor: function() {
-    return ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR;
+    return SjamayeeFacade.MODEL_BACKGROUND_COLOR;
   }  
 });
 ModelRelationsGrid.ID = "modelRelationsGrid";
-/*
-//Class: BottomPane
-var BottomPane = new Class({
-  Extends: SjamayeeUIComponent,
-  initialize: function(properties) {
-    this.toolBar = null;
-    this.detail = null;
-    //this.parent(BottomPane.ID,{html: html});
-    this.parent(BottomPane.ID);
-  },
-  initializeChildren: function() {
-    this.toolBar = new ToolBar();
-    this.addChild(this.toolBar);
-    this.detail = new Detail();
-    this.addChild(this.detail);
-  },
-});
-BottomPane.ID = "bottomPane";
-*/
+
 //Class: ToolBar
 var ToolBar = new Class({
   Extends: SjamayeeUIComponent,
@@ -9301,23 +9205,32 @@ var Detail = new Class({
   Extends: SjamayeeUIComponent,
   initialize: function(name,properties) {
     this.name = (name)?name:Detail.ID;
+    if (this.name == Detail.MODEL_OBJECTS_ID || this.name == Detail.MODEL_RELATIONS_ID) {
+      this.setClassName(SjamayeeFacade.MODEL_CLASS_NAME);
+    } else {
+      this.setClassName(SjamayeeFacade.DATA_CLASS_NAME);
+    }
     var html = '';
     switch (this.name) {
       case Detail.DATA_OBJECTS_ID:
-      html += '<div id="'+DetailLeft.DATA_OBJECTS_ID+'" style="width:100%;height:100%;background-color:inherit;"></div>'+
-              '<div id="'+DetailRight.DATA_OBJECTS_ID+'" style="width:100%;height:100%;background-color:inherit;"></div>';
+      this.setClassName(SjamayeeFacade.DATA_CLASS_NAME);
+      html += '<div id="'+DetailLeft.DATA_OBJECTS_ID+'" class="'+this.getClassName()+'" style="width:100%;height:100%;background-color:inherit;"></div>'+
+              '<div id="'+DetailRight.DATA_OBJECTS_ID+'" class="'+this.getClassName()+'" style="width:100%;height:100%;background-color:inherit;"></div>';
       break;
       case Detail.DATA_RELATIONS_ID:
-      html += '<div id="'+DetailLeft.DATA_RELATIONS_ID+'" style="width:100%;height:100%;background-color:inherit;"></div>'+
-              '<div id="'+DetailRight.DATA_RELATIONS_ID+'" style="width:100%;height:100%;background-color:inherit;"></div>';
+      this.setClassName(SjamayeeFacade.DATA_CLASS_NAME);
+      html += '<div id="'+DetailLeft.DATA_RELATIONS_ID+'" class="'+this.getClassName()+'" style="width:100%;height:100%;background-color:inherit;"></div>'+
+              '<div id="'+DetailRight.DATA_RELATIONS_ID+'" class="'+this.getClassName()+'" style="width:100%;height:100%;background-color:inherit;"></div>';
       break;
       case Detail.MODEL_OBJECTS_ID:
-      html += '<div id="'+DetailLeft.MODEL_OBJECTS_ID+'" style="width:100%;height:100%;background-color:inherit;"></div>'+
-              '<div id="'+DetailRight.MODEL_OBJECTS_ID+'" style="width:100%;height:100%;background-color:inherit;"></div>';
+      this.setClassName(SjamayeeFacade.MODEL_CLASS_NAME);
+      html += '<div id="'+DetailLeft.MODEL_OBJECTS_ID+'" class="'+this.getClassName()+'" style="width:100%;height:100%;background-color:inherit;"></div>'+
+              '<div id="'+DetailRight.MODEL_OBJECTS_ID+'" class="'+this.getClassName()+'" style="width:100%;height:100%;background-color:inherit;"></div>';
       break;
       case Detail.MODEL_RELATIONS_ID:
-      html += '<div id="'+DetailLeft.MODEL_RELATIONS_ID+'" style="width:100%;height:100%;background-color:inherit;"></div>'+
-              '<div id="'+DetailRight.MODEL_RELATIONS_ID+'" style="width:100%;height:100%;background-color:inherit;"></div>';
+      this.setClassName(SjamayeeFacade.MODEL_CLASS_NAME);
+      html += '<div id="'+DetailLeft.MODEL_RELATIONS_ID+'" class="'+this.getClassName()+'" style="width:100%;height:100%;background-color:inherit;"></div>'+
+              '<div id="'+DetailRight.MODEL_RELATIONS_ID+'" class="'+this.getClassName()+'" style="width:100%;height:100%;background-color:inherit;"></div>';
       break;
     }
     this.parent(this.name,{html: html});
@@ -9335,16 +9248,11 @@ var Detail = new Class({
     this.addEvent(SjamayeeFacade.BLUR, this.detail_blurHandler);
   },
   initializationComplete: function() {
+    var handleColor = SjamayeeFacade.DEFAULT_HANDLE_COLOR;
     if (this.name == Detail.MODEL_OBJECTS_ID || this.name == Detail.MODEL_RELATIONS_ID) {
-      this.addClass('model');
+      handleColor = SjamayeeFacade.MODEL_BACKGROUND_COLOR;
     } else {
-      this.addClass('data');
-    }
-    var handleColor = 'lightgray';
-    if (this.name == Detail.MODEL_OBJECTS_ID || this.name == Detail.MODEL_RELATIONS_ID) {
-      handleColor = ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR;
-    } else {
-      handleColor = DataDetailMediator.BACKGROUND_HIGHLITE_COLOR;
+      handleColor = SjamayeeFacade.DATA_BACKGROUND_COLOR;
     }
     this.hsplitter = new Splitter($(this.name), {
       'handleWidth':1,
@@ -9388,16 +9296,20 @@ var DetailLeft = new Class({
     var html = '';
     switch (this.name) {
       case DetailLeft.DATA_OBJECTS_ID:
-      html = '<div id="'+DataObjectNTD.ID+'" class="'+ObjectNTD.CLASS_ID+'"></div>';
+      this.setClassName(SjamayeeFacade.DATA_CLASS_NAME);
+      html = '<div id="'+DataObjectNTD.ID+'" class="'+ObjectNTD.CLASS_ID+" "+this.getClassName()+'"></div>';
       break;
       case DetailLeft.DATA_RELATIONS_ID:
-      html = '<div id="'+DataParentDetail.ID+'" class="'+ParentDetail.CLASS_ID+'"></div>';
+      this.setClassName(SjamayeeFacade.DATA_CLASS_NAME);
+      html = '<div id="'+DataParentDetail.ID+'" class="'+ParentDetail.CLASS_ID+" "+this.getClassName()+'"></div>';
       break;
       case DetailLeft.MODEL_OBJECTS_ID:
-      html = '<div id="'+ModelObjectNTD.ID+'" class="'+ObjectNTD.CLASS_ID+'"></div>';
+      this.setClassName(SjamayeeFacade.MODEL_CLASS_NAME);
+      html = '<div id="'+ModelObjectNTD.ID+'" class="'+ObjectNTD.CLASS_ID+" "+this.getClassName()+'"></div>';
       break;
       case DetailLeft.MODEL_RELATIONS_ID:
-      html = '<div id="'+ModelParentDetail.ID+'" class="'+ParentDetail.CLASS_ID+'"></div>';
+      this.setClassName(SjamayeeFacade.MODEL_CLASS_NAME);
+      html = '<div id="'+ModelParentDetail.ID+'" class="'+ParentDetail.CLASS_ID+" "+this.getClassName()+'"></div>';
       break;
     }    
     this.parent(this.name, {html: html});
@@ -9441,16 +9353,20 @@ var DetailRight = new Class({
     var html = '';
     switch (this.name) {
       case DetailRight.DATA_OBJECTS_ID:
-     	html = '<div id="'+DataObjectProperties.ID+'" class="'+ObjectProperties.CLASS_ID+'"></div>';
+      this.setClassName(SjamayeeFacade.DATA_CLASS_NAME);
+     	html = '<div id="'+DataObjectProperties.ID+'" class="'+ObjectProperties.CLASS_ID+" "+this.getClassName()+'"></div>';
       break;
       case DetailRight.DATA_RELATIONS_ID:
-     	html = '<div id="'+DataChildDetail.ID+'" class="'+ChildDetail.CLASS_ID+'"></div>';
+      this.setClassName(SjamayeeFacade.DATA_CLASS_NAME);
+     	html = '<div id="'+DataChildDetail.ID+'" class="'+ChildDetail.CLASS_ID+" "+this.getClassName()+'"></div>';
       break;
       case DetailRight.MODEL_OBJECTS_ID:
-     	html = '<div id="'+ModelObjectProperties.ID+'" class="'+ObjectProperties.CLASS_ID+'"></div>';
+      this.setClassName(SjamayeeFacade.MODEL_CLASS_NAME);
+     	html = '<div id="'+ModelObjectProperties.ID+'" class="'+ObjectProperties.CLASS_ID+" "+this.getClassName()+'"></div>';
       break;
       case DetailRight.MODEL_RELATIONS_ID:
-     	html = '<div id="'+ModelChildDetail.ID+'" class="'+ChildDetail.CLASS_ID+'"></div>';
+      this.setClassName(SjamayeeFacade.MODEL_CLASS_NAME);
+     	html = '<div id="'+ModelChildDetail.ID+'" class="'+ChildDetail.CLASS_ID+" "+this.getClassName()+'"></div>';
       break;
     }    
     this.parent(this.name, {html: html});
@@ -9601,7 +9517,7 @@ DetailNTD.CANCEL_BUTTON_LABEL = "Cancel";
 var ObjectNTD = new Class({
   Extends: DetailNTD,
   initialize: function(name,properties) {
-    var html = '<div id="'+name+ObjectNTD.HEADER_ID+'" class="'+DetailNTD.HEADER_CLASS_ID+'">'+ObjectNTD.HEADER_VALUE+'</div>'+ //alert(\'objectNTD/header!!!\') /*SjamayeeFacade.getInstance().hello()*/ /* onmousedown="$(\'dataObjects_splitter\').mousedown()"*/
+    var html = '<div id="'+name+ObjectNTD.HEADER_ID+'" class="'+DetailNTD.HEADER_CLASS_ID+" "+this.getClassName()+'">'+ObjectNTD.HEADER_VALUE+'</div>'+ //alert(\'objectNTD/header!!!\') /*SjamayeeFacade.getInstance().hello()*/ /* onmousedown="$(\'dataObjects_splitter\').mousedown()"*/
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
                ' <label for="'+name+ObjectNTD.NAME_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.NAME_FIELD_LABEL+'</label>'+
                ' <div id="'+name+ObjectNTD.NAME_ID+'" class="'+DetailNTD.NAME_FIELD_CLASS_ID+'">Sjamayee is in the house! The time is now!</div>'+
@@ -9663,6 +9579,7 @@ ObjectNTD.NOGO_BUTTON_ID = "NTDNogoButton";
 var DataObjectNTD = new Class({
   Extends: ObjectNTD,
   initialize: function() {
+    this.setClassName(SjamayeeFacade.DATA_CLASS_NAME);
     this.parent(DataObjectNTD.ID);
   }
 });
@@ -9673,6 +9590,7 @@ DataObjectNTD.HEADER_ID = DataObjectNTD.ID+ObjectNTD.HEADER_ID;
 var ModelObjectNTD = new Class({
   Extends: ObjectNTD,
   initialize: function() {
+    this.setClassName(SjamayeeFacade.MODEL_CLASS_NAME);
     this.parent(ModelObjectNTD.ID);
   }
 });
@@ -9694,6 +9612,7 @@ ObjectProperties.HEADER_VALUE = "Properties";
 var DataObjectProperties = new Class({
   Extends: ObjectProperties,
   initialize: function() {
+    this.setClassName(SjamayeeFacade.DATA_CLASS_NAME);
     this.parent(DataObjectProperties.ID);
   }
 /*,
@@ -9711,6 +9630,7 @@ DataObjectProperties.ID = "dataObjectProperties";
 var ModelObjectProperties = new Class({
   Extends: ObjectProperties,
   initialize: function() {
+    this.setClassName(SjamayeeFacade.MODEL_CLASS_NAME);
     this.parent(ModelObjectProperties.ID);
   }  
 /*,
@@ -9741,8 +9661,9 @@ ParentDetail.CLASS_ID = "parentDetail";
 var DataParentDetail = new Class({
   Extends: ParentDetail,
   initialize: function() {
-    var html = '<div id="'+DataParentNTD.ID+'" class="'+ParentNTD.CLASS_ID+'"></div>'+
-               '<div id="'+DataParentProperties.ID+'" class="'+ParentProperties.CLASS_ID+'"></div>';
+    this.setClassName(SjamayeeFacade.DATA_CLASS_NAME);
+    var html = '<div id="'+DataParentNTD.ID+'" class="'+ParentNTD.CLASS_ID+" "+this.getClassName()+'"></div>'+
+               '<div id="'+DataParentProperties.ID+'" class="'+ParentProperties.CLASS_ID+" "+this.getClassName()+'"></div>';
     this.parent(DataParentDetail.ID,{html:html});
   },  
   initializeChildren: function() {
@@ -9752,10 +9673,9 @@ var DataParentDetail = new Class({
     this.addChild(this.properties);
   },
   initializationComplete: function() {
-    this.addClass('data');
     this.hsplitter = new Splitter($(this.id), {
       'handleWidth':2,
-      'handleColor':DataDetailMediator.BACKGROUND_HIGHLITE_COLOR, //'lightblue',
+      'handleColor':SjamayeeFacade.DATA_BACKGROUND_COLOR,
       'orientation':0,
       'minimumSize':'10%',
       'maximumSize':'90%',
@@ -9782,8 +9702,9 @@ DataParentDetail.ID = "dataParentDetail";
 var ModelParentDetail = new Class({
   Extends: ParentDetail,
   initialize: function() {
-    var html = '<div id="'+ModelParentNTD.ID+'" class="'+ParentNTD.CLASS_ID+'"></div>'+
-               '<div id="'+ModelParentProperties.ID+'" class="'+ParentProperties.CLASS_ID+'"></div>';
+    this.setClassName(SjamayeeFacade.MODEL_CLASS_NAME);
+    var html = '<div id="'+ModelParentNTD.ID+'" class="'+ParentNTD.CLASS_ID+" "+this.getClassName()+'"></div>'+
+               '<div id="'+ModelParentProperties.ID+'" class="'+ParentProperties.CLASS_ID+" "+this.getClassName()+'"></div>';
     this.parent(ModelParentDetail.ID,{html:html});
   },
   initializeChildren: function() {
@@ -9793,10 +9714,9 @@ var ModelParentDetail = new Class({
     this.addChild(this.properties);
   },
   initializationComplete: function() {
-    this.addClass('model');
     this.hsplitter = new Splitter($(this.id), {
       'handleWidth':1,
-      'handleColor':ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR,
+      'handleColor':SjamayeeFacade.MODEL_BACKGROUND_COLOR,
       'orientation':0,
       'minimumSize':'10%',
       'maximumSize':'90%',
@@ -9824,7 +9744,7 @@ ModelParentDetail.ID = "modelParentDetail";
 var ParentNTD = new Class({
   Extends: DetailNTD,
   initialize: function(name,properties) {
-    var html = '<div id="'+name+ParentNTD.HEADER_ID+'" class="'+DetailNTD.HEADER_CLASS_ID+'">'+ParentNTD.HEADER_VALUE+'</div>'+ //alert(\'parentNTD/header!!!\') // onmousedown="SjamayeeFacade.getInstance().hello()"
+    var html = '<div id="'+name+ParentNTD.HEADER_ID+'" class="'+DetailNTD.HEADER_CLASS_ID+" "+this.getClassName()+'">'+ParentNTD.HEADER_VALUE+'</div>'+ //alert(\'parentNTD/header!!!\') // onmousedown="SjamayeeFacade.getInstance().hello()"
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
                ' <label for="'+name+ParentNTD.NAME_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.NAME_FIELD_LABEL+'</label>'+
                ' <div id="'+name+ParentNTD.NAME_ID+'" class="'+DetailNTD.NAME_FIELD_CLASS_ID+'">Parent *** Sjamayee *** Parent 1234567890 123456789012 345678901234 567890ABC DEFGHIJKLMNO</div>'+
@@ -9882,6 +9802,7 @@ ParentNTD.NOGO_BUTTON_ID = "NTDNoGoButton";
 var DataParentNTD = new Class({
   Extends: ParentNTD,
   initialize: function() {
+    this.setClassName(SjamayeeFacade.DATA_CLASS_NAME);
     this.parent(DataParentNTD.ID);
   }
 });
@@ -9892,6 +9813,7 @@ DataParentNTD.ID = "dataParentNTD";
 var ModelParentNTD = new Class({
   Extends: ParentNTD,
   initialize: function() {
+    this.setClassName(SjamayeeFacade.MODEL_CLASS_NAME);
     this.parent(ModelParentNTD.ID);
   }
 });
@@ -9914,6 +9836,7 @@ ParentProperties.HEADER_VALUE = "Properties";
 var DataParentProperties = new Class({
   Extends: ParentProperties,
   initialize: function() {
+    this.setClassName(SjamayeeFacade.DATA_CLASS_NAME);
     this.parent(DataParentProperties.ID);
   }
 /*,
@@ -9931,6 +9854,7 @@ DataParentProperties.ID = "dataParentProperties";
 var ModelParentProperties = new Class({
   Extends: ParentProperties,
   initialize: function() {
+    this.setClassName(SjamayeeFacade.MODEL_CLASS_NAME);
     this.parent(ModelParentProperties.ID);
   }
 /*,
@@ -9960,8 +9884,9 @@ ChildDetail.CLASS_ID = "childDetail";
 var DataChildDetail = new Class({
   Extends: ChildDetail,
   initialize: function() {
-    var html = '<div id="'+DataChildNTD.ID+'" class="'+ChildNTD.CLASS_ID+'"></div>'+
-               '<div id="'+DataChildProperties.ID+'" class="'+ChildProperties.CLASS_ID+'"></div>';
+    this.setClassName(SjamayeeFacade.DATA_CLASS_NAME);
+    var html = '<div id="'+DataChildNTD.ID+'" class="'+ChildNTD.CLASS_ID+" "+this.getClassName()+'"></div>'+
+               '<div id="'+DataChildProperties.ID+'" class="'+ChildProperties.CLASS_ID+" "+this.getClassName()+'"></div>';
     this.parent(DataChildDetail.ID,{html:html});
   },
   initializeChildren: function() {
@@ -9973,7 +9898,7 @@ var DataChildDetail = new Class({
   initializationComplete: function() {
     this.hsplitter = new Splitter($(this.id), {
       'handleWidth':1,
-      'handleColor':DataDetailMediator.BACKGROUND_HIGHLITE_COLOR, //'lightblue',
+      'handleColor':SjamayeeFacade.DATA_BACKGROUND_COLOR,
       'orientation':0,
       'minimumSize':'10%',
       'maximumSize':'90%',
@@ -10000,8 +9925,9 @@ DataChildDetail.ID = "dataChildDetail";
 var ModelChildDetail = new Class({
   Extends: ChildDetail,
   initialize: function() {
-    var html = '<div id="'+ModelChildNTD.ID+'" class="'+ChildNTD.CLASS_ID+'"></div>'+
-               '<div id="'+ModelChildProperties.ID+'" class="'+ChildProperties.CLASS_ID+'"></div>';
+    this.setClassName(SjamayeeFacade.MODEL_CLASS_NAME);
+    var html = '<div id="'+ModelChildNTD.ID+'" class="'+ChildNTD.CLASS_ID+" "+this.getClassName()+'"></div>'+
+               '<div id="'+ModelChildProperties.ID+'" class="'+ChildProperties.CLASS_ID+" "+this.getClassName()+'"></div>';
     this.parent(ModelChildDetail.ID,{html:html});
   },
   initializeChildren: function() {
@@ -10013,7 +9939,7 @@ var ModelChildDetail = new Class({
   initializationComplete: function() {
     this.hsplitter = new Splitter($(this.id), {
       'handleWidth':1,
-      'handleColor':ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR,
+      'handleColor':SjamayeeFacade.MODEL_BACKGROUND_COLOR,
       'orientation':0,
       'minimumSize':'10%',
       'maximumSize':'90%',
@@ -10041,7 +9967,7 @@ ModelChildDetail.ID = "modelChildDetail";
 var ChildNTD = new Class({
   Extends: DetailNTD,
   initialize: function(name,properties) {
-    var html = '<div id="'+name+ChildNTD.HEADER_ID+'" class="'+DetailNTD.HEADER_CLASS_ID+'">'+ChildNTD.HEADER_VALUE+'</div>'+ //alert(\'childNTD/header!!!\') // onmousedown="SjamayeeFacade.getInstance().hello()"
+    var html = '<div id="'+name+ChildNTD.HEADER_ID+'" class="'+DetailNTD.HEADER_CLASS_ID+" "+this.getClassName()+'">'+ChildNTD.HEADER_VALUE+'</div>'+ //alert(\'childNTD/header!!!\') // onmousedown="SjamayeeFacade.getInstance().hello()"
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
                ' <label for="'+name+ChildNTD.NAME_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.NAME_FIELD_LABEL+'</label>'+
                ' <div id="'+name+ChildNTD.NAME_ID+'" class="'+DetailNTD.NAME_FIELD_CLASS_ID+'">Child *** Sjamayee *** Sjamayee *** Child 123456 78 90123 45 6789 012345 678 90</div>'+
@@ -10099,6 +10025,7 @@ ChildNTD.NOGO_BUTTON_ID = "NTDNoGoButton";
 var DataChildNTD = new Class({
   Extends: ChildNTD,
   initialize: function() {
+    this.setClassName(SjamayeeFacade.DATA_CLASS_NAME);
     this.parent(DataChildNTD.ID);
     this.buttons = null;
   }
@@ -10110,6 +10037,7 @@ DataChildNTD.HEADER_ID = DataChildNTD.ID+ChildNTD.HEADER_ID;
 var ModelChildNTD = new Class({
   Extends: ChildNTD,
   initialize: function() {
+    this.setClassName(SjamayeeFacade.MODEL_CLASS_NAME);
     this.parent(ModelChildNTD.ID);
     this.buttons = null;
   }
@@ -10133,6 +10061,7 @@ ChildProperties.HEADER_VALUE = "Properties";
 var DataChildProperties = new Class({
   Extends: ChildProperties,
   initialize: function() {
+    this.setClassName(SjamayeeFacade.DATA_CLASS_NAME);
     this.parent(DataChildProperties.ID);
   }
 /*,
@@ -10150,6 +10079,7 @@ DataChildProperties.HEADER_ID = DataChildProperties.ID+AttributeListUIComponent.
 var ModelChildProperties = new Class({
   Extends: ChildProperties,
   initialize: function() {
+    this.setClassName(SjamayeeFacade.MODEL_CLASS_NAME);
     this.parent(ModelChildProperties.ID);
   }
 /*,
@@ -10418,6 +10348,7 @@ var ORMediator = new Class({
     this.groupId = null;
     //MODE: Edit/Display
     this.mode = null;
+    $("sjamayeeSmash").setAttribute("style","display:none;");
     var app = this.facade.getApplication();
     app.dataObjectsPane.setAttribute("style","display:none;");
     app.dataRelationsPane.setAttribute("style","display:none;");
@@ -11608,10 +11539,9 @@ var AttributeListMediator = new Class({
     }
   },
   getBackgroundHighliteColor: function() {
-    return ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR; //ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR;
+    return SjamayeeFacade.MODEL_BACKGROUND_COLOR;
   }
 });
-AttributeListMediator.BACKGROUND_HIGHLITE_COLOR = "yellow;";
 AttributeListMediator.TYPE_OBJECT = "OBJECT";
 AttributeListMediator.TYPE_PARENT = "PARENT";
 AttributeListMediator.TYPE_CHILD = "CHILD";
@@ -14691,7 +14621,7 @@ var DataDetailMediator = new Class({
     }
   },
   getBackgroundHighliteColor: function() {
-    return DataDetailMediator.BACKGROUND_HIGHLITE_COLOR; //'black'
+    return SjamayeeFacade.DATA_BACKGROUND_COLOR;
   }/*,
   hide: function() {
     var detail = this.getViewComponent();
@@ -14705,7 +14635,6 @@ var DataDetailMediator = new Class({
     //detail.right.modelObjectProperties.setAttribute("style","display:none;");
   }*/
 });
-DataDetailMediator.BACKGROUND_HIGHLITE_COLOR = "lightblue"; //"inherit"; //""#F2F2F2"; //""#D7E5FE";
 
 //Abstract
 //Class: ModelDetailMediator
@@ -14802,7 +14731,7 @@ var ModelDetailMediator = new Class({
     }
   },
   getBackgroundHighliteColor: function() {
-    return ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR; //'white'
+    return SjamayeeFacade.MODEL_BACKGROUND_COLOR;
   }/*,
   hide: function() {
     var detail = this.getViewComponent();
@@ -14816,7 +14745,6 @@ var ModelDetailMediator = new Class({
     //detail.right.modelObjectProperties.setAttribute("style","display:none;");
   }*/
 });
-ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR = "#FAE4DB";
 
 //Abstract
 //Class: DetailNTDMediator
@@ -14953,14 +14881,13 @@ var DataObjectNTDMediator = new Class({
       }
       ntd.goButton.innerHTML = goButtonLabel;
       var noGoStyle = "display:none;"
-      if (objectsMediator.isEdit()) { noGoStyle = "display:block;background-color:"+DataDetailMediator.BACKGROUND_HIGHLITE_COLOR+";"; } //lightblue;"; }
+      if (objectsMediator.isEdit()) { noGoStyle = "display:block;background-color:"+SjamayeeFacade.DATA_BACKGROUND_COLOR; }
       ntd.noGoButton.setAttribute("style",noGoStyle);
       break;
     }
   }
 });
 DataObjectNTDMediator.ID = "DataObjectNTDMediator";
-//DataObjectNTDMediator.BACKGROUND_HIGHLITE_COLOR = "#D7E5FE;";
 
 //Class: ModelObjectNTDMediator
 var ModelObjectNTDMediator = new Class({
@@ -15012,14 +14939,13 @@ var ModelObjectNTDMediator = new Class({
       }
       ntd.goButton.innerHTML = goButtonLabel;
       var noGoStyle = "display:none;"
-      if (objectsMediator.isEdit()) { noGoStyle = "display:block;background-color:"+DataDetailMediator.BACKGROUND_HIGHLITE_COLOR; } //this.getBackgroundHighliteColor(); }
+      if (objectsMediator.isEdit()) { noGoStyle = "display:block;background-color:"+SjamayeeFacade.DATA_BACKGROUND_COLOR; }
       ntd.noGoButton.setAttribute("style",noGoStyle);
       break;
     }
   }
 });
 ModelObjectNTDMediator.ID = "ModelObjectNTDMediator";
-//ModelObjectNTDMediator.BACKGROUND_HIGHLITE_COLOR = "#FAE4DB;";
 
 //Abstract
 //Class: ObjectPropertiesMediator
@@ -15499,10 +15425,9 @@ var ObjectPropertiesMediator = new Class({
     this.currentOid = oid;
   },
   getBackgroundHighliteColor: function() {
-    return ObjectPropertiesMediator.BACKGROUND_HIGHLITE_COLOR;
+    return SjamayeeFacade.OBJECT_BACKGROUND_COLOR;
   } 
 });
-ObjectPropertiesMediator.BACKGROUND_HIGHLITE_COLOR = "lightgray;";
 
 //Class: DataObjectPropertiesMediator
 var DataObjectPropertiesMediator = new Class({
@@ -15665,7 +15590,7 @@ var ParentNTDMediator = new Class({
       ntd.goButton.innerHTML = goButtonLabel;
       //ntd.goButton.setAttribute("onclick",goButtonScript);      
       var noGoStyle = "display:none;"
-      if (relationsMediator.isEdit()) { noGoStyle = "display:block;background-color:"+DataDetailMediator.BACKGROUND_HIGHLITE_COLOR+";"; } //lightblue;"; }
+      if (relationsMediator.isEdit()) { noGoStyle = "display:block;background-color:"+SjamayeeFacade.DATA_BACKGROUND_COLOR; }
       ntd.noGoButton.setAttribute("style",noGoStyle);
       break;
       case SjamayeeFacade.PARENT_NTD_CLICK:
@@ -15799,10 +15724,9 @@ var ParentPropertiesMediator = new Class({
     }
   },
   getBackgroundHighliteColor: function() {
-    return ParentPropertiesMediator.BACKGROUND_HIGHLITE_COLOR;
+    return SjamayeeFacade.PARENT_BACKGROUND_COLOR;
   } 
 });
-ParentPropertiesMediator.BACKGROUND_HIGHLITE_COLOR = "lightgray;";
 
 //Class: DataParentPropertiesMediator
 var DataParentPropertiesMediator = new Class({
@@ -16030,10 +15954,9 @@ var ChildPropertiesMediator = new Class({
     }
   },
   getBackgroundHighliteColor: function() {
-    return ChildPropertiesMediator.BACKGROUND_HIGHLITE_COLOR;
+    return SjamayeeFacade.CHILD_BACKGROUND_COLOR;
   } 
 });
-ChildPropertiesMediator.BACKGROUND_HIGHLITE_COLOR = "lightgray;";
 
 //Class: DataChildPropertiesMediator
 var DataChildPropertiesMediator = new Class({
@@ -18159,11 +18082,10 @@ var ModelObjectsHeaderMediator = new Class({
     }
   },
   getBackgroundHighliteColor: function() {
-    return ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR; //ModelObjectsHeaderMediator.BACKGROUND_HIGHLITE_COLOR;
+    return SjamayeeFacade.MODEL_BACKGROUND_COLOR;
   } 
 });
 ModelObjectsHeaderMediator.ID = "ModelObjectsHeaderMediator";
-//ModelObjectsHeaderMediator.BACKGROUND_HIGHLITE_COLOR = "#FAE4DB";
 
 //Class: ModelObjectsTextsHeaderMediator
 var ModelObjectsTextsHeaderMediator = new Class({
@@ -18297,11 +18219,10 @@ var ModelRelationsHeaderMediator = new Class({
     return entitySelected;
   },
   getBackgroundHighliteColor: function() {
-    return ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR; //ModelRelationsHeaderMediator.BACKGROUND_HIGHLITE_COLOR;
+    return SjamayeeFacade.MODEL_BACKGROUND_COLOR;
   }  
 });
 ModelRelationsHeaderMediator.ID = "ModelRelationsHeaderMediator";
-//ModelRelationsHeaderMediator.BACKGROUND_HIGHLITE_COLOR = "#FAE4DB";
 
 //Class: ModelRelationsTextsHeaderMediator
 var ModelRelationsTextsHeaderMediator = new Class({
@@ -19083,11 +19004,10 @@ var ModelRelationsGridMediator = new Class({
     return new ModelRelation(vo);
   },
   getBackgroundHighliteColor: function() {
-    return ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR; //ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR;
+    return SjamayeeFacade.MODEL_BACKGROUND_COLOR;
   }
 });
 ModelRelationsGridMediator.ID = "ModelRelationsGridMediator";
-//ModelRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR = "#FAE4DB;";
 
 //Class: ModelObjectsListMediator
 var ModelObjectsListMediator = new Class({
@@ -19368,11 +19288,10 @@ var ModelObjectsListMediator = new Class({
     this.setResizeButtonText(resizeButtonText);
   },
   getBackgroundHighliteColor: function() {
-    return ModelDetailMediator.BACKGROUND_HIGHLITE_COLOR; //ModelObjectsListMediator.BACKGROUND_HIGHLITE_COLOR;
+    return SjamayeeFacade.MODEL_BACKGROUND_COLOR;
   } 
 });
 ModelObjectsListMediator.ID = "ModelObjectsListMediator";
-//ModelObjectsListMediator.BACKGROUND_HIGHLITE_COLOR = "#FAE4DB;";
 
 //Class: ModelObjectsToolBarMediator
 var ModelObjectsToolBarMediator = new Class({
@@ -21920,11 +21839,10 @@ var DataObjectsHeaderMediator = new Class({
     }
   },
   getBackgroundHighliteColor: function() {
-    return DataDetailMediator.BACKGROUND_HIGHLITE_COLOR; //DataObjectsHeaderMediator.BACKGROUND_HIGHLITE_COLOR;
+    return SjamayeeFacade.DATA_BACKGROUND_COLOR;
   }  
 });
 DataObjectsHeaderMediator.ID = "DataObjectsHeaderMediator";
-//DataObjectsHeaderMediator.BACKGROUND_HIGHLITE_COLOR = "lightblue";
 
 //Class: DataRelationsHeaderMediator
 var DataRelationsHeaderMediator = new Class({
@@ -22016,11 +21934,10 @@ var DataRelationsHeaderMediator = new Class({
     return entitySelected;
   },
   getBackgroundHighliteColor: function() {
-    return DataDetailMediator.BACKGROUND_HIGHLITE_COLOR; //DataRelationsHeaderMediator.BACKGROUND_HIGHLITE_COLOR; //'black'
+    return SjamayeeFacade.DATA_BACKGROUND_COLOR;
   }  
 });
 DataRelationsHeaderMediator.ID = "DataRelationsHeaderMediator";
-//DataRelationsHeaderMediator.BACKGROUND_HIGHLITE_COLOR = "lightblue";
 
 //Class: DataObjectsToolBarMediator
 var DataObjectsToolBarMediator = new Class({
@@ -22064,7 +21981,7 @@ var DataObjectsToolBarMediator = new Class({
       //toolBar.setAttribute("style","display:block;");
       var headerMediator = this.facade.retrieveMediator(DataObjectsHeaderMediator.ID);
       //toolBar.setAttribute("style","background-color:"+headerMediator.getBackgroundHighliteColor()+";height:100%;width:100%;display:block;");
-      toolBar.setAttribute("style","background-color:"+DataDetailMediator.BACKGROUND_HIGHLITE_COLOR+";height:100%;width:100%;display:block;");
+      toolBar.setAttribute("style","background-color:"+SjamayeeFacade.DATA_BACKGROUND_COLOR+";height:100%;width:100%;display:block;");
       break;
     }
   }
@@ -22125,7 +22042,7 @@ var DataRelationsToolBarMediator = new Class({
       //toolBar.setAttribute("style","display:block;");
       var headerMediator = this.facade.retrieveMediator(DataRelationsHeaderMediator.ID);
       //toolBar.setAttribute("style","background-color:"+headerMediator.getBackgroundHighliteColor()+";height:100%;width:100%;display:block;");
-      toolBar.setAttribute("style","background-color:"+DataDetailMediator.BACKGROUND_HIGHLITE_COLOR+";height:100%;width:100%;display:block;");
+      toolBar.setAttribute("style","background-color:"+SjamayeeFacade.DATA_BACKGROUND_COLOR+";height:100%;width:100%;display:block;");
       break;
       case SjamayeeFacade.GRID_DATA_RESIZED:
       var sizeNormal = note.getBody();
@@ -22524,11 +22441,10 @@ var DataRelationsGridMediator = new Class({
     return new DataRelation(vo);
   },
   getBackgroundHighliteColor: function() {
-    return DataDetailMediator.BACKGROUND_HIGHLITE_COLOR; //DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR;
+    return SjamayeeFacade.DATA_BACKGROUND_COLOR;
   }
 });
 DataRelationsGridMediator.ID = "DataRelationsGridMediator";
-//DataRelationsGridMediator.BACKGROUND_HIGHLITE_COLOR = "#D7E5FE;";
 
 //Class: DataObjectsListMediator
 var DataObjectsListMediator = new Class({
@@ -22738,8 +22654,7 @@ var DataObjectsListMediator = new Class({
     this.setResizeButtonText(resizeButtonText);
   },
   getBackgroundHighliteColor: function() {
-    return DataDetailMediator.BACKGROUND_HIGHLITE_COLOR; //DataObjectsListMediator.BACKGROUND_HIGHLITE_COLOR;
+    return SjamayeeFacade.DATA_BACKGROUND_COLOR;
   } 
 });
 DataObjectsListMediator.ID = "DataObjectsListMediator";
-//DataObjectsListMediator.BACKGROUND_HIGHLITE_COLOR = "#D7E5FE;";

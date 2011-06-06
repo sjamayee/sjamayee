@@ -100,7 +100,6 @@
    });
   
    function init()    {
-		 //addSplitters();
      //alert("pmvc - Sjamayee started!");
      var sjamayee = new Sjamayee();
      sjamayee.initializeChildren();
@@ -126,97 +125,6 @@
       google.language.getBranding('googleBranding'); //, v);
     }
 
-		function addSplitters() {
-	    var vsplitter1 = new Splitter($("sjamayeeForm"), {
-	      'handleWidth':5,
-	      'handleColor':'inherit',
-	      'handleBorder':'none',
-	      'orientation':1,
-	      'minimumSize':'100%',
-	      'maximumSize':'100%',
-	      'initialSize':'100%',
-	      'opaqueResize':1});	
-			vsplitter1.addWidget($("topPane"), {
-	      'handleWidth':0,
-	      'handleColor':'inherit',
-	      'handleBorder':'none', //'0px solid red',
-	      'orientation':1,
-	      'minimumSize':'28px',
-	      'maximumSize':'897px', //(925-28)
-	      'initialSize':'400px', //'50%',
-	      'opaqueResize':1});
-			vsplitter1.addWidget($("bottomPane"), {
-	      'handleWidth':5,
-	      'handleColor':'inherit',
-	      'handleBorder':'none', //'0px solid red',
-	      'orientation':1,
-	      'minimumSize':'28px',
-	      'maximumSize':'897px', //(925-28)
-	      'initialSize':'497px', //'50%',
-	      'opaqueResize':1});
-	    var hsplitter1 = new Splitter($("listPane"), {
-	      'handleWidth':5,
-	      'handleColor':'inherit',
-	      'handleBorder':'none',
-	      'orientation':0,
-	      'minimumSize':'100%',
-	      'maximumSize':'100%',
-	      'initialSize':'100%',
-	      'opaqueResize':1});		
-			hsplitter1.addWidget($("listPaneLeft"), {
-	      'handleWidth':0,
-	      'handleColor':'inherit',
-	      'handleBorder':'none', //'0px solid red',
-	      'orientation':0,
-	      'minimumSize':'0%',
-	      'maximumSize':'100%',
-	      'initialSize':'300px', //'30%',
-	      'opaqueResize':1});
-			hsplitter1.addWidget($("listPaneRight"), {
-	      'handleWidth':5,
-	      'handleColor':'inherit',
-	      'handleBorder':'none', //'0px solid red',
-	      'orientation':0,
-	      'minimumSize':'0%',
-	      'maximumSize':'100%',
-	      'initialSize':'500px', //'70%',
-	      'opaqueResize':1});
-	    var hsplitter2 = new Splitter($("detailPane"), {
-	      'handleWidth':5,
-	      'handleColor':'inherit',
-	      'handleBorder':'none',
-	      'orientation':0,
-	      'minimumSize':'100%',
-	      'maximumSize':'100%',
-	      'initialSize':'100%',
-	      'opaqueResize':1});		
-			hsplitter2.addWidget($("detailPaneLeft"), {
-	      'handleWidth':0,
-	      'handleColor':'inherit',
-	      'handleBorder':'none', //'0px solid red',
-	      'orientation':0,
-	      'minimumSize':'0%',
-	      'maximumSize':'100%',
-	      'initialSize':'200px', //'40%',
-	      'opaqueResize':1});
-			hsplitter2.addWidget($("detailPaneRight"), {
-	      'handleWidth':5,
-	      'handleColor':'inherit',
-	      'handleBorder':'none', //'0px solid red',
-	      'orientation':0,
-	      'minimumSize':'0%',
-	      'maximumSize':'100%',
-	      'initialSize':'400px', //'60%',
-	      'opaqueResize':1});
-	    //Splitter__resize();
-	    //$("sjamayeeForm_splitter").resize();
-	    //vsplitter1.resize();
-	    //$("sjamayeeForm_splitter").resize();
-	    //$("sjamayeeForm").resize();
-			//vsplitter1.resize();
-			window.resize();
-		}
-		
 		///////////////////////////////
 		// LOAD DEMO DATASET (JSON). //
 		///////////////////////////////
@@ -275,24 +183,6 @@
       }
       //alert("loadLog/loadDataRelations - loaded: "+i);
     }
-
-		/*****************************************************************************************
-		* Disable Text Selection script- © Dynamic Drive DHTML code library (www.dynamicdrive.com)
-		* This notice MUST stay intact for legal use
-		* Visit Dynamic Drive at http://www.dynamicdrive.com/ for full source code
-		*****************************************************************************************/
-		function disableSelection(target) {
-			if (typeof target.onselectstart!="undefined") //IE route
-				target.onselectstart = function(){ return false }
-			else if (typeof target.style.MozUserSelect!="undefined") //Firefox route
-				target.style.MozUserSelect="none"
-			else //All other route (ie: Opera)
-				target.onmousedown = function(){ return false }
-		  target.style.cursor = "default"
-		}
-		//Sample usages
-		//disableSelection(document.body) //Disable text selection on entire body
-		//disableSelection(document.getElementById("mydiv")) //Disable text selection on element with id="mydiv"
 		</script>
   </script>
   <script type="text/javascript" src="http://sjamayee-explorer.googlecode.com/files/demo_project_planning_typesJson.js"></script>
@@ -302,26 +192,11 @@
   <script type="text/javascript" src="http://sjamayee-explorer.googlecode.com/files/demo_project_planning_dataRelationsJson.js"></script>
  </head>
  <body>
-<!--  
-	<div style="margin:10px 10px 0px 10px;border:none;">
-   <div id="sjamayeeForm" style="width:100%;height:925px;">
-	  <div id ="topPane" style="width:100%;height:100%;">
-	   <div id="headerPane" style="width:100%;height:28px;"></div>
-     <div id="listPane" style="width:100%;height:100%;position:relative;align:left;">
-     </div>
-		</div>
-	  <div id ="bottomPane" style="width:100%;height:100%;">
-     <div id="toolBarPane" class="toolBar" style="width:100%;height:28px;cursor:ns-resize;" onmousedown="alert('mousedown on toolBarPane!!!');"></div>
-     <div id="detailPane" class="listPane" style="width:100%;height:100%;">
-     </div>
-    </div>
-   </div>
-   <div id="googleBranding" style="width:100%;height:20px;"></div>
-  </div>
--->
-
   <div style="margin:10px 10px 0px 10px;border:none;">
    <div id="sjamayeeForm" style="width:100%;height:925px;">
+		<div id="sjamayeeSmash" style="width:100%;height:100%;background-color:white;text-align:center;font:italic bold 42px/60px Georgia,serif;">
+		 <br/><br/><br/><br/><br/><font color="red">SJAMAYEE...<br/><br/>The time is now !!!</font>
+		</div> 
     <div id="headerPane" style="width:100%;height:28px;display:block;"></div>
     <div id="dataObjects" style="width:100%;height:863px;background-color:lightblue;display:block;">
      <div id="dataObjectsList" class="data" style="width:100%;height:100%;position:relative;align:top;"></div>
@@ -368,6 +243,6 @@
   </div>
  </body>
  <script type="text/javascript">
-  disableSelection(document.body); //disable text selection on entire body of page
+  Utils.disableSelection(document.body); //disable text selection on entire body of page
  </script>
 </html>
