@@ -59,7 +59,15 @@ var Splitter = new Class({
 		  setSizes: this.setSizes,
 		  getSizes: this.getSizes,
 		  setHandleColor: this.setHandleColor,
-		  setHandlePosition: this.setHandlePosition
+		  setHandlePosition: this.setHandlePosition,
+		  resizeDataObjectsDetail: this.resizeDataObjectsDetail,
+		  resizeDataRelationsDetail: this.resizeDataRelationsDetail,
+		  resizeDataParentDetail: this.resizeDataParentDetail,
+		  resizeDataChildDetail: this.resizeDataChildDetail,
+		  resizeModelObjectsDetail: this.resizeModelObjectsDetail,
+		  resizeModelRelationsDetail: this.resizeModelRelationsDetail,
+		  resizeModelParentDetail: this.resizeModelParentDetail,
+		  resizeModelChildDetail: this.resizeModelChildDetail
 		});
 		wrapper.orientation = wrapper_orientation;
 		wrapper.handleWidth = wrapper_handleWidth;
@@ -75,13 +83,150 @@ var Splitter = new Class({
 		wrapper.addClass(SjamayeeFacade.SPLITTER_CLASS_NAME);
 		if (parent) parent.appendChild(wrapper);
 		document.addEvent('resize',this.resize);
+		//window.addEvent('resize',this.resize);
+		//window.document.addEvent('resize',this.resize);
 		return wrapper;
 	},
   resize: function() {
+    //alert("Splitter/resize id: "+this.id);
     var children = this.getElements('div');
 	  children.each(function(child) {
 		  if (child.parentResized) child.parentResized();
 	  });
+	  switch (this.id) {
+	    case Detail.DATA_OBJECTS_ID+"_"+SjamayeeFacade.SPLITTER_CLASS_NAME:
+	    this.resizeDataObjectsDetail();
+	    break;
+	    case Detail.DATA_RELATIONS_ID+"_"+SjamayeeFacade.SPLITTER_CLASS_NAME:
+	    this.resizeDataRelationsDetail();
+	    break;
+	    case DataParentDetail.ID+"_"+SjamayeeFacade.SPLITTER_CLASS_NAME:
+	    this.resizeDataParentDetail();
+	    break;
+	    case DataChildDetail.ID+"_"+SjamayeeFacade.SPLITTER_CLASS_NAME:
+	    this.resizeDataChildDetail();
+	    break;
+	    case Detail.MODEL_OBJECTS_ID+"_"+SjamayeeFacade.SPLITTER_CLASS_NAME:
+	    this.resizeModelObjectsDetail();
+	    break;
+	    case Detail.MODEL_RELATIONS_ID+"_"+SjamayeeFacade.SPLITTER_CLASS_NAME:
+	    this.resizeModelRelationsDetail();
+	    break;
+	    case ModelParentDetail.ID+"_"+SjamayeeFacade.SPLITTER_CLASS_NAME:
+	    this.resizeModelParentDetail();
+	    break;
+	    case ModelChildDetail.ID+"_"+SjamayeeFacade.SPLITTER_CLASS_NAME:
+	    this.resizeModelChildDetail();
+	    break;
+	  }
+  },
+  resizeDataObjectsDetail: function() {
+    var descrSpan = $("dataObjectNTDDescriptionSpan");
+    var descrSpanSize = descrSpan.offsetWidth*descrSpan.offsetHeight;
+    var descr = $("dataObjectNTDDescription");
+    var descrSize = descr.offsetWidth*descr.offsetHeight;
+    var _height = (Math.ceil(descrSpanSize / descr.offsetWidth) * 1.1) + descrSpan.offsetHeight;
+	  descr.setStyles({ 'height': _height });
+    /*alert("Splitter/resizeDataObjectsDetail - this/id: "+this.id+
+          "\n\ndescr/width: "+descr.offsetWidth+"\ndescr/height: "+descr.offsetHeight+
+          "\ndescr/size: "+descrSize+
+          "\ndescrSpan/width: "+descrSpan.offsetWidth+"\ndescrSpan/height: "+descrSpan.offsetHeight+
+          "\ndescrSpan/size: "+descrSpanSize);*/
+  },
+  resizeDataRelationsDetail: function() {
+    //alert("Splitter/resizeDataRelationsDetail");
+    //Parent
+    var parentDescrSpan = $("dataParentNTDDescriptionSpan");
+    var parentDescrSpanSize = parentDescrSpan.offsetWidth*parentDescrSpan.offsetHeight;
+    var parentDescr = $("dataParentNTDDescription");
+    var parentDescrSize = parentDescr.offsetWidth*parentDescr.offsetHeight;
+    var _parentHeight = (Math.ceil(parentDescrSpanSize / parentDescr.offsetWidth) * 1.1) + parentDescrSpan.offsetHeight;
+	  parentDescr.setStyles({ 'height': _parentHeight });
+    /*alert("Splitter/parentResised - this/id: "+this.id+"\nparentDescr/height: "+parentDescr.offsetHeight+
+          "\nparentDescr_span/width: "+parentDescr_span.offsetWidth+"\nparentDescr_span/height: "+parentDescr_span.offsetHeight+
+          "\nparentDescr_span/size: "+(parentDescr_span.offsetWidth*parentDescr_span.offsetHeight));*/
+    //Child
+    var childDescrSpan = $("dataChildNTDDescriptionSpan");
+    var childDescrSpanSize = childDescrSpan.offsetWidth*childDescrSpan.offsetHeight;
+    var childDescr = $("dataChildNTDDescription");
+    var childDescrSize = childDescr.offsetWidth*childDescr.offsetHeight;
+    var _childHeight = (Math.ceil(childDescrSpanSize / childDescr.offsetWidth) * 1.1) + childDescrSpan.offsetHeight;
+	  childDescr.setStyles({ 'height': _childHeight });
+    /*alert("Splitter/resizeDataRelationsDetail - this/id: "+this.id+"\nchildDescr/height: "+childDescr.offsetHeight+
+          "\nchildDescr_span/width: "+childDescr_span.offsetWidth+"\nchildDescr_span/height: "+childDescr_span.offsetHeight+
+          "\nchildDescr_span/size: "+(childDescr_span.offsetWidth*childDescr_span.offsetHeight));*/
+  },
+  resizeDataParentDetail: function() {
+    //alert("Splitter/resizeDataParentDetail");
+    var descrSpan = $("dataParentNTDDescriptionSpan");
+    var descrSpanSize = descrSpan.offsetWidth*descrSpan.offsetHeight;
+    var descr = $("dataParentNTDDescription");
+    var descrSize = descr.offsetWidth*descr.offsetHeight;
+    var _height = (Math.ceil(descrSpanSize / descr.offsetWidth) * 1.1) + descrSpan.offsetHeight;
+	  descr.setStyles({ 'height': _height });
+  },
+  resizeDataChildDetail: function() {
+    //alert("Splitter/resizeDataChildDetail");
+    var descrSpan = $("dataChildNTDDescriptionSpan");
+    var descrSpanSize = descrSpan.offsetWidth*descrSpan.offsetHeight;
+    var descr = $("dataChildNTDDescription");
+    var descrSize = descr.offsetWidth*descr.offsetHeight;
+    var _height = (Math.ceil(descrSpanSize / descr.offsetWidth) * 1.1) + descrSpan.offsetHeight;
+	  descr.setStyles({ 'height': _height });
+  },
+  resizeModelObjectsDetail: function() {
+    var descrSpan = $("modelObjectNTDDescriptionSpan");
+    var descrSpanSize = descrSpan.offsetWidth*descrSpan.offsetHeight;
+    var descr = $("modelObjectNTDDescription");
+    var descrSize = descr.offsetWidth*descr.offsetHeight;
+    var _height = (Math.ceil(descrSpanSize / descr.offsetWidth) * 1.1) + descrSpan.offsetHeight;      
+	  descr.setStyles({ 'height': _height });  	  
+    /*alert("Splitter/resizeModelObjectsDetail - this/id: "+this.id+
+          "\n\ndescr/width: "+descr.offsetWidth+"\ndescr/height: "+descr.offsetHeight+
+          "\ndescr/size: "+descrSize+
+          "\ndescrSpan/width: "+descrSpan.offsetWidth+"\ndescrSpan/height: "+descrSpan.offsetHeight+
+          "\ndescrSpan/size: "+descrSpanSize);*/
+  },
+  resizeModelRelationsDetail: function() {
+    //alert("Splitter/resizeModelRelationsDetail");
+    //Parent
+    var parentDescrSpan = $("modelParentNTDDescriptionSpan");
+    var parentDescrSpanSize = parentDescrSpan.offsetWidth*parentDescrSpan.offsetHeight;
+    var parentDescr = $("modelParentNTDDescription");
+    var parentDescrSize = parentDescr.offsetWidth*parentDescr.offsetHeight;
+    var _parentHeight = (Math.ceil(parentDescrSpanSize / parentDescr.offsetWidth) * 1.1) + parentDescrSpan.offsetHeight;
+	  parentDescr.setStyles({ 'height': _parentHeight });
+    /*alert("Splitter/parentResised - this/id: "+this.id+"\nparentDescr/height: "+parentDescr.offsetHeight+
+          "\nparentDescr_span/width: "+parentDescr_span.offsetWidth+"\nparentDescr_span/height: "+parentDescr_span.offsetHeight+
+          "\nparentDescr_span/size: "+(parentDescr_span.offsetWidth*parentDescr_span.offsetHeight));*/
+    //Child
+    var childDescrSpan = $("modelChildNTDDescriptionSpan");
+    var childDescrSpanSize = childDescrSpan.offsetWidth*childDescrSpan.offsetHeight;
+    var childDescr = $("modelChildNTDDescription");
+    var childDescrSize = childDescr.offsetWidth*childDescr.offsetHeight;
+    var _childHeight = (Math.ceil(childDescrSpanSize / childDescr.offsetWidth) * 1.1) + childDescrSpan.offsetHeight;
+	  childDescr.setStyles({ 'height': _childHeight });
+    /*alert("Splitter/resizeModelRelationsDetail - this/id: "+this.id+"\nchildDescr/height: "+childDescr.offsetHeight+
+          "\nchildDescr_span/width: "+childDescr_span.offsetWidth+"\nchildDescr_span/height: "+childDescr_span.offsetHeight+
+          "\nchildDescr_span/size: "+(childDescr_span.offsetWidth*childDescr_span.offsetHeight));*/
+  },
+  resizeModelParentDetail: function() {
+    //alert("Splitter/resizeModelParentDetail");
+    var descrSpan = $("modelParentNTDDescriptionSpan");
+    var descrSpanSize = descrSpan.offsetWidth*descrSpan.offsetHeight;
+    var descr = $("modelParentNTDDescription");
+    var descrSize = descr.offsetWidth*descr.offsetHeight;
+    var _height = (Math.ceil(descrSpanSize / descr.offsetWidth) * 1.1) + descrSpan.offsetHeight;
+	  descr.setStyles({ 'height': _height });
+  },
+  resizeModelChildDetail: function() {
+    //alert("Splitter/resizeModelChildDetail");
+    var descrSpan = $("modelChildNTDDescriptionSpan");
+    var descrSpanSize = descrSpan.offsetWidth*descrSpan.offsetHeight;
+    var descr = $("modelChildNTDDescription");
+    var descrSize = descr.offsetWidth*descr.offsetHeight;
+    var _height = (Math.ceil(descrSpanSize / descr.offsetWidth) * 1.1) + descrSpan.offsetHeight;
+	  descr.setStyles({ 'height': _height });
   },
   addWidget: function(widget,parameters) {
   	if (!parameters) parameters = {};
@@ -107,9 +252,10 @@ var Splitter = new Class({
   	
   	//alert("Splitter/addWidget pid: "+parent.id+" - wid: "+widget.id);
   	
+  	var handleCursor = (orientation)?'ns-resize':'ew-resize';
     handle.setAttribute("id",parent.id+"_"+widget.id+"_"+SjamayeeFacade.HANDLE_CLASS_NAME);
-  	handle.setStyles(orientation?{'border-width':handleWidth+'px 0','cursor':'ns-resize','height':handleWidth+'px','width':this.offsetWidth}
-  															:{'border-width':'0 '+handleWidth+'px','cursor':'ew-resize','width':handleWidth+'px','height':this.offsetHeight});  
+  	handle.setStyles(orientation?{'border-width':handleWidth+'px 0','cursor':handleCursor,'height':handleWidth+'px','width':this.offsetWidth}
+  															:{'border-width':'0 '+handleWidth+'px','cursor':handleCursor,'width':handleWidth+'px','height':this.offsetHeight});  
   	handle.num = numWidgets;
   	handle.handleWidth = handleWidth;            //ADDED !!!
     var pseudoHandleColor = widget.hasClass(SjamayeeFacade.MODEL_CLASS_NAME)?SjamayeeFacade.MODEL_BACKGROUND_COLOR:SjamayeeFacade.DATA_BACKGROUND_COLOR;
@@ -132,7 +278,7 @@ var Splitter = new Class({
   			//'styles': {'position':'absolute', 'left':this.offsetLeft, 'top':this.offsetTop, 'border':'1px dashed '+pseudoHandleColor, 'font-size':'0'} //black
   			//'styles': {'position':'absolute', 'left':this.offsetLeft, 'top':this.offsetTop, 'border':'28px dashed '+pseudoHandleColor, 'font-size':'0', 'background':'transparent'} //black
   			//'styles': {'position':'absolute', 'left':this.offsetLeft, 'top':this.offsetTop, 'border':handleWidth+'px dashed '+pseudoHandleColor, 'font-size':'0', 'opacity':pseudoHandleOpacity} //black
-  			'styles': {'position':'absolute', 'left':this.offsetLeft, 'top':this.offsetTop, 'border':pseudoHandleWidth+'px '+pseudoHandleBorder+' '+pseudoHandleColor, 'font-size':'0', 'opacity':pseudoHandleOpacity} //black
+  			'styles': {'position':'absolute', 'left':this.offsetLeft, 'top':this.offsetTop, 'border':pseudoHandleWidth+'px '+pseudoHandleBorder+' '+pseudoHandleColor, 'font-size':'0', 'opacity':pseudoHandleOpacity, 'cursor': handleCursor} //black
   		});
   		parent.appendChild(pseudoHandle);
   		pseudoHandle.setStyles(orientation?{'height':parent.handleHeight - 2,'width':this.offsetWidth - 2}
@@ -278,6 +424,8 @@ var Splitter = new Class({
   			x = orientation?e.page.y - yoffset - p.y:e.page.x - xoffset - p.x;
         //alert("Splitter/mousedown - orientation: "+orientation+" x: "+x+" top: "+this.offsetTop);
   		  if (x > (this.offsetTop + 51)) { return false; }
+
+        var pseudoHandleCursor = (orientation)?'ns-resize':'ew-resize';
 /*
         if (widgetWrapper.handle.style.cursor == 'ew-resize') {
           widgetWrapper.handle.style.cursor = 'all-scroll';
@@ -297,6 +445,7 @@ var Splitter = new Class({
     			'styles': {'position':'absolute', 'left':this.handle.offsetLeft, 'top':this.handle.offsetTop, 'border':'28px solid '+pseudoHandleColor, 'font-size':'0', 'opacity':pseudoHandleOpacity} //black
     		});
     		parent.appendChild(pseudoHandle);
+    		pseudoHandle.cursor = pseudoHandleCursor;
     		pseudoHandle.setStyles(orientation?{'height':parent.handleHeight - 2,'width':this.offsetWidth - 2}
     																			:{'width':parent.handleWidth - 2,'height':this.offsetHeight - 2});
     		var min = 0;
@@ -358,6 +507,8 @@ var Splitter = new Class({
     			if (x > max) { x = max;	}
     			var dir = orientation?'top':'left';
     			pseudoHandle.setStyle(dir,x);
+    			//pseudoHandle.setStyles({dir:x,'cursor':pseudoHandleCursor});
+    			//document.style.cursor = pseudoHandle.cursor;
     		};
     		var mouseup = function(e) {
     			var e = new Event(e),p = {x:0,y:0};
@@ -396,6 +547,7 @@ var Splitter = new Class({
     			pseudoHandle.destroy();
     			document.removeEvent('mouseup',mouseup);
     			document.removeEvent('mousemove',mousemove);
+    			//document.style.cursor = 'auto';
     			parent.resize();
     		};
     		document.addEvent('mousemove',mousemove);
@@ -440,6 +592,7 @@ var Splitter = new Class({
   	this.setSizes(sizes);
   },
   parentResized: function() {
+    //alert("Splitter/parentResized - this/id: "+this.id);
   	var parent = this.parentNode;
   	var w = parent.offsetWidth, h = parent.offsetHeight;
   	if (parent === document.body) {
@@ -727,6 +880,8 @@ SjamayeeFacade.PARENT_BACKGROUND_COLOR = "lightgray";
 SjamayeeFacade.CHILD_BACKGROUND_COLOR = "lightgray";
 SjamayeeFacade.DEFAULT_HANDLE_COLOR = "lightgray";
 //SjamayeeFacade.ATTRIBUTE_BACKGROUND_COLOR = "yellow;";
+
+SjamayeeFacade.TIME_TO_FADE = 500.0; //1000.0; //1000.0;
 
 SjamayeeFacade.DATA = "Data";
 SjamayeeFacade.MODEL = "Model";
@@ -1463,9 +1618,25 @@ var PrepViewCommand = new Class({
     this.facade.registerMediator(new ModelObjectsMediator(app.modelObjectsPane));
     this.facade.registerMediator(new ModelRelationsMediator(app.modelRelationsPane));
     
-    //this.facade.registerMediator(new ToolBarMediator(app.bottom.toolBar));
+    //Fade out "Splash".
+    Utils.fade("sjamayeeSplash");
+
+    /*$("sjamayeeSplash").setStyle("display","none");
+    $("sjamayeeSplash2").setStyle("display","block");
+    Utils.fade("sjamayeeSplash2");
+    $("sjamayeeSplash2").setStyle("display","none");*/
+
+    /*Utils.fade("sjamayeeSplash_Drupal");
+    Utils.fade("sjamayeeSplash_Salesforce");
+    Utils.fade("sjamayeeSplash_Sap");
+    Utils.fade("sjamayeeSplash_Wikipedia");
+    Utils.fade("sjamayeeSplash_Google");
+    Utils.fade("sjamayeeSplash_Git");
+    Utils.fade("sjamayeeSplash_Linux");
+    Utils.fade("sjamayeeSplash_Mac");*/
+
     //Show Data Relations Grid.
-    this.sendNotification(SjamayeeFacade.GRID_DATA_SHOW);
+    //this.sendNotification(SjamayeeFacade.GRID_DATA_SHOW);
   }
 });
 
@@ -8597,57 +8768,7 @@ ModelRelationsGrid.ID = "modelRelationsGrid";
 var ToolBar = new Class({
   Extends: SjamayeeUIComponent,
   initialize: function(name,properties) {
-  /*var html = '<div id="'+DataObjectsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>'+
-    //var html = '<div id="toolBarPane" style="width:100%;height:28px;background-color:red;cursor:ns-resize;">'+
-    //         '<div id="'+DataObjectsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>'+
-               '<div id="'+DataRelationsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>';
-    //           '</div>';
-    if (SjamayeeFacade.APPLICATION_TYPE == SjamayeeFacade.COMPOSER) {               
-      html += '<div id="'+ModelObjectsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>'+
-              '<div id="'+ModelRelationsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>'+
-              '<div id="'+ModelObjectsTextsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>'+
-              '<div id="'+ModelRelationsTextsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>';
-    }*/
-
-    //var html = '<div id="'+DataObjectsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>'+
-    //           '<div id="'+DataRelationsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>';
-    
     this.name = (name)?name:ToolBar.ID;
-    /*var html = '';
-    switch (this.name) {
-      case ToolBar.DATA_OBJECTS_ID:
-      html += '<div id="'+DataObjectsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"  onmousedown="alert(\'mousedown on DOTB!!!\');"></div>';
-      break;
-      case ToolBar.DATA_RELATIONS_ID:
-      html += '<div id="'+DataRelationsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>';
-      break;
-      case ToolBar.MODEL_OBJECTS_ID:
-      html += '<div id="'+ModelObjectsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>'+
-              '<div id="'+ModelObjectsTextsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>';
-      break;
-      case ToolBar.MODEL_RELATIONS_ID:
-      html += '<div id="'+ModelRelationsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>'; **+
-              '<div id="'+ModelRelationsTextsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>';**
-      break;
-    }*/
-
-    /*if (SjamayeeFacade.APPLICATION_TYPE == SjamayeeFacade.COMPOSER) {               
-      **html += '<div id="'+ModelObjectsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>'+
-              '<div id="'+ModelRelationsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>'+
-              '<div id="'+ModelObjectsTextsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>'+
-              '<div id="'+ModelRelationsTextsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>';**
-      switch (this.name) {
-        case ToolBar.MODEL_OBJECTS_ID:
-        html += '<div id="'+ModelObjectsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>'+
-                '<div id="'+ModelObjectsTextsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>';
-        break;
-        case ToolBar.MODEL_RELATIONS_ID:
-        html += '<div id="'+ModelRelationsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>'+
-                '<div id="'+ModelRelationsTextsToolBar.ID+'" class="'+ToolBar.CLASS_ID+'"></div>';
-        break;
-      }      
-    }*/
-    //this.parent(this.name,{html: html});
     this.parent(this.name);
     this.dataObjectsToolBar = null;
     this.dataRelationsToolBar = null;
@@ -8657,20 +8778,6 @@ var ToolBar = new Class({
     this.modelRelationsTextsToolBar = null;
   },
   initializeChildren: function() {
-  /*this.dataObjectsToolBar = new DataObjectsToolBar();
-    this.addChild(this.dataObjectsToolBar);
-    this.dataRelationsToolBar = new DataRelationsToolBar();
-    this.addChild(this.dataRelationsToolBar);
-    if (SjamayeeFacade.APPLICATION_TYPE == SjamayeeFacade.COMPOSER) {   
-      this.modelObjectsToolBar = new ModelObjectsToolBar();
-      this.addChild(this.modelObjectsToolBar);
-      this.modelRelationsToolBar = new ModelRelationsToolBar();
-      this.addChild(this.modelRelationsToolBar);    
-      this.modelObjectsTextsToolBar = new ModelObjectsTextsToolBar();
-      this.addChild(this.modelObjectsTextsToolBar);
-      this.modelRelationsTextsToolBar = new ModelRelationsTextsToolBar();
-      this.addChild(this.modelRelationsTextsToolBar);
-    }*/
     switch (this.name) {
       case ToolBar.DATA_OBJECTS_ID:
       this.dataObjectsToolBar = new DataObjectsToolBar();
@@ -8693,22 +8800,6 @@ var ToolBar = new Class({
       //this.addChild(this.modelRelationsTextsToolBar);
       break;
     }
-    /*if (SjamayeeFacade.APPLICATION_TYPE == SjamayeeFacade.COMPOSER) {   
-      switch (this.name) {
-        case ToolBar.MODEL_OBJECTS_ID:
-        this.modelObjectsToolBar = new ModelObjectsToolBar();
-        this.addChild(this.modelObjectsToolBar);
-        this.modelObjectsTextsToolBar = new ModelObjectsTextsToolBar();
-        this.addChild(this.modelObjectsTextsToolBar);
-        break;
-        case ToolBar.MODEL_RELATIONS_ID:
-        this.modelRelationsToolBar = new ModelRelationsToolBar();
-        this.addChild(this.modelRelationsToolBar);    
-        this.modelRelationsTextsToolBar = new ModelRelationsTextsToolBar();
-        this.addChild(this.modelRelationsTextsToolBar);
-        break;
-      }
-    }*/
   }
 });
 ToolBar.ID = "toolBarPane";
@@ -8751,6 +8842,9 @@ ToolBar.GRID_MENU_ITEM = "Extract";
 ToolBar.GRID_MENU_ITEM = "Copy";
 ToolBar.GRID_MENU_ITEM = "Paste";
 ToolBar.GRID_MENU_ITEM = "Reset Grid";
+
+ToolBar.OVERLAY_ID = "Overlay";
+ToolBar.RESIZER_ID = "Resizer";
 
 ToolBar.getMenuOptions = function() {
   var _type_code_name = type_code_name?type_code_name:'';   
@@ -8810,7 +8904,7 @@ var ObjectsToolBar = new Class({
               '<button id="'+name+ObjectsToolBar.CLEAR_BUFFER_BUTTON_ID+'" class="'+ToolBar.BUTTON_CLASS_ID+'" style="margin-left:10px;">'+ObjectsToolBar.CLEAR_BUFFER_BUTTON_VALUE+'</button>'+
               '<button id="'+name+ObjectsToolBar.DELETE_UNREFOBS_BUTTON_ID+'" class="'+ObjectsToolBar.DELETE_UNREFOBS_BUTTON_CLASS_ID+'">'+ObjectsToolBar.DELETE_UNREFOBS_BUTTON_VALUE+'</button>';
     }
-    if (this instanceof ModelObjectsToolBar) {
+    /*if (this instanceof ModelObjectsToolBar) {
       html += '<button id="'+name+ObjectsToolBar.TEXT_BUTTON_ID+'" class="'+ObjectsToolBar.TEXT_BUTTON_CLASS_ID+'">'+ObjectsToolBar.TEXT_BUTTON_VALUE+'</button>';
     } else {
       if (SjamayeeFacade.APPLICATION_TYPE != SjamayeeFacade.BROWSER) {
@@ -8818,6 +8912,14 @@ var ObjectsToolBar = new Class({
       } else {
         html += '<div style="width:100px;height:100%;"/>';
       }
+    }*/
+    if (this instanceof ModelObjectsToolBar) {
+      html += '<button id="'+name+ObjectsToolBar.TEXT_BUTTON_ID+'" class="'+ObjectsToolBar.TEXT_BUTTON_CLASS_ID+'">'+ObjectsToolBar.TEXT_BUTTON_VALUE+'</button>';
+    }
+    if (SjamayeeFacade.APPLICATION_TYPE != SjamayeeFacade.BROWSER) {
+      html += '</div>';
+    } else {
+      html += '<div style="width:100px;height:100%;"/>';
     }
     html += '</div>';
     this.parent(name,{html:html});
@@ -9416,6 +9518,7 @@ var DetailNTD = new Class({
     this.modifiedBy = null;
     this.goButton = null;
     this.noGoButton = null;
+    this.descriptionSpan = null;
     this.ntd_clickHandler = this.ntd_clickHandler.bindWithEvent(this);
     this.ntd_keypressHandler = this.ntd_keypressHandler.bindWithEvent(this);
     this.ntd_keydownHandler = this.ntd_keydownHandler.bindWithEvent(this);
@@ -9425,6 +9528,21 @@ var DetailNTD = new Class({
     this.goButton_clickHandler = this.goButton_clickHandler.bindWithEvent(this);
     this.noGoButton_clickHandler = this.noGoButton_clickHandler.bindWithEvent(this);
   },
+  initializeChildren: function() {
+    var name = this.id;
+    this.name = $(name+DetailNTD.NAME_ID);
+    this.type = $(name+DetailNTD.TYPE_ID);
+    this.description = $(name+DetailNTD.DESC_ID);
+    this.createdBy = $(name+DetailNTD.CBY_ID);
+    this.modifiedBy = $(name+DetailNTD.MBY_ID);
+    this.buttons = $(name+DetailNTD.BUTTONS_ID);
+    this.goButton = $(name+DetailNTD.GO_BUTTON_ID);
+    this.noGoButton = $(name+DetailNTD.NOGO_BUTTON_ID);
+    this.descriptionSpan = $(name+DetailNTD.DESC_SPAN_ID);
+    if (!this.description) { alert("Splitter/initializeChildren name: "+name); }
+    if (!this.descriptionSpan) { alert("Splitter/initializeChildren name: "+name); }
+    this.descriptionSpan.innerHTML = this.description.innerHTML; //Replace this - ONLY FOR TEST !!!
+  },
   childrenInitialized: function() {
     this.addEvent(SjamayeeFacade.CLICK, this.ntd_clickHandler);
     this.addEvent(SjamayeeFacade.KEYPRESS, this.ntd_keypressHandler);
@@ -9432,7 +9550,7 @@ var DetailNTD = new Class({
     this.name.addEvent(SjamayeeFacade.CLICK, this.name_clickHandler);
     this.name.addEvent(SjamayeeFacade.KEYPRESS, this.name_keypressHandler);
     this.name.addEvent(SjamayeeFacade.KEYDOWN, this.name_keydownHandler);
-  },
+  },  
   getName: function() {
     return this.name.value;
   },
@@ -9511,6 +9629,15 @@ DetailNTD.NOGO_BUTTON_CLASS_ID = "detailNTDNoGoButton";
 DetailNTD.SAVE_BUTTON_LABEL = "Save";
 DetailNTD.SALESFORCE_BUTTON_LABEL = "Salesforce";
 DetailNTD.CANCEL_BUTTON_LABEL = "Cancel";
+DetailNTD.NAME_ID = "Name";
+DetailNTD.TYPE_ID = "Type";
+DetailNTD.DESC_ID = "Description";
+DetailNTD.DESC_SPAN_ID = "DescriptionSpan";
+DetailNTD.CBY_ID = "CreatedBy";
+DetailNTD.MBY_ID = "ModifiedBy";
+DetailNTD.BUTTONS_ID = "Buttons";
+DetailNTD.GO_BUTTON_ID = "GoButton";
+DetailNTD.NOGO_BUTTON_ID = "NogoButton";
 
 //Abstract
 //Class: ObjectNTD
@@ -9519,44 +9646,33 @@ var ObjectNTD = new Class({
   initialize: function(name,properties) {
     var html = '<div id="'+name+ObjectNTD.HEADER_ID+'" class="'+DetailNTD.HEADER_CLASS_ID+" "+this.getClassName()+'">'+ObjectNTD.HEADER_VALUE+'</div>'+ //alert(\'objectNTD/header!!!\') /*SjamayeeFacade.getInstance().hello()*/ /* onmousedown="$(\'dataObjects_splitter\').mousedown()"*/
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
-               ' <label for="'+name+ObjectNTD.NAME_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.NAME_FIELD_LABEL+'</label>'+
-               ' <div id="'+name+ObjectNTD.NAME_ID+'" class="'+DetailNTD.NAME_FIELD_CLASS_ID+'">Sjamayee is in the house! The time is now!</div>'+
+               ' <label for="'+name+DetailNTD.NAME_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.NAME_FIELD_LABEL+'</label>'+
+               ' <div id="'+name+DetailNTD.NAME_ID+'" class="'+DetailNTD.NAME_FIELD_CLASS_ID+'">Sjamayee is in the house! The time is now!</div>'+
                '</div><br/>'+
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
-               ' <label for="'+name+ObjectNTD.TYPE_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.TYPE_FIELD_LABEL+'</label>'+
-               ' <div id="'+name+ObjectNTD.TYPE_ID+'" class="'+DetailNTD.TYPE_FIELD_CLASS_ID+'">Lead</div>'+
+               ' <label for="'+name+DetailNTD.TYPE_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.TYPE_FIELD_LABEL+'</label>'+
+               ' <div id="'+name+DetailNTD.TYPE_ID+'" class="'+DetailNTD.TYPE_FIELD_CLASS_ID+'">Lead</div>'+
                '</div><br/>'+
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
-               ' <label for="'+name+ObjectNTD.DESC_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.DESC_FIELD_LABEL+'</label>'+
-               ' <div id="'+name+ObjectNTD.DESC_ID+'" class="'+DetailNTD.DESC_FIELD_CLASS_ID+'" onoverflowchanged="alert(\'*** OveRFloW ***\')">Sjamayee is now *** Object *** jssjsj dldldld mfmfmfmf kekeke mdmdmdm kqkqkqk l lsslsl 123456790 14226 djdjjd jkfkfkfkf skksks lqlqlql zyzzyu hdhdhd jfff jfjjf fjfjfjf vcvc dsds 123</div>'+
+               ' <label for="'+name+DetailNTD.DESC_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.DESC_FIELD_LABEL+'</label>'+
+               ' <div id="'+name+DetailNTD.DESC_ID+'" class="'+DetailNTD.DESC_FIELD_CLASS_ID+'" onoverflowchanged="alert(\'*** OveRFloW ***\')">Sjamayee is now *** Object *** jssjsj dldldld mfmfmfmf kekeke mdmdmdm kqkqkqk l lsslsl 123456790 14226 djdjjd jkfkfkfkf skksks lqlqlql zyzzyu hdhdhd jfff jfjjf fjfjfjf vcvc dsds 123</div>'+
                '</div>'+
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
-               ' <label for="'+name+ObjectNTD.CBY_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.CBY_FIELD_LABEL+'</label>'+
-               ' <div id="'+name+ObjectNTD.CBY_ID+'" class="'+DetailNTD.CBY_FIELD_CLASS_ID+'">Jan Creemers 2011-10-12 13:54:07</div>'+
+               ' <label for="'+name+DetailNTD.CBY_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.CBY_FIELD_LABEL+'</label>'+
+               ' <div id="'+name+DetailNTD.CBY_ID+'" class="'+DetailNTD.CBY_FIELD_CLASS_ID+'">Jan Creemers 2011-10-12 13:54:07</div>'+
                '</div>'+
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
-               ' <label for="'+name+ObjectNTD.MBY_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.MBY_FIELD_LABEL+'</label>'+
-               ' <div id="'+name+ObjectNTD.MBY_ID+'" class="'+DetailNTD.MBY_FIELD_CLASS_ID+'">Alma VandenBroeck 2011-10-17 23:14:12</div>'+
+               ' <label for="'+name+DetailNTD.MBY_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.MBY_FIELD_LABEL+'</label>'+
+               ' <div id="'+name+DetailNTD.MBY_ID+'" class="'+DetailNTD.MBY_FIELD_CLASS_ID+'">Alma VandenBroeck 2011-10-17 23:14:12</div>'+
                '</div><br/>'+
-               '<div id="'+ObjectNTD.BUTTONS_ID+'" class="'+DetailNTD.BUTTONS_CLASS_ID+'">'+
-               '<button id="'+name+ObjectNTD.GO_BUTTON_ID+'" type="button" class="'+DetailNTD.GO_BUTTON_CLASS_ID+'">'+DetailNTD.SALESFORCE_BUTTON_LABEL+'</button>'+
-               '<button id="'+name+ObjectNTD.NOGO_BUTTON_ID+'" type="button" class="'+DetailNTD.NOGO_BUTTON_CLASS_ID+'">'+DetailNTD.CANCEL_BUTTON_LABEL+'</button>'+
-               '</div>';
+               '<div id="'+DetailNTD.BUTTONS_ID+'" class="'+DetailNTD.BUTTONS_CLASS_ID+'">'+
+               '<button id="'+name+DetailNTD.GO_BUTTON_ID+'" type="button" class="'+DetailNTD.GO_BUTTON_CLASS_ID+'">'+DetailNTD.SALESFORCE_BUTTON_LABEL+'</button>'+
+               '<button id="'+name+DetailNTD.NOGO_BUTTON_ID+'" type="button" class="'+DetailNTD.NOGO_BUTTON_CLASS_ID+'">'+DetailNTD.CANCEL_BUTTON_LABEL+'</button>'+
+               '</div>'+
+               '<span id="'+name+DetailNTD.DESC_SPAN_ID+'" style="position:absolute;top:'+(window.getHeight()+50)+'px;white-space:nowrap;"></span>';
     this.parent(name,{html:html});
     this.buttons = null;
-  },
-  initializeChildren: function() {
-    var name = this.id;
-    this.header = $(name+ObjectNTD.HEADER_ID);
-    this.name = $(name+ObjectNTD.NAME_ID);
-    this.type = $(name+ObjectNTD.TYPE_ID);
-    this.description = $(name+ObjectNTD.DESC_ID);
-    this.createdBy = $(name+ObjectNTD.CBY_ID);
-    this.modifiedBy = $(name+ObjectNTD.MBY_ID);
-    this.buttons = $(name+ObjectNTD.BUTTONS_ID);
-    this.goButton = $(name+ObjectNTD.GO_BUTTON_ID);
-    this.noGoButton = $(name+ObjectNTD.NOGO_BUTTON_ID);
-  },
+  },  
   childrenInitialized: function() {
     this.goButton.addEvent(SjamayeeFacade.CLICK, this.goButton_clickHandler);
     this.noGoButton.addEvent(SjamayeeFacade.CLICK, this.noGoButton_clickHandler);
@@ -9566,14 +9682,6 @@ ObjectNTD.CLASS_ID = "objectNTD";
 //ObjectNTD.HEADER_CLASS_ID = "objectNTDHeader";
 ObjectNTD.HEADER_ID = "NTDHeader";
 ObjectNTD.HEADER_VALUE = "Object";
-ObjectNTD.NAME_ID = "NTDName";
-ObjectNTD.TYPE_ID = "NTDType";
-ObjectNTD.DESC_ID = "NTDDescription";
-ObjectNTD.CBY_ID = "NTDCreatedBy";
-ObjectNTD.MBY_ID = "NTDModifiedBy";
-ObjectNTD.BUTTONS_ID = "NTDButtons";
-ObjectNTD.GO_BUTTON_ID = "NTDGoButton";
-ObjectNTD.NOGO_BUTTON_ID = "NTDNogoButton";
 
 //Class: DataObjectNTD
 var DataObjectNTD = new Class({
@@ -9746,42 +9854,32 @@ var ParentNTD = new Class({
   initialize: function(name,properties) {
     var html = '<div id="'+name+ParentNTD.HEADER_ID+'" class="'+DetailNTD.HEADER_CLASS_ID+" "+this.getClassName()+'">'+ParentNTD.HEADER_VALUE+'</div>'+ //alert(\'parentNTD/header!!!\') // onmousedown="SjamayeeFacade.getInstance().hello()"
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
-               ' <label for="'+name+ParentNTD.NAME_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.NAME_FIELD_LABEL+'</label>'+
-               ' <div id="'+name+ParentNTD.NAME_ID+'" class="'+DetailNTD.NAME_FIELD_CLASS_ID+'">Parent *** Sjamayee *** Parent 1234567890 123456789012 345678901234 567890ABC DEFGHIJKLMNO</div>'+
+               ' <label for="'+name+DetailNTD.NAME_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.NAME_FIELD_LABEL+'</label>'+
+               ' <div id="'+name+DetailNTD.NAME_ID+'" class="'+DetailNTD.NAME_FIELD_CLASS_ID+'">Parent *** Sjamayee *** Parent 1234567890 123456789012 345678901234 567890ABC DEFGHIJKLMNO</div>'+
                '</div><br/>'+
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
-               ' <label for="'+name+ParentNTD.TYPE_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.TYPE_FIELD_LABEL+'</label>'+
-               ' <div id="'+name+ParentNTD.TYPE_ID+'" class="'+DetailNTD.TYPE_FIELD_CLASS_ID+'">Opportunity</div>'+
+               ' <label for="'+name+DetailNTD.TYPE_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.TYPE_FIELD_LABEL+'</label>'+
+               ' <div id="'+name+DetailNTD.TYPE_ID+'" class="'+DetailNTD.TYPE_FIELD_CLASS_ID+'">Opportunity</div>'+
                '</div><br/>'+
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
-               ' <label for="'+name+ParentNTD.DESC_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.DESC_FIELD_LABEL+'</label>'+
-               ' <div id="'+name+ParentNTD.DESC_ID+'" class="'+DetailNTD.DESC_FIELD_CLASS_ID+'">Sjamayee is now *** Parent ***jssjsj dldldld mfmfmfmf kek 111 22 33 44 55 hqhhshshssh slsl 123456790 14226  aez hdhd mqmmq qlqlql zyzzyu hdhdhd jfff jfjjf fjfjfjf vcvc dsds 123</div>'+
+               ' <label for="'+name+DetailNTD.DESC_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.DESC_FIELD_LABEL+'</label>'+
+               ' <div id="'+name+DetailNTD.DESC_ID+'" class="'+DetailNTD.DESC_FIELD_CLASS_ID+'">Sjamayee is now *** Parent ***jssjsj dldldld mfmfmfmf kek 111 22 33 44 55 hqhhshshssh slsl 123456790 14226  aez hdhd mqmmq qlqlql zyzzyu hdhdhd jfff jfjjf fjfjfjf vcvc dsds 123</div>'+
                '</div>'+
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
-               ' <label for="'+name+ParentNTD.CBY_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.CBY_FIELD_LABEL+'</label>'+
-               ' <div id="'+name+ParentNTD.CBY_ID+'" class="'+DetailNTD.CBY_FIELD_CLASS_ID+'">Jan Creemers 2011-10-12 13:54:07</div>'+
+               ' <label for="'+name+DetailNTD.CBY_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.CBY_FIELD_LABEL+'</label>'+
+               ' <div id="'+name+DetailNTD.CBY_ID+'" class="'+DetailNTD.CBY_FIELD_CLASS_ID+'">Jan Creemers 2011-10-12 13:54:07</div>'+
                '</div>'+
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
-               ' <label for="'+name+ParentNTD.MBY_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.MBY_FIELD_LABEL+'</label>'+
-               ' <div id="'+name+ParentNTD.CBY_ID+'" class="'+DetailNTD.CBY_FIELD_CLASS_ID+'">Bill Gates 2010-11-15 14:14:17</div>'+
+               ' <label for="'+name+DetailNTD.MBY_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.MBY_FIELD_LABEL+'</label>'+
+               ' <div id="'+name+DetailNTD.CBY_ID+'" class="'+DetailNTD.CBY_FIELD_CLASS_ID+'">Bill Gates 2010-11-15 14:14:17</div>'+
                '</div><br/>'+
-               '<div id="'+name+ParentNTD.BUTTONS_ID+'" class="'+DetailNTD.BUTTONS_CLASS_ID+'">'+
-               '<button id="'+name+ParentNTD.GO_BUTTON_ID+'" type="button" class="'+DetailNTD.GO_BUTTON_CLASS_ID+'">'+DetailNTD.SALESFORCE_BUTTON_LABEL+'</button>'+
-               '<button id="'+name+ParentNTD.NOGO_BUTTON_ID+'" type="button" class="'+DetailNTD.NOGO_BUTTON_CLASS_ID+'">'+DetailNTD.CANCEL_BUTTON_LABEL+'</button>'+
-               '</div>';
+               '<div id="'+name+DetailNTD.BUTTONS_ID+'" class="'+DetailNTD.BUTTONS_CLASS_ID+'">'+
+               '<button id="'+name+DetailNTD.GO_BUTTON_ID+'" type="button" class="'+DetailNTD.GO_BUTTON_CLASS_ID+'">'+DetailNTD.SALESFORCE_BUTTON_LABEL+'</button>'+
+               '<button id="'+name+DetailNTD.NOGO_BUTTON_ID+'" type="button" class="'+DetailNTD.NOGO_BUTTON_CLASS_ID+'">'+DetailNTD.CANCEL_BUTTON_LABEL+'</button>'+
+               '</div>'+
+               '<span id="'+name+DetailNTD.DESC_SPAN_ID+'" style="position:absolute;top:'+(window.getHeight()+50)+'px;white-space:nowrap;"></span>';
     this.parent(name,{html:html});
     this.buttons = null;
-  },
-  initializeChildren: function() {
-    var name = this.id;
-    this.name = $(name+ParentNTD.NAME_ID);
-    this.type = $(name+ParentNTD.TYPE_ID);
-    this.description = $(name+ParentNTD.DESC_ID);
-    this.createdBy = $(name+ParentNTD.CBY_ID);
-    this.modifiedBy = $(name+ParentNTD.MBY_ID);
-    this.buttons = $(name+ParentNTD.BUTTONS_ID);
-    this.goButton = $(name+ParentNTD.GO_BUTTON_ID);
-    this.noGoButton = $(name+ParentNTD.NOGO_BUTTON_ID);
   }
 });
 //ParentNTD.ID = "parentNTD";
@@ -9789,14 +9887,6 @@ ParentNTD.CLASS_ID = "parentNTD";
 //ParentNTD.HEADER_CLASS_ID = "parentNTDHeader";
 ParentNTD.HEADER_ID = "NTDHeader";
 ParentNTD.HEADER_VALUE = "Parent";
-ParentNTD.NAME_ID = "NTDName";
-ParentNTD.TYPE_ID = "NTDType";
-ParentNTD.DESC_ID = "NTDDescription";
-ParentNTD.CBY_ID = "NTDCreatedBy";
-ParentNTD.MBY_ID = "NTDModifiedBy";
-ParentNTD.BUTTONS_ID = "NTDButtons";
-ParentNTD.GO_BUTTON_ID = "NTDGoButton";
-ParentNTD.NOGO_BUTTON_ID = "NTDNoGoButton";
 
 //Class: DataParentNTD
 var DataParentNTD = new Class({
@@ -9969,42 +10059,32 @@ var ChildNTD = new Class({
   initialize: function(name,properties) {
     var html = '<div id="'+name+ChildNTD.HEADER_ID+'" class="'+DetailNTD.HEADER_CLASS_ID+" "+this.getClassName()+'">'+ChildNTD.HEADER_VALUE+'</div>'+ //alert(\'childNTD/header!!!\') // onmousedown="SjamayeeFacade.getInstance().hello()"
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
-               ' <label for="'+name+ChildNTD.NAME_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.NAME_FIELD_LABEL+'</label>'+
-               ' <div id="'+name+ChildNTD.NAME_ID+'" class="'+DetailNTD.NAME_FIELD_CLASS_ID+'">Child *** Sjamayee *** Sjamayee *** Child 123456 78 90123 45 6789 012345 678 90</div>'+
+               ' <label for="'+name+DetailNTD.NAME_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.NAME_FIELD_LABEL+'</label>'+
+               ' <div id="'+name+DetailNTD.NAME_ID+'" class="'+DetailNTD.NAME_FIELD_CLASS_ID+'">Child *** Sjamayee *** Sjamayee *** Child 123456 78 90123 45 6789 012345 678 90</div>'+
                '</div><br/>'+
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
-               ' <label for="'+name+ChildNTD.TYPE_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.TYPE_FIELD_LABEL+'</label>'+
-               ' <div id="'+name+ChildNTD.TYPE_ID+'" class="'+DetailNTD.TYPE_FIELD_CLASS_ID+'">Account</div>'+
+               ' <label for="'+name+DetailNTD.TYPE_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.TYPE_FIELD_LABEL+'</label>'+
+               ' <div id="'+name+DetailNTD.TYPE_ID+'" class="'+DetailNTD.TYPE_FIELD_CLASS_ID+'">Account</div>'+
                '</div><br/>'+
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
-               ' <label for="'+name+ChildNTD.DESC_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.DESC_FIELD_LABEL+'</label>'+
-               ' <div id="'+name+ChildNTD.DESC_ID+'" class="'+DetailNTD.DESC_FIELD_CLASS_ID+'">Sjamayee is now *** CHILD *** CHILD *** CHILD *** jssjsj dldldld mfmfmfmf kekeke mdmdmdm kqkqkqk l lsslsl 123456790 14226 djdjjd jkfkfk</div>'+
+               ' <label for="'+name+DetailNTD.DESC_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.DESC_FIELD_LABEL+'</label>'+
+               ' <div id="'+name+DetailNTD.DESC_ID+'" class="'+DetailNTD.DESC_FIELD_CLASS_ID+'">Sjamayee is now *** CHILD *** CHILD *** CHILD *** jssjsj dldldld mfmfmfmf kekeke mdmdmdm kqkqkqk l lsslsl 123456790 14226 djdjjd jkfkfk</div>'+
                '</div>'+
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
-               ' <label for="'+name+ChildNTD.CBY_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.CBY_FIELD_LABEL+'</label>'+
-               ' <div id="'+name+ChildNTD.CBY_ID+'" class="'+DetailNTD.CBY_FIELD_CLASS_ID+'">Jan Creemers 2011-10-12 13:54:07</div>'+
+               ' <label for="'+name+DetailNTD.CBY_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.CBY_FIELD_LABEL+'</label>'+
+               ' <div id="'+name+DetailNTD.CBY_ID+'" class="'+DetailNTD.CBY_FIELD_CLASS_ID+'">Jan Creemers 2011-10-12 13:54:07</div>'+
                '</div>'+
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
-               ' <label for="'+name+ChildNTD.MBY_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.MBY_FIELD_LABEL+'</label>'+
-               ' <div id="'+name+ChildNTD.CBY_ID+'" class="'+DetailNTD.MBY_FIELD_CLASS_ID+'">Steve Jobs 2009-02-10 03:14:27</div>'+
+               ' <label for="'+name+DetailNTD.MBY_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.MBY_FIELD_LABEL+'</label>'+
+               ' <div id="'+name+DetailNTD.CBY_ID+'" class="'+DetailNTD.MBY_FIELD_CLASS_ID+'">Steve Jobs 2009-02-10 03:14:27</div>'+
                '</div><br/>'+
-               '<div id="'+ChildNTD.BUTTONS_ID+'" class="'+DetailNTD.BUTTONS_CLASS_ID+'">'+
-               '<button id="'+name+ChildNTD.GO_BUTTON_ID+'" type="button" class="'+DetailNTD.GO_BUTTON_CLASS_ID+'">'+DetailNTD.SALESFORCE_BUTTON_LABEL+'</button>'+
-               '<button id="'+name+ChildNTD.NOGO_BUTTON_ID+'" type="button" class="'+DetailNTD.NOGO_BUTTON_CLASS_ID+'">'+DetailNTD.CANCEL_BUTTON_LABEL+'</button>'+
-               '</div>';
+               '<div id="'+DetailNTD.BUTTONS_ID+'" class="'+DetailNTD.BUTTONS_CLASS_ID+'">'+
+               '<button id="'+name+DetailNTD.GO_BUTTON_ID+'" type="button" class="'+DetailNTD.GO_BUTTON_CLASS_ID+'">'+DetailNTD.SALESFORCE_BUTTON_LABEL+'</button>'+
+               '<button id="'+name+DetailNTD.NOGO_BUTTON_ID+'" type="button" class="'+DetailNTD.NOGO_BUTTON_CLASS_ID+'">'+DetailNTD.CANCEL_BUTTON_LABEL+'</button>'+
+               '</div>'+
+               '<span id="'+name+DetailNTD.DESC_SPAN_ID+'" style="position:absolute;top:'+(window.getHeight()+50)+'px;white-space:nowrap;"></span>';
     this.parent(name,{html:html});
     this.buttons = null;
-  },
-  initializeChildren: function() {
-    var name = this.id;
-    this.name = $(name+ChildNTD.NAME_ID);
-    this.type = $(name+ChildNTD.TYPE_ID);
-    this.description = $(name+ChildNTD.DESC_ID);
-    this.createdBy = $(name+ChildNTD.CBY_ID);
-    this.modifiedBy = $(name+ChildNTD.MBY_ID);
-    this.buttons = $(name+ChildNTD.BUTTONS_ID);
-    this.goButton = $(name+ChildNTD.GO_BUTTON_ID);
-    this.noGoButton = $(name+ChildNTD.NOGO_BUTTON_ID);
   }
 });
 //ChildNTD.ID = "childNTD";
@@ -10012,14 +10092,6 @@ ChildNTD.CLASS_ID = "childNTD";
 //ChildNTD.HEADER_CLASS_ID = "childNTDHeader";
 ChildNTD.HEADER_ID = "NTDHeader";
 ChildNTD.HEADER_VALUE = "Child";
-ChildNTD.NAME_ID = "NTDName";
-ChildNTD.TYPE_ID = "NTDType";
-ChildNTD.DESC_ID = "NTDDescription";
-ChildNTD.CBY_ID = "NTDCreatedBy";
-ChildNTD.MBY_ID = "NTDModifiedBy";
-ChildNTD.BUTTONS_ID = "NTDButtons";
-ChildNTD.GO_BUTTON_ID = "NTDGoButton";
-ChildNTD.NOGO_BUTTON_ID = "NTDNoGoButton";
 
 //Class: DataChildNTD
 var DataChildNTD = new Class({
@@ -10348,7 +10420,7 @@ var ORMediator = new Class({
     this.groupId = null;
     //MODE: Edit/Display
     this.mode = null;
-    $("sjamayeeSmash").setAttribute("style","display:none;");
+    $("sjamayeeSplash").setAttribute("style","display:none;");
     var app = this.facade.getApplication();
     app.dataObjectsPane.setAttribute("style","display:none;");
     app.dataRelationsPane.setAttribute("style","display:none;");
@@ -14401,7 +14473,10 @@ var DetailMediator = new Class({
       if (detail.left.dataObjectProperties) { detail.right.dataObjectProperties.setHeader(ObjectProperties.HEADER_ID, ObjectProperties.HEADER_VALUE); }
       if (detail.left.dataObjectProperties) { detail.right.dataObjectProperties.setAttribute("style","width:100%;height:100%;display:block;"); }
       //var objectPropertiesMediator = this.facade.retrieveMediator(ObjectPropertiesMediator.ID);
-      //objectPropertiesMediator.setType(AttributeListMediator.TYPE_OBJECT);
+      //objectPropertiesMediator.setType(AttributeListMediator.TYPE_OBJECT);      
+      if (detail.left.dataObjectNTD) {
+        detail.left.dataObjectNTD.descriptionSpan = detail.left.dataObjectNTD.description;
+      }
       break;
       case SjamayeeFacade.GRID_SHOW:
       this.hide();
@@ -14502,11 +14577,15 @@ var DataDetailMediator = new Class({
       this.hide();
       //detail.setAttribute("style","width:100%;height:"+Detail.NORMAL_SIZE+"px;display:block");      
       //detail.hsplitter.left.dataObjectNTD.setHeader(DataObjectNTD.HEADER_ID, ObjectNTD.HEADER_VALUE);
-      if (detail.left.dataObjectNTD)         { detail.left.dataObjectNTD.setHeader(DataObjectNTD.HEADER_ID, ObjectNTD.HEADER_VALUE); }
-      if (detail.left.dataObjectNTD)         { detail.left.dataObjectNTD.setAttribute("style","width:100%;height:100%;display:block;"); }
+      if (detail.left.dataObjectNTD) { detail.left.dataObjectNTD.setHeader(DataObjectNTD.HEADER_ID, ObjectNTD.HEADER_VALUE); }
+      if (detail.left.dataObjectNTD) { detail.left.dataObjectNTD.setAttribute("style","width:100%;height:100%;display:block;"); }
       //detail.left.dataObjectNTD.header.innerHTML = ObjectNTD.HEADER_VALUE;
       //detail.hsplitter.right.dataObjectProperties.setHeader(DataObjectProperties.HEADER_ID, ObjectProperties.HEADER_VALUE);
       if (detail.right.dataObjectProperties) { detail.right.dataObjectProperties.setAttribute("style","width:100%;height:100%;display:block;"); }
+
+      if (detail.left.dataObjectNTD) {
+        detail.left.dataObjectNTD.descriptionSpan = detail.left.dataObjectNTD.description;
+      }
 
       detail.hsplitter.setHandleColor(this.getBackgroundHighliteColor());
       detail.hsplitter.resize();
@@ -14534,8 +14613,12 @@ var DataDetailMediator = new Class({
       detail.left.dataParentDetail.hsplitter = null;
       detail.right.dataChildDetail.hsplitter = null;
       //detail.hsplitter.left.dataObjectNTD.setHeader(DataParentNTD.HEADER_ID, ParentNTD.HEADER_VALUE);
-      if (detail.left.dataObjectNTD)         { detail.left.dataObjectNTD.setHeader(DataObjectNTD.HEADER_ID, ParentNTD.HEADER_VALUE); }
-      if (detail.left.dataObjectNTD)         { detail.left.dataObjectNTD.setAttribute("style","width:100%;height:100%;display:block;"); }
+      if (detail.left.dataObjectNTD) { detail.left.dataObjectNTD.setHeader(DataObjectNTD.HEADER_ID, ParentNTD.HEADER_VALUE); }
+      if (detail.left.dataObjectNTD) { detail.left.dataObjectNTD.setAttribute("style","width:100%;height:100%;display:block;"); }
+      if (detail.left.dataObjectNTD) {
+        detail.left.dataObjectNTD.descriptionSpan = detail.left.dataObjectNTD.description;
+      }
+
       //detail.left.dataObjectNTD.header.innerHTML = ParentNTD.HEADER_VALUE;
       //detail.hsplitter.right.dataObjectProperties.setHeader(DataParentProperties.HEADER_ID, DataParentProperties.HEADER_VALUE);
       if (detail.right.dataObjectProperties) { detail.right.dataObjectProperties.setAttribute("style","width:100%;height:100%;display:block;"); }
@@ -14548,8 +14631,16 @@ var DataDetailMediator = new Class({
       this.hide();
       //detail.left.dataParentDetail.setHeader(DataParentNTD.HEADER_ID, "PPPPPPPPPP");
       if (detail.left.dataParentDetail) { detail.left.dataParentDetail.setAttribute("style","width:100%;height:100%;display:block;"); }
+      if (detail.left.dataParentDetail) {
+        detail.left.dataParentDetail.ntd.descriptionSpan = detail.left.dataParentDetail.ntd.description;
+      }
+
       //detail.left.dataChildDetail.setHeader(DataChildNTD.HEADER_ID, "CCCCCCCCC");
       if (detail.right.dataChildDetail) { detail.right.dataChildDetail.setAttribute("style","width:100%;height:100%;display:block;"); }    
+      if (detail.right.dataChildDetail) {
+        detail.right.dataChildDetail.ntd.descriptionSpan = detail.right.dataChildDetail.ntd.description;
+      }
+
       detail.hsplitter.setHandleColor(this.getBackgroundHighliteColor());
       detail.hsplitter.resize();
       this.setState(DetailMediator.STATE_PARENT_CHILD);
@@ -14608,8 +14699,12 @@ var DataDetailMediator = new Class({
       detail.left.dataParentDetail.hsplitter = null;
       detail.right.dataChildDetail.hsplitter = null;
       //detail.hsplitter.left.dataObjectNTD.setHeader(DataChildNTD.HEADER_ID, ChildNTD.HEADER_VALUE);
-      if (detail.left.dataObjectNTD)         { detail.left.dataObjectNTD.setHeader(DataObjectNTD.HEADER_ID, ChildNTD.HEADER_VALUE); }
-      if (detail.left.dataObjectNTD)         { detail.left.dataObjectNTD.setAttribute("style","width:100%;height:100%;display:block;"); }
+      if (detail.left.dataObjectNTD) { detail.left.dataObjectNTD.setHeader(DataObjectNTD.HEADER_ID, ChildNTD.HEADER_VALUE); }
+      if (detail.left.dataObjectNTD) { detail.left.dataObjectNTD.setAttribute("style","width:100%;height:100%;display:block;"); }
+      if (detail.left.dataObjectNTD) {
+        detail.left.dataObjectNTD.descriptionSpan = detail.left.dataObjectNTD.description;
+      }
+
       //detail.left.dataObjectNTD.header.innerHTML = ChildNTD.HEADER_VALUE;
       //detail.hsplitter.right.dataObjectProperties.setHeader(DataChildProperties.HEADER_ID, DataChildProperties.HEADER_VALUE);
       if (detail.right.dataObjectProperties) { detail.right.dataObjectProperties.setAttribute("style","width:100%;height:100%;display:block;"); }
@@ -14663,9 +14758,12 @@ var ModelDetailMediator = new Class({
       this.hide();
       //detail.setAttribute("style","width:100%;height:"+Detail.NORMAL_SIZE+"px;display:block");      
       //detail.hsplitter.left.modelObjectNTD.setHeader(ModelObjectNTD.HEADER_ID, ObjectNTD.HEADER_VALUE);
-      if (detail.left.modelObjectNTD)         { detail.left.modelObjectNTD.setAttribute("style","width:100%;height:100%;display:block;"); }
-      //detail.left.modelObjectNTD.header.innerHTML = ObjectNTD.HEADER_VALUE;
-      if (detail.left.modelObjectNTD)         { detail.left.modelObjectNTD.setHeader(ModelObjectNTD.HEADER_ID, ObjectNTD.HEADER_VALUE); }
+      if (detail.left.modelObjectNTD) { detail.left.modelObjectNTD.setAttribute("style","width:100%;height:100%;display:block;"); }
+      if (detail.left.modelObjectNTD) { detail.left.modelObjectNTD.setHeader(ModelObjectNTD.HEADER_ID, ObjectNTD.HEADER_VALUE); }
+      if (detail.left.modelObjectNTD) {
+        detail.left.modelObjectNTD.descriptionSpan = detail.left.modelObjectNTD.description;
+      }
+
       //detail.hsplitter.right.modelObjectProperties.setHeader(ModelObjectProperties.HEADER_ID, ObjectProperties.HEADER_VALUE);
       if (detail.right.modelObjectProperties) { detail.right.modelObjectProperties.setAttribute("style","width:100%;height:100%;display:block;"); }
       detail.hsplitter.setHandleColor(this.getBackgroundHighliteColor());
@@ -14694,9 +14792,12 @@ var ModelDetailMediator = new Class({
       //detail.hsplitter = null;
       //detail.hsplitter.left.modelObjectNTD.setHeader(ModelParentNTD.HEADER_ID, ParentNTD.HEADER_VALUE);
 
-      if (detail.left.modelObjectNTD)         { detail.left.modelObjectNTD.setAttribute("style","width:100%;height:100%;display:block;"); }
-      //detail.left.modelObjectNTD.header.innerHTML = ParentNTD.HEADER_VALUE;
-      if (detail.left.modelObjectNTD)         { detail.left.modelObjectNTD.setHeader(ModelObjectNTD.HEADER_ID, ParentNTD.HEADER_VALUE); }
+      if (detail.left.modelObjectNTD) { detail.left.modelObjectNTD.setAttribute("style","width:100%;height:100%;display:block;"); }
+      if (detail.left.modelObjectNTD) { detail.left.modelObjectNTD.setHeader(ModelObjectNTD.HEADER_ID, ParentNTD.HEADER_VALUE); }
+      if (detail.left.modelObjectNTD) {
+        detail.left.modelObjectNTD.descriptionSpan = detail.left.modelObjectNTD.description;
+      }
+
       //detail.hsplitter.right.modelObjectProperties.setHeader(ModelParentProperties.HEADER_ID, ModelParentProperties.HEADER_VALUE);
       if (detail.right.modelObjectProperties) { detail.right.modelObjectProperties.setAttribute("style","width:100%;height:100%;display:block;"); }
       detail.hsplitter.setHandleColor(this.getBackgroundHighliteColor());
@@ -14707,7 +14808,15 @@ var ModelDetailMediator = new Class({
       case SjamayeeFacade.GRID_MODEL_PARENTANDCHILD_SHOW:
       this.hide();
       if (detail.left.modelParentDetail) { detail.left.modelParentDetail.setAttribute("style","width:100%;height:100%;display:block;"); }
+      if (detail.left.modelParentDetail) {
+        detail.left.modelParentDetail.ntd.descriptionSpan = detail.left.modelParentDetail.ntd.description;
+      }
+
       if (detail.right.modelChildDetail) { detail.right.modelChildDetail.setAttribute("style","width:100%;height:100%;display:block;"); }
+      if (detail.right.modelChildDetail) {
+        detail.right.modelChildDetail.ntd.descriptionSpan = detail.right.modelChildDetail.ntd.description;
+      }
+
       detail.hsplitter.setHandleColor(this.getBackgroundHighliteColor());
       detail.hsplitter.resize();
       this.sendNotification(SjamayeeFacade.GRID_MODEL_RESIZE,SjamayeeFacade.SIZE_NORMAL);
@@ -14718,9 +14827,12 @@ var ModelDetailMediator = new Class({
       //detail.hsplitter = null;
       //detail.hsplitter.left.modelObjectNTD.setHeader(ModelChildNTD.HEADER_ID, ChildNTD.HEADER_VALUE);
 
-      if (detail.left.modelObjectNTD)         { detail.left.modelObjectNTD.setAttribute("style","width:100%;height:100%;display:block;"); }
-      //detail.left.modelObjectNTD.header.innerHTML = ChildNTD.HEADER_VALUE;
-      if (detail.left.modelObjectNTD)         { detail.left.modelObjectNTD.setHeader(ModelObjectNTD.HEADER_ID, ChildNTD.HEADER_VALUE); }
+      if (detail.left.modelObjectNTD) { detail.left.modelObjectNTD.setAttribute("style","width:100%;height:100%;display:block;"); }
+      if (detail.left.modelObjectNTD) { detail.left.modelObjectNTD.setHeader(ModelObjectNTD.HEADER_ID, ChildNTD.HEADER_VALUE); }
+      if (detail.left.modelObjectNTD) {
+        detail.left.modelObjectNTD.descriptionSpan = detail.left.modelObjectNTD.description;
+      }
+
       //detail.hsplitter.right.modelObjectProperties.setHeader(ModelChildProperties.HEADER_ID, ModelChildProperties.HEADER_VALUE);
       if (detail.right.modelObjectProperties) { detail.right.modelObjectProperties.setAttribute("style","width:100%;height:100%;display:block;"); }
       detail.hsplitter.setHandleColor(this.getBackgroundHighliteColor());
