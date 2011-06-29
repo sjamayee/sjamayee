@@ -47,7 +47,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
   .tundra .dijitSplitter {
     border-color:red; //#bfbfbf;
   }
-
+/*
   .dijitSplitterH {
     background-color:inherit;
     height:7px;
@@ -63,7 +63,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
   //border-right:1px;
     cursor:ew-resize;
   }
-  
+*/
   ///////////////////////////////////
   //THIS CONTROLS THE SPLITTER !!! //
   ///////////////////////////////////
@@ -196,7 +196,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
 
   .normalPropertyName {
     border-top:1px solid inherit;   
-    border-left:1px solid inherit;   
+    /*border-left:1px solid inherit;*/
     border-bottom:1px dotted lightgray;
   	background-color:#F2F2F2;
     font-color:inherit;
@@ -204,7 +204,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
   }
   .normalPropertyValue {
     border-top:1px solid inherit;   
-    border-left:1px solid inherit;   
+    /*border-left:1px solid inherit;*/
     border-bottom:1px dotted lightgray;   
   	background-color:#F2F2F2;
     font-color:inherit;
@@ -212,7 +212,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
   }
   .normalFocusedPropertyName {
     border-top:1px solid inherit;   
-    border-left:1px solid inherit;   
+    /*border-left:1px solid inherit;*/
     border-bottom:1px dotted lightgray;   
     background-color:lightgray;
     font-color:inherit;
@@ -220,7 +220,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
   }
   .normalFocusedPropertyValue {
     border-top:1px solid inherit;   
-    border-left:1px solid inherit;   
+    /*border-left:1px solid inherit;*/
     border-bottom:1px dotted lightgray;   
     background-color:lightgray;
     font-color:black;
@@ -228,7 +228,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
   }
   .emptyNormalPropertyName {
     border-top:1px solid inherit;   
-    border-left:1px solid inherit;   
+    /*border-left:1px solid inherit;*/
     border-bottom:1px dotted lightgray;
     background-color:inherit;
     font-color:inherit;
@@ -237,7 +237,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
   }
   .emptyFocusedPropertyName {
     border-top:1px solid inherit;   
-    border-left:1px solid inherit;   
+    /*border-left:1px solid inherit;*/
     border-bottom:1px dotted lightgray;
     background-color:lightgray;
     font-color:inherit;
@@ -286,7 +286,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
 		text-align:left;
   }
   .tundra .listColumn {
-    background-color:inherit;
+    background-color:red; /*inherit;*/
     width:0%;
     height:100%;
     align:left;
@@ -303,7 +303,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
     border-width:1px 0px 0px 1px;
     border-style:dotted none none dotted;
     border-top:1px dotted lightgray;
-    border-left:1px dotted lightgray;
+    /*border-left:1px dotted lightgray;*/
     color:black;
     white-space:nowrap;
     overflow:hidden;    
@@ -315,7 +315,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
     border-color:black;
     border-width:0px 0px 0px 1px;
     border-style:none none none dotted;
-    border-left:1px dotted lightgray;
+    /*border-left:1px dotted lightgray;*/
     color:black;
     white-space:nowrap;
     overflow:hidden;    
@@ -483,7 +483,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
 /* SHOULD BE REMOVED - replaced by LEFT/RIGHT !!! */
   .tundra .gridCell {
     border-top:1px dotted lightgray;
-    border-left:1px dotted lightgray;
+    /*border-left:1px dotted lightgray;*/
     background-color:inherit;
   	padding:1px 0px 1px 0px;
   	color:inherit;
@@ -495,7 +495,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
 
   .tundra .relationsGridLeftCell {
     border-top:1px dotted lightgray;
-    border-left:1px dotted lightgray;
+    /*border-left:1px dotted lightgray;*/
     background-color:inherit;
   	padding:1px 0px 1px 0px;
   	color:inherit;
@@ -1004,11 +1004,14 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
 }
 #googleBranding {
   width:100%;
-  height:100%;
+  height:20px;
   background-color:white;
+  margin:0px 50px 50px 0px;
+  border:none;
   display:block;
-  /*border-bottom:1px solid gray;*/
 }
+#googleBranding .gBranding 		 { text-align: right; }
+#googleBranding .gBrandingText { color: black; }
 
 ////////////
 // Header //
@@ -2148,7 +2151,7 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 
 .attributeName {
   border-top:1px solid inherit;   
-  border-left:1px solid inherit;   
+  /*border-left:1px solid inherit;*/
   border-bottom:1px dotted lightgray;
 	background-color:inherit; //#F2F2F2;
   font-color:inherit;
@@ -2192,7 +2195,7 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 
 .attributeValue {
   border-top:1px solid inherit;   
-  border-left:1px dotted lightgray;
+  /*border-left:1px dotted lightgray;*/
   border-bottom:1px dotted lightgray;
 	background-color:inherit; //#F2F2F2;
   font-color:inherit;

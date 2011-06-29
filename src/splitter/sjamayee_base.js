@@ -415,10 +415,9 @@ Utils._animateFade = function(lastTick, eid) {
     element.FadeState = element.FadeState == 1 ? 2 : -2;
 
     //Show Data Relations Grid.
-    //if (eid == "sjamayeeSplash2") { 
-      SjamayeeFacade.getInstance().sendNotification(SjamayeeFacade.GRID_DATA_SHOW);
-    //}
-    
+    if (eid == "sjamayeeSplash") { //2") {
+      SjamayeeFacade.getInstance().sendNotification(SjamayeeFacade.GRID_DATA_SHOW); //GRID_DATA_SHOW);
+    }
     return;
   }
   element.FadeTimeLeft -= elapsedTicks;

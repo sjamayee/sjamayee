@@ -4,23 +4,10 @@
 <html>
  <head>
   <title>Sjamayee - Browser/Explorer/Composer</title>
-  <style type="text/css">html { overflow:hidden; }</style>	
-  <style>
-   //Google branding
-   div#googleBranding {
-     /*margin: 0px 10px 0px 10px;
-     width: 100%;
-     height: 20px;
-     //background-color: lightGray;
-		 border:none;*/
-   }
-   div#googleBranding .gBranding 		 { text-align: right; }
-   div#googleBranding .gBrandingText { color: black; }
-  </style>  
-	<!-- link rel="stylesheet" type="text/css" href="../../src/externs/css/tundra.css"/>
-	<link rel="stylesheet" type="text/css" href="../../src/externs/css/dojo.css"/ -->
+	<link rel="stylesheet" type="text/css" href="../../src/externs/css/tundra.css"/>
+	<link rel="stylesheet" type="text/css" href="../../src/externs/css/dojo.css"/>
 	<link rel="stylesheet" type="text/css" href="sjamayee.css"/>
-  <!-- link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.1.0/build/cssfonts/fonts-min.css"/ -->
+  <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.1.0/build/cssfonts/fonts-min.css"/>
 
   <script type="text/javascript" src="../../src/externs/js/dojo_xd.js"></script>
   <script type="text/javascript" src="../../src/externs/js/yui_min.js"></script>
@@ -34,8 +21,7 @@
 
   <script type="text/javascript" src="sjamayee_base.js"></script>
   <script type="text/javascript" src="sjamayee_grid.js"></script>
-  <!-- script type="text/javascript" src="sjamayee_pmvc.js"></script -->
-  <script type="text/javascript" src="sjamayee_splitter.js"></script>
+  <script type="text/javascript" src="sjamayee_pmvc.js"></script>
 
   <!-- Salesforce.com >
   <apex:includeScript value="/soap/ajax/17.0/connection.js"/>
@@ -43,13 +29,16 @@
 
 	<style type="text/css" media="all">
 		html, body {
-			margin: 0;
-			padding: 0;
-			overflow: hidden;	/* Remove scroll bars on browser window */
+			margin:0;
+			padding:0;
+			overflow:hidden;	/* Remove scroll bars on browser window */
 		}
+		
 		#header { padding: 1em; }
+		
 		div {
 			border:none;
+			/*overflow: hidden;*/
 		}
 
 		.propertiesHeader {
@@ -57,19 +46,16 @@
 			width: 500px;
 			border: 5px solid #aaa;*/
 		}
-		.propertiesHeader div {
-			overflow: hidden;
-		}
 
 		.splitter {
 			position:relative;
-			/*height:100%;
-			width:100%;*/
+			height:100%;
+			width:100%;
 		}
 		.splitterPanel {
 			position:relative;
-			/*height:100%;
-			width:100%;*/
+			height:100%;
+			width:100%;
 		}
 		.vsplitbar {
 			background-image: url(hgrabber.gif) no-repeat center;
@@ -104,7 +90,7 @@
      var sjamayee = new Sjamayee();
      sjamayee.initializeChildren();
      sjamayee.childrenInitialized();
-     sjamayee.initializationComplete();
+     sjamayee.initializationComplete();        
      //alert("pmvc - Sjamayee created!");
    }
 
@@ -183,7 +169,6 @@
       }
       //alert("loadLog/loadDataRelations - loaded: "+i);
     }
-		</script>
   </script>
   <script type="text/javascript" src="http://sjamayee-explorer.googlecode.com/files/demo_project_planning_typesJson.js"></script>
   <script type="text/javascript" src="http://sjamayee-explorer.googlecode.com/files/demo_project_planning_modelEntitiesJson.js"></script>
@@ -193,67 +178,31 @@
  </head>
  <body>
   <div style="margin:10px 10px 0px 10px;border:none;">
-   <div id="sjamayeeForm" style="width:100%;height:925px;">
-		<div id="sjamayeeSplash" style="width:100%;height:100%;background-color:white;text-align:center;font:italic bold 42px/60px Georgia,serif;">
-		 <br/><br/><br/><br/><br/><br/><font color="red">SJAMAYEE!<br/><br/>The time is now...</font>
-		</div>
-		<div id="sjamayeeSplash2" style="width:100%;height:100%;background-color:transparent;font:italic bold 42px/60px Georgia,serif;z-index:99;display:none;">
-		 <div id="sjamayeeSplash_Drupal" style="position:absolute;top:40px;left:50px;color:blue;">Drupal</div>
-		 <div id="sjamayeeSplash_Salesforce" style="position:absolute;top:100px;right:150px;color:red;">Salesforce</div>
-		 <div id="sjamayeeSplash_Sap" style="position:absolute;top:160px;left:250px;color:lightgray;">SAP</div>
-		 <div id="sjamayeeSplash_Wikipedia" style="position:absolute;top:320px;right:350px;color:lightblue;">Wikipedia</div>
-		 <div id="sjamayeeSplash_Google" style="position:absolute;top:260px;left:700px;color:lightgreen;">Google</div>
-		 <div id="sjamayeeSplash_4" style="position:absolute;top:320px;left:700px;color:red;">sjamayee4...</div>
-		 <div id="sjamayeeSplash_Git" style="position:absolute;top:420px;left:350px;color:yellow;">Git</div>
-		 <div id="sjamayeeSplash_Linux" style="position:absolute;top:500px;right:350px;color:green;">Linux</div>
-		 <div id="sjamayeeSplash_Mac" style="position:absolute;top:640px;left:750px;color:brown;">Mac</div>
-		</div>
+	 <div id="sjamayeeSplash" style="width:100%;height:100%;background-color:white;text-align:center;font:italic bold 42px/60px Georgia,serif;display:block;">
+	  <br/><br/><br/><br/><br/><br/><font color="red">SJAMAYEE!<br/><br/>The time is now...</font>
+		<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+	 </div>
+   <div id="sjamayeeForm" style="width:100%;height:100%;overflow:hidden;">
     <div id="headerPane" style="width:100%;height:28px;display:block;"></div>
-    <div id="dataObjects" style="width:100%;height:863px;background-color:lightblue;display:block;">
-     <div id="dataObjectsList" class="data" style="width:100%;height:100%;position:relative;align:top;"></div>
-     <div id="dataObjectsBottom" class="listPane data splitter" style="width:100%;height:100%;">
-      <div id="dataObjectsToolBar" class="toolBar data" style="width:100%;height:28px;cursor:ns-resize;"></div> <!-- onmousedown="SjamayeeFacade.getInstance().hello() / alert('mousedown on DOTB!!!');" //  onmousedown="$('dataObjects_splitter').mousedown()"></div --> 
-      <div id="dataObjectsDetail" class="listPane data" style="width:100%;height:100%;">
-	     <div id="dataObjectsDetailLeft" class="data" style="height:100%;width:100%;background-color:lightblue;position:relative;align:left;float:left;">111</div>
-	     <div id="dataObjectsDetailRight" class="data" style="height:100%;width:100%;background-color:blue;position:relative;align:left;float:left;">222</div>
+		<!-- div id="sjamayeePane" style="width:100%;height:897px;display:block;" -->
+     <div id="dataObjects" style="width:100%;height:897px;display:block;"> <!-- 897px -->
+      <div id="dataObjectsList" class="data" style="width:100%;height:100%;position:relative;align:top;"></div>
+      <div id="dataObjectsBottom" class="listPane data splitter" style="width:100%;height:100%;">
+       <div id="dataObjectsToolBar" class="toolBar data" style="width:100%;height:28px;cursor:ns-resize;"></div> <!-- onmousedown="SjamayeeFacade.getInstance().hello() / alert('mousedown on DOTB!!!');" //  onmousedown="$('dataObjects_splitter').mousedown()"></div --> 
+       <div id="dataObjectsDetail" class="listPane data" style="width:100%;height:100%;">
+	      <div id="dataObjectsDetailLeft" class="data" style="height:100%;width:100%;background-color:lightblue;position:relative;align:left;float:left;">111</div>
+	      <div id="dataObjectsDetailRight" class="data" style="height:100%;width:100%;background-color:blue;position:relative;align:left;float:left;">222</div>
+			 </div>
       </div>
 		 </div>
-    </div>
-    <div id="dataRelations" style="width:100%;height:863px;background-color:lightgreen;display:block;">
-     <div id="dataRelationsGrid" class="data" style="width:100%;height:100%;position:relative;align:top;"></div>
-     <div id="dataRelationsBottom" class="listPane data splitter" style="width:100%;height:100%;">
-      <div id="dataRelationsToolBar" class="toolBar data" style="width:100%;height:28px;cursor:ns-resize;"></div> <!-- onmousedown="alert('mousedown on DRTB!!!');" // onmousedown="SjamayeeFacade.getInstance().hello()"></div -->
-      <div id="dataRelationsDetail" class="listPane data" style="width:100%;height:100%;">
-	     <div id="dataRelationsDetailLeft" class="data" style="height:100%;width:100%;background-color:lightblue;position:relative;align:left;float:left;">111</div>
-	     <div id="dataRelationsDetailRight" class="data" style="height:100%;width:100%;background-color:blue;position:relative;align:left;float:left;">222</div>
-      </div>
-		 </div>
-    </div>
-    <div id="modelObjects" style="width:100%;height:863px;background-color:yellow;display:block;">
-     <div id="modelObjectsList" class="model" style="width:100%;height:100%;position:relative;align:top;"></div>
-     <div id="modelObjectsBottom" class="listPane model splitter" style="width:100%;height:100%;">
-      <div id="modelObjectsToolBar" class="toolBar model" style="width:100%;height:28px;cursor:ns-resize;"></div> <!-- onmousedown="alert('mousedown on MOTB!!!');" // onmousedown="SjamayeeFacade.getInstance().hello()"></div -->
-      <!-- div id="modelObjectsToolBarOverlay" class="toolBar model" style="position:relative;top:40px;width:10px;height:48px;z-index:99;vertical-align:middle;background-color:transparent;color:red;font-weight:bold;font-size:120%;cursor:move;">
-       <br/><br/>+ +++<div id="modelObjectsToolBarResizer" style="color:red;font-weight:bold;">+++</div>
-      </div -->
-      <div id="modelObjectsDetail" class="listPane model" style="width:100%;height:100%;">
-	     <div id="modelObjectsDetailLeft" class="model" style="height:100%;width:100%;background-color:lightblue;position:relative;align:left;float:left;">111</div>
-	     <div id="modelObjectsDetailRight" class="model" style="height:100%;width:100%;background-color:blue;position:relative;align:left;float:left;">222</div>
-      </div>
-		 </div>
-    </div>
-    <div id="modelRelations" style="width:100%;height:863px;background-color:red;display:block;">
-     <div id="modelRelationsGrid" class="model" style="width:100%;height:100%;position:relative;align:top;"></div>
-     <div id="modelRelationsBottom" class="listPane model splitter" style="width:100%;height:100%;">
-      <div id="modelRelationsToolBar" class="toolBar model" style="width:100%;height:28px;cursor:ns-resize;"></div> <!-- onmousedown="alert('mousedown on MRTB!!!');" // onmousedown="SjamayeeFacade.getInstance().hello()"></div -->
-      <div id="modelRelationsDetail" class="listPane model" style="width:100%;height:100%;">
-	     <div id="modelRelationsDetailLeft" class="model" style="height:100%;width:100%;background-color:lightblue;position:relative;align:left;float:left;">111</div>
-	     <div id="modelRelationsDetailRight" class="model" style="height:100%;width:100%;background-color:blue;position:relative;align:left;float:left;">222</div>
-      </div>
-		 </div>
-    </div>
+    <!-- /div -->
    </div>
-   <div id="googleBranding" style="width:100%;height:20px;"></div>
+	 <!-- div id="sjamayeeResizer" style="width:100%;height:100%;background-color:lightgray;opacity:0.15;text-align:center;font:italic bold 42px/60px Georgia,serif;display:none;">
+		<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+    <div id="xverticalResizer" style="height:48px;width:100%;position:absolute;top:500px;left:10px;cursor:ns-resize;background-color:red;z-index:91;"></div>
+    <div id="xhorizontalResizer" style="height:100%;width:3px;position:absolute;top:10px;left:800px;cursor:move;background-color:red;z-index:92;"></div>
+	 </div -->
+   <div id="googleBranding"/>
   </div>
  </body>
  <script type="text/javascript">
