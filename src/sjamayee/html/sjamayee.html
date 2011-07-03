@@ -4,41 +4,21 @@
 <html>
  <head>
   <title>Sjamayee - Browser/Explorer/Composer</title>
-  <style type="text/css">html { overflow:hidden; }</style>	
-  <style>
-   //Google branding
-   div#googleBranding {
-     margin-top: 10px;
-     width: 400px;
-     height: 20px;
-     background-color: lightGray;
-   }
-   div#googleBranding .gBranding 		 { text-align: right; }
-   div#googleBranding .gBrandingText { color: black; }
-  </style>  
-	<link rel="stylesheet" type="text/css" href="../../externs/css/tundra.css"/>
-	<link rel="stylesheet" type="text/css" href="../../externs/css/dojo.css"/>
-	<link rel="stylesheet" type="text/css" href="../demo/sjamayee.css"/>
+	<link rel="stylesheet" type="text/css" href="../css/sjamayee.css"/>
   <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.1.0/build/cssfonts/fonts-min.css"/>
 
-  <!-- script type="text/javascript" src="../../externs/js/jquery.js"></script -->
-  <!-- script type="text/javascript" src="../../externs/js/jquery.min.js"></script -->
-  <!-- script type="text/javascript" src="../../externs/js/jquery.splitter.js"></script -->
-  <script type="text/javascript" src="../../externs/js/dojo_xd.js"></script>
-  <script type="text/javascript" src="../../externs/js/yui_min.js"></script>
-  <script type="text/javascript" src="../../externs/js/jsmin.js"></script>
-  <script type="text/javascript" src="../../externs/js/json.js"></script>
-  <!-- script type="text/javascript" src="../../externs/js/mootools_1_2_5_core_nc.js"></script -->
-  <!-- script type="text/javascript" src="../../externs/js/mootools_1_2_4_4_more_nc.js"></script -->
-  <script type="text/javascript" src="../../externs/js/pureMVC_2_0_Mini.js"></script>
+  <script type="text/javascript" src="../../../src/externs/js/yui_min.js"></script>
+  <script type="text/javascript" src="../../../src/externs/js/jsmin.js"></script>
+  <script type="text/javascript" src="../../../src/externs/js/json.js"></script>
+  <script type="text/javascript" src="../../../src/externs/js/mootools_1_2_5_core_nc.js"></script>
+  <script type="text/javascript" src="../../../src/externs/js/mootools_1_2_4_4_more_nc.js"></script>
+
+  <script type="text/javascript" src="../../../src/externs/js/pureMVC_2_0_Mini.js"></script>
   <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 
-  <script type="text/javascript" src="../demo/sjamayee_base.js"></script>
-  <script type="text/javascript" src="../demo/sjamayee_grid.js"></script>
-  <script type="text/javascript" src="../demo/sjamayee_pmvc.js"></script>
-
-	<script type="text/javascript" src="splitter_demo_bestanden/mootools.js"></script>
-	<script type="text/javascript" src="splitter_mootools.js"></script>
+  <script type="text/javascript" src="../js/sjamayee_base.js"></script>
+  <script type="text/javascript" src="../js/sjamayee_grid.js"></script>
+  <script type="text/javascript" src="../js/sjamayee_pmvc.js"></script>
 
   <!-- Salesforce.com >
   <apex:includeScript value="/soap/ajax/17.0/connection.js"/>
@@ -46,49 +26,54 @@
 
 	<style type="text/css" media="all">
 		html, body {
-			margin: 0;
-			padding: 0;
-			overflow: hidden;	/* Remove scroll bars on browser window */
+			margin:0;
+			padding:0;
+			overflow:hidden;	/* Remove scroll bars on browser window */
 		}
+		
 		#header { padding: 1em; }
+		
+		div {
+			border:none;
+			/*overflow: hidden;*/
+		}
 
 		.propertiesHeader {
 			/*height: 200px;
 			width: 500px;
 			border: 5px solid #aaa;*/
 		}
-		.propertiesHeader div {
-			overflow: hidden;
+
+		.splitter {
+			position:relative;
+			height:100%;
+			width:100%;
 		}
-/*		
+		.splitterPanel {
+			position:relative;
+			height:100%;
+			width:100%;
+		}
 		.vsplitbar {
-			width: 1px;
-			background: lightgray;
+			background-image: url(hgrabber.gif) no-repeat center;
+			background: #c66 url(hgrabber.gif) no-repeat center;
+			opacity: 1; //0.7;
+			filter: alpha(opacity=70); /* IE */
 		}
-		.vsplitbar.active, .vsplitbar:hover {
-			background: gray;
+		.hsplitbar {
+			background-image: url(vgrabber.gif) no-repeat center;
+			background: #c66 url(vgrabber.gif) no-repeat center;
+			opacity: 1; //0.7;
+			filter: alpha(opacity=70); /* IE */			
 		}
-*/
 	</style>
 
   <script type="text/javascript">
-   dojo.require("dojo.cookie");  
-   dojo.require("dojox.json.ref");
-   dojo.require("dijit.layout.ContentPane");
-   dojo.require("dijit.layout.BorderContainer");
-   dojo.require("dojo.parser");
-
-   dojo.addOnLoad(preloader);
-
-   dojo.addOnLoad(function() {
-     //Disable text selection!
-     var listPaneBorder = document.getElementById('listPaneBorder');
-     listPaneBorder.onselectstart = function () { return false; } // ie
-     listPaneBorder.onmousedown = function () { return false; }   // mozilla
+	 window.addEvent('domready', function() {
+     //alert('The DOM is ready!');
      init();
-     dojo.parser.parse(); // or set djConfig.parseOnLoad = true
-   });
-  
+	 });
+	
    function init()    {
      //alert("pmvc - Sjamayee started!");
      var sjamayee = new Sjamayee();
@@ -98,7 +83,7 @@
      //alert("pmvc - Sjamayee created!");
    }
 
-    var field_error_gif = null;
+    /*var field_error_gif = null;
     var required_field_gif = null;
     function preloader() {
       //alert("preLoader");
@@ -106,7 +91,7 @@
       //not_found image
       field_error_gif = resourceUrl+"1290250671000/sja__field_error_gif";
       required_field_gif = resourceUrl+"1290250720000/sja__required_field_gif";
-    } 
+    }*/
 
     google.load('language', "1");
     google.setOnLoadCallback(initialize);
@@ -173,56 +158,69 @@
       }
       //alert("loadLog/loadDataRelations - loaded: "+i);
     }
-/*
-		$().ready(function() {
-			$(".propertiesHeader").splitter();
-		});
-		
-		(function($){
-			$.ready(function() {
-				$(".propertiesHeader").splitter();
-			});
-		})(jQuery);
-*/
   </script>
-<!--
-  <script type="text/javascript" src="http://sjamayee-explorer.googlecode.com/files/typesJson.js"></script>
-  <script type="text/javascript" src="http://sjamayee-explorer.googlecode.com/files/modelEntitiesJson.js"></script>
-  <script type="text/javascript" src="http://sjamayee-explorer.googlecode.com/files/modelRelationsJson.js"></script>
-  <script type="text/javascript" src="http://sjamayee-explorer.googlecode.com/files/dataEntitiesJson.js"></script>
-  <script type="text/javascript" src="http://sjamayee-explorer.googlecode.com/files/dataRelationsJson.js"></script>
- -->
-<!-- -->
   <script type="text/javascript" src="http://sjamayee-explorer.googlecode.com/files/demo_project_planning_typesJson.js"></script>
   <script type="text/javascript" src="http://sjamayee-explorer.googlecode.com/files/demo_project_planning_modelEntitiesJson.js"></script>
   <script type="text/javascript" src="http://sjamayee-explorer.googlecode.com/files/demo_project_planning_modelRelationsJson.js"></script>
   <script type="text/javascript" src="http://sjamayee-explorer.googlecode.com/files/demo_project_planning_dataEntitiesJson.js"></script>
   <script type="text/javascript" src="http://sjamayee-explorer.googlecode.com/files/demo_project_planning_dataRelationsJson.js"></script>
-<!-- -->
  </head>
  <body>
-  <div style="margin:10px 10px 0px 10px;">
-   <div id="sjamayeeForm" style="width:100%;height:499px;"> <!-- 489px -->
-    <!-- HEADERPANE -->
-    <div id="headerPane" style="vertical-align:top;margin:0px 0px 10px 0px;width:100%;height:26px;display:block;"></div> <!-- 24px -->
-    <div id="listPaneBorder" class="normalBorder listPaneBorder" style="background-color:inherit;vertical-align:top;width:100%;height:220px;margin-top:3px;">
-     <div id="listSplitter" jsId="jsGridSplitter" class="tundra gridSplitter" dojoType="dijit.layout.BorderContainer" design="sidebar" liveSplitters="true" persist="false" gutters="true" style="background-color:white;width:100%;height:100%;">
-      <!-- LIST-/GRIDPANE -->
-      <div id="listPaneLeft" class="listPane" dojoType="dijit.layout.ContentPane" region="left" splitter="true" style="height:100%;width:35%;background-color:inherit;overflow:hidden;" sizeShare="35" sizeMin="10"></div>
-      <div id="listPaneRight" class="listPane" dojoType="dijit.layout.ContentPane" region="center" splitter="true" style="height:100%;background-color:inherit;overflow:hidden;" sizeMin="10" tabindex="-1"></div>
+  <div style="margin:10px 10px 0px 10px;border:none;">
+	 <div id="sjamayeeSplash" style="width:100%;height:100%;background-color:white;text-align:center;font:italic bold 42px/60px Georgia,serif;display:block;">
+	  <br/><br/><br/><br/><br/><br/><font color="red">SJAMAYEE!<br/><br/>The time is now...</font>
+		<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+	 </div>
+   <div id="sjamayeeForm" style="width:100%;height:100%;overflow:hidden;">
+    <div id="headerPane" style="width:100%;height:28px;display:block;"></div>
+		<div id="sjamayeePane" style="width:100%;height:897px;display:block;">
+     <div id="dataObjects" style="width:100%;height:100%;display:block;">
+      <div id="dataObjectsList" class="data" style="width:100%;height:100%;position:relative;align:top;"></div>
+      <div id="dataObjectsBottom" class="listPane data splitter" style="width:100%;height:100%;">
+       <div id="dataObjectsToolBar" class="toolBar data" style="width:100%;height:28px;cursor:ns-resize;"></div>
+       <div id="dataObjectsDetail" class="listPane data" style="width:100%;height:100%;">
+	      <div id="dataObjectsDetailLeft" class="data" style="height:100%;width:100%;background-color:lightblue;position:relative;align:left;float:left;">111</div>
+	      <div id="dataObjectsDetailRight" class="data" style="height:100%;width:100%;background-color:blue;position:relative;align:left;float:left;">222</div>
+		   </div>
+      </div>
+		 </div>
+     <div id="dataRelations" style="width:100%;height:100%;display:none;">
+      <div id="dataRelationsGrid" class="data" style="width:100%;height:100%;position:relative;align:top;"></div>
+      <div id="dataRelationsBottom" class="listPane data splitter" style="width:100%;height:100%;">
+       <div id="dataRelationsToolBar" class="toolBar data" style="width:100%;height:28px;cursor:ns-resize;"></div>
+       <div id="dataRelationsDetail" class="listPane data" style="width:100%;height:100%;">
+	      <div id="dataRelationsDetailLeft" class="data" style="height:100%;width:100%;background-color:lightblue;position:relative;align:left;float:left;">111</div>
+	      <div id="dataRelationsDetailRight" class="data" style="height:100%;width:100%;background-color:blue;position:relative;align:left;float:left;">222</div>
+       </div>
+		  </div>
      </div>
-    </div>
-    <!-- TOOLBARPANE -->
-    <div id="toolBarPane" style="vertical-align:top;width:100%;height:28px;display:block;" tabindex="-1"></div>
-    <div id="detailPane" class="listPane" style="width:100%;height:217px;border:1px solid lightgray;background-color:inherit;display:block;" tabindex="-1">
-     <div id="detailSplitter" jsId="jsDetailSplitter" class="tundra gridSplitter" dojoType="dijit.layout.BorderContainer" design="sidebar" liveSplitters="true" persist="false" gutters="true" style="background-color:inherit;vertical-align:top;width:100%;height:100%;" tabindex="-1">
-      <!-- DETAILPANE -->
-      <div id="detailPaneLeft" class="listPane" dojoType="dijit.layout.ContentPane" region="left" splitter="true" style="height:100%;width:35%;background-color:white;overflow:hidden;display:block;" sizeShare="35" sizeMin="10" tabindex="-1"></div>
-      <div id="detailPaneRight" class="listPane" dojoType="dijit.layout.ContentPane" region="center" splitter="true" style="height:100%;background-color:white;overflow:hidden;display:block;" sizeMin="10" tabindex="-1"></div>
+     <div id="modelObjects" style="width:100%;height:100%;display:none;">
+      <div id="modelObjectsList" class="model" style="width:100%;height:100%;position:relative;align:top;"></div>
+      <div id="modelObjectsBottom" class="listPane model splitter" style="width:100%;height:100%;">
+       <div id="modelObjectsToolBar" class="toolBar model" style="width:100%;height:28px;cursor:ns-resize;"></div>
+       <div id="modelObjectsDetail" class="listPane model" style="width:100%;height:100%;">
+	      <div id="modelObjectsDetailLeft" class="model" style="height:100%;width:100%;background-color:lightblue;position:relative;align:left;float:left;">111</div>
+	      <div id="modelObjectsDetailRight" class="model" style="height:100%;width:100%;background-color:blue;position:relative;align:left;float:left;">222</div>
+       </div>
+		  </div>
+     </div>
+     <div id="modelRelations" style="width:100%;height:100%;display:none;">
+      <div id="modelRelationsGrid" class="model" style="width:100%;height:100%;position:relative;align:top;"></div>
+      <div id="modelRelationsBottom" class="listPane model splitter" style="width:100%;height:100%;">
+       <div id="modelRelationsToolBar" class="toolBar model" style="width:100%;height:28px;cursor:ns-resize;"></div>
+        <div id="modelRelationsDetail" class="listPane model" style="width:100%;height:100%;">
+	       <div id="modelRelationsDetailLeft" class="model" style="height:100%;width:100%;background-color:lightblue;position:relative;align:left;float:left;">111</div>
+	       <div id="modelRelationsDetailRight" class="model" style="height:100%;width:100%;background-color:blue;position:relative;align:left;float:left;">222</div>
+        </div>
+		   </div>
+      </div>
      </div>
     </div>
    </div>
-   <div id="googleBranding" style="margin-top:5px;"></div>
+   <div id="googleBranding"></div>
   </div>
  </body>
+ <script type="text/javascript">
+  Utils.disableSelection(document.body); //disable text selection on entire body of page
+ </script>
 </html>

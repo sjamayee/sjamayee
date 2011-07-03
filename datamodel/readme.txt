@@ -34,18 +34,18 @@ Sjamayee browser, explorer, composer make different use of this datamodel.
 The browser uses the minimal model:
 For browsing of data from different data sources.
 
-sequences
-types
-texts
-data_entities
-data_attributes
-data_relations
+sequences				- sja_sequences
+types						- sja_types
+texts						- sja_texts
+data_entities		- sja_objects
+data_attributes	- sja_attributes
+data_relations	- sja_references
 
 The explorer and composer additionaly make use of the model_tables.
 
-model_entities
-model_attrbutes
-model_relations
+model_entities  - sja_objects
+model_attrbutes	- sja_attributes
+model_relations - sja_references
 
 2. As an explorer:
 The explorer uses the model only for the references and for a few

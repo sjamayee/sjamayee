@@ -27,7 +27,6 @@ External entry point', }
 
 Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f30001 (NS_ERROR_NOT_INITIALIZED) [nsIDOMJSWindow.setTimeout]"  nsresult: "0xc1f30001 (NS_ERROR_NOT_INITIALIZED)"  location: "JS frame :: https://sja.na6.visual.force.com/resource/1272448729000/sja__yui_min_js :: anonymous :: line 10"  data: no]
 */
-
   .tundra .dijitSplitContainerSizerH {
     background:url("../images/splitContainerSizerV.png") repeat-y #fff;
     border:0;
@@ -48,7 +47,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
   .tundra .dijitSplitter {
     border-color:red; //#bfbfbf;
   }
-
+/*
   .dijitSplitterH {
     background-color:inherit;
     height:7px;
@@ -64,7 +63,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
   //border-right:1px;
     cursor:ew-resize;
   }
-  
+*/
   ///////////////////////////////////
   //THIS CONTROLS THE SPLITTER !!! //
   ///////////////////////////////////
@@ -161,10 +160,10 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
     border-left:2px solid inherit;   
   }
   .normalBorder {
-    border-top:1px solid black;   
+    /*border-top:1px solid black;   
     border-right:1px solid black;   
-    border-bottom:1px solid black;   
-    border-left:1px solid black;   
+    border-bottom:1px solid black;*/
+    /*border-left:1px solid black;*/  /*TODO: remove normalBorder in code ???*/
   }
   .focusedBorder {
     border-top:2px solid red;   
@@ -197,7 +196,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
 
   .normalPropertyName {
     border-top:1px solid inherit;   
-    border-left:1px solid inherit;   
+    /*border-left:1px solid inherit;*/
     border-bottom:1px dotted lightgray;
   	background-color:#F2F2F2;
     font-color:inherit;
@@ -205,7 +204,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
   }
   .normalPropertyValue {
     border-top:1px solid inherit;   
-    border-left:1px solid inherit;   
+    /*border-left:1px solid inherit;*/
     border-bottom:1px dotted lightgray;   
   	background-color:#F2F2F2;
     font-color:inherit;
@@ -213,7 +212,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
   }
   .normalFocusedPropertyName {
     border-top:1px solid inherit;   
-    border-left:1px solid inherit;   
+    /*border-left:1px solid inherit;*/
     border-bottom:1px dotted lightgray;   
     background-color:lightgray;
     font-color:inherit;
@@ -221,7 +220,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
   }
   .normalFocusedPropertyValue {
     border-top:1px solid inherit;   
-    border-left:1px solid inherit;   
+    /*border-left:1px solid inherit;*/
     border-bottom:1px dotted lightgray;   
     background-color:lightgray;
     font-color:black;
@@ -229,7 +228,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
   }
   .emptyNormalPropertyName {
     border-top:1px solid inherit;   
-    border-left:1px solid inherit;   
+    /*border-left:1px solid inherit;*/
     border-bottom:1px dotted lightgray;
     background-color:inherit;
     font-color:inherit;
@@ -238,7 +237,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
   }
   .emptyFocusedPropertyName {
     border-top:1px solid inherit;   
-    border-left:1px solid inherit;   
+    /*border-left:1px solid inherit;*/
     border-bottom:1px dotted lightgray;
     background-color:lightgray;
     font-color:inherit;
@@ -247,7 +246,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
   }
 
   .tundra .gridSplitter {
-  //border:0px none red;
+  /*border:0px none red;
   //border-color:black;
   //border-width:0px 1px 0px 0px;
   //border-style:none solid none none;
@@ -255,19 +254,19 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
   //background-color:black; //white;     
   //width:100%;
   //height:100%;
-  	//margin:10px 0px 0px 1.5%;
+  	//margin:10px 0px 0px 1.5%;*/
     display:block;
   }
 
   .tundra .verticalSplitter {
-  //border:0px none red;
+  /*border:0px none red;
   //border-color:black;
   //border-width:0px 1px 0px 0px;
   //border-style:none solid none none;
-    background-color:red; //inherit;
   //width:100%; //97%;
   //height:100%; //49%;
-  	//margin:10px 0px 0px 1.5%;
+  	//margin:10px 0px 0px 1.5%;*/
+    background-color:red; //inherit;
     display:block;
   }
 
@@ -276,8 +275,8 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
 ////////////////////////////////////////
 
   .tundra .listPane {
-  //background-color:yellow;
-  //width:100%;
+  /*background-color:yellow;
+    width:100%;*/
     height:100%;
     align:left;
     position:relative;
@@ -287,7 +286,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
 		text-align:left;
   }
   .tundra .listColumn {
-    background-color:inherit;
+    background-color:red; /*inherit;*/
     width:0%;
     height:100%;
     align:left;
@@ -304,7 +303,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
     border-width:1px 0px 0px 1px;
     border-style:dotted none none dotted;
     border-top:1px dotted lightgray;
-    border-left:1px dotted lightgray;
+    /*border-left:1px dotted lightgray;*/
     color:black;
     white-space:nowrap;
     overflow:hidden;    
@@ -316,7 +315,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
     border-color:black;
     border-width:0px 0px 0px 1px;
     border-style:none none none dotted;
-    border-left:1px dotted lightgray;
+    /*border-left:1px dotted lightgray;*/
     color:black;
     white-space:nowrap;
     overflow:hidden;    
@@ -355,7 +354,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
     padding:0px 0px 0px 2px;
     border-style:none;
     white-space:nowrap;    
-  //font-family:sans-serif; //ff-2
+  /*font-family:sans-serif; //ff-2*/
 		text-align:left;
   }
 
@@ -398,7 +397,10 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
   //border-width:0px 0px 1px 1px;
   //border-style:none none solid solid;
   }
-  .tundra .listColumnReference { }
+  .tundra .listColumnReference {
+    /*text-align:right;
+    padding:0px 5px;*/
+  }
 
   .tundra .listColumnHeaderName {
   //border-width:0px 0px 1px 1px;
@@ -481,7 +483,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
 /* SHOULD BE REMOVED - replaced by LEFT/RIGHT !!! */
   .tundra .gridCell {
     border-top:1px dotted lightgray;
-    border-left:1px dotted lightgray;
+    /*border-left:1px dotted lightgray;*/
     background-color:inherit;
   	padding:1px 0px 1px 0px;
   	color:inherit;
@@ -493,7 +495,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
 
   .tundra .relationsGridLeftCell {
     border-top:1px dotted lightgray;
-    border-left:1px dotted lightgray;
+    /*border-left:1px dotted lightgray;*/
     background-color:inherit;
   	padding:1px 0px 1px 0px;
   	color:inherit;
@@ -730,6 +732,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
   	font-weight:bold;
   	text-align:center;
   	padding:3px 0px 0px 0px;
+    cursor:ns-resize;
   	overflow:hidden;
   }  
   #dataChildNTDNTDHeader {
@@ -742,6 +745,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
   	font-weight:bold;
   	text-align:center;
   	padding:3px 0px 0px 0px;
+    cursor:ns-resize;
   	overflow:hidden;
   }  
   .detailNTDHeader {
@@ -754,6 +758,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
   	font-weight:bold;
   	text-align:center;
   	padding:3px 0px 0px 0px;
+    cursor:ns-resize;
   	overflow:hidden;
   }
 /*#dataObjectNTDNTDHeader {
@@ -778,6 +783,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
   	font-weight:bold;
   	text-align:center;
   	padding:3px 0px 0px 0px;
+    cursor:ns-resize;
   	overflow:hidden;
   }  
   #modelChildNTDNTDHeader {
@@ -790,6 +796,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
   	font-weight:bold;
   	text-align:center;
   	padding:3px 0px 0px 0px;
+    cursor:ns-resize;
   	overflow:hidden;
   }    
   #modelObjectNTDNTDHeader {
@@ -802,6 +809,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
   	font-weight:bold;
   	text-align:center;
   	padding:3px 0px 0px 0px;
+    cursor:ns-resize;
   	overflow:hidden;
   }
   .detailNTDField {
@@ -809,7 +817,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
     clear:both;
     left:0px;
     border:none;
-    overflow:hidden;    
+    overflow:hidden;
     white-space:nowrap;
     margin:0px 0px 0px 3px;    
   }
@@ -843,7 +851,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
     position:relative;
     clear:both;
     width:100%;
-    height:33px;
+    height:41px; /*33px;*/ /*108px;*/ /*33px;*/
     border:none;
     background:transparent;
     overflow:hidden;
@@ -934,16 +942,16 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
     border-width:0px 0px 0px 0px;
     border-style:none none none none;
     padding:0px 0px 0px 0px;
-  //style="width:87%;
-  //height:12px;
+  /*style="width:87%;
+    height:12px;*/
   }
   .tundra .parentDescTextArea {
     font:12px/22px Georgia,Garamond,Serif;
     border-color:white white white white;
     border-width:0px 0px 0px 0px;
     border-style:none none none none;
-  //padding:1px 0px 1px 0px;
-  //width:98%;
+  /*padding:1px 0px 1px 0px;
+    width:98%;*/
   }
   .tundra .childNameTextArea {
     font:10px Georgia,Garamond,Serif;
@@ -951,16 +959,16 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
     border-width:0px 0px 0px 0px;
     border-style:none none none none;
     padding:0px 0px 0px 0px;
-  //style="width:87%;
-  //height:12px;
+  /*style="width:87%;
+    height:12px;*/
   }
   .tundra .childDescTextArea {
     font:12px/22px Georgia,Garamond,Serif;
     border-color:white white white white;
     border-width:0px 0px 0px 0px;
     border-style:none none none none;
-  //padding:1px 0px 1px 0px;
-  //width:98%;
+  /*padding:1px 0px 1px 0px;
+    width:98%;*/
   }
 
 /*  
@@ -986,6 +994,25 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
   .tundra .childProperties { }
 */
 
+//////////
+// Form //
+//////////
+#sjamayeeForm {
+  width:100%;
+  height:1000px;
+  /*border:1px solid gray;*/
+}
+#googleBranding {
+  width:100%;
+  height:20px;
+  background-color:white;
+  margin:0px 50px 50px 0px;
+  border:none;
+  display:block;
+}
+#googleBranding .gBranding 		 { text-align: right; }
+#googleBranding .gBrandingText { color: black; }
+
 ////////////
 // Header //
 ////////////
@@ -998,35 +1025,43 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
 }
 #dataObjectsHeader {
 	background-color:lightblue;
-	display:none;
+	height:100%;
+	/*display:none;*/
 }
 #dataObjectsTextsHeader {
 	background-color:lightblue;
-	display:none;
+	height:100%;
+	/*display:none;*/
 }
 #dataRelationsHeader {
 	background-color:lightblue;
-	display:none;
+	height:100%;
+	/*display:none;*/
 }
 #dataRelationsTextsHeader {
 	background-color:lightblue;
-	display:none;
+	height:100%;
+	/*display:none;*/
 }
 #modelObjectsHeader {
-	background-color:#FF887A;
-	display:none;
+	background-color:#FAE4DB; /*#FF887A;*/
+	height:100%;
+	/*display:none;*/
 }
 #modelObjectsTextsHeader {
-	background-color:#FF887A;
-	display:none;
+	background-color:#FAE4DB; /*#FF887A;*/
+	height:100%;
+	/*display:none;*/
 }
 #modelRelationsHeader {
-	background-color:#FF887A;
-	display:none;
+	background-color:#FAE4DB; /*#FF887A;*/
+	height:100%;
+	/*display:none;*/
 }
 #modelRelationsTextsHeader {
-	background-color:#FF887A;
-	display:none;
+	background-color:#FAE4DB; /*#FF887A;*/
+	height:100%;
+	/*display:none;*/
 }
 
 #dataModelHeader {
@@ -1044,9 +1079,10 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
 	left:0px;
 	text-align:left;
 	vertical-align:middle;
-  min-width:10em;
-  max-width:10em;
-	height:100%;  
+	margin-top:4px;
+  min-width:10.5em;
+  max-width:10.5em;
+	/*height:100%;*/
 	display:block;
 }
 /*
@@ -1065,26 +1101,34 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
   left:50px;
 	text-align:left;
 	vertical-align:middle;
+	margin-top:4px;
 	/*width:18em; //16em;*/
   min-width:18em;
   max-width:18em;
-	height:100%;
+	/*height:100%;*/
 	margin:1px 0px 1px 0px;
 }
-#dataRelationsHeaderrelationsEntitySelect label {	font-weight:bold; }
+#dataRelationsHeaderrelationsEntitySelect label {
+  font-weight:bold;
+	margin-top:4px;
+}
 #modelRelationsHeaderrelationsEntitySelect {
 	position:relative;
 	float:left;
   left:50px;
 	text-align:left;
 	vertical-align:middle;
+	margin-top:4px;
 	/*width:18em; //16em;*/
   min-width:18em;
   max-width:18em;
-	height:100%;
+	/*height:100%;*/
 	margin:1px 0px 1px 0px;
 }
-#modelRelationsHeaderrelationsEntitySelect label { font-weight:bold; }
+#modelRelationsHeaderrelationsEntitySelect label {
+  font-weight:bold;
+	margin-top:4px;
+}
 /*
 .relationsTypeSelect {
 	text-align:left;
@@ -1101,39 +1145,49 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
   left:400px;
 	text-align:left;
 	vertical-align:middle;
+	margin-top:4px;
 	/*width:14em;*/
   min-width:14em;
   max-width:14em;	
-	height:100%;
+	/*height:100%;*/
 	margin:1px 0px 1px 0px;
 }
-#dataRelationsHeaderrelationsTypeSelect label {	font-weight:bold; }
+#dataRelationsHeaderrelationsTypeSelect label {
+  font-weight:bold;
+	margin-top:4px;
+}
 #modelRelationsHeaderrelationsTypeSelect {
 	position:relative;
 	float:left;
   left:400px;
 	text-align:left;
 	vertical-align:middle;
+	margin-top:4px;
 	/*width:14em;*/
   min-width:14em;
   max-width:14em;	
-	height:100%;
+	/*height:100%;*/
 	margin:1px 0px 1px 0px;
 }
-#modelRelationsHeaderrelationsTypeSelect label {	font-weight:bold; }
+#modelRelationsHeaderrelationsTypeSelect label {
+  font-weight:bold;
+	margin-top:4px;
+}
 
 #relationsEntityFilter {
 	position:relative;
 	vertical-align:middle;
+	margin-top:4px;
 	left:350px;
 	width:1.5em; //2.5em; //50px;
-	height:100%;
+	/*height:100%;*/
 }
 
 #relationsEntityFilterButton {
 	position:relative;
 	text-align:center;
 	vertical-align:middle;
+	margin-top:3px;
 	left:410px;
 	float:left;
 	width:50px;
@@ -1144,6 +1198,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
 	left:480px;
 	width:20px;
 	height:24px;
+	margin-top:3px;
 }
 
 #rootSelectButton {
@@ -1151,6 +1206,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
 	left:500px;
 	width:50px;
 	height:24px;
+	margin-top:3px;
 }
 
 #rootRedoButton {
@@ -1158,64 +1214,73 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
 	left:550px;
 	width:20px;
 	height:24px;
+	margin-top:3px;
 }
 
 #modelObjectsHeaderReferenceOperatorSelect {
 	position:relative;
 	text-align:left;
 	vertical-align:middle;
+	margin-top:4px;
 	float:left;
 	left:20px;
 	/*width:50px;*/
   min-width:50px;
   max-width:50px;	
-	height:100%;
+	/*height:100%;*/
 }
 #modelObjectsHeaderReferenceOperatorSelect label {
 	font-weight:bold;
+	margin-top:4px;
 }
 #dataObjectsHeaderReferenceOperatorSelect {
 	position:relative;
 	text-align:left;
 	vertical-align:middle;
+	margin-top:4px;
 	float:left;
 	left:20px;
 	/*width:50px;*/
   min-width:50px;
   max-width:50px;	
-	height:100%;
+	/*height:100%;*/
 }
 #dataObjectsHeaderReferenceOperatorSelect label {
 	font-weight:bold;
+	margin-top:4px;
 }
 .objectsReferenceOperatorSelect {
 	position:relative;
 	text-align:left;
 	vertical-align:middle;
+	margin-top:4px;
 	float:left;
 	left:20px;
 	/*width:50px;*/
   min-width:50px;
   max-width:50px;	
-	height:100%;
+	/*height:100%;*/
 }
 .objectsReferenceOperatorSelect label {
 	font-weight:bold;
+	margin-top:4px;
 }
 
 #modelObjectsHeaderReferenceFilter {
 	position:relative;
 	vertical-align:middle;
+	margin-top:4px;
 	left:5px;
 	width:2.0em; //50px;
-	height:100%;
+	/*height:100%;*/
 }
 #dataObjectsHeaderReferenceFilter {
 	position:relative;
 	vertical-align:middle;
+	margin-top:4px;
 	left:5px;
 	width:2.0em; //50px;
-	height:100%;
+	/*height:100%;*/
 }
 .objectsReferenceFilter {
 	position:relative;
@@ -1229,71 +1294,81 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
 	position:relative;
 	text-align:left;
 	vertical-align:middle;
+	margin-top:4px;
 	float:left;
 	left:400px;
 	/*width:14em;*/
   min-width:14em;
   max-width:14em;	
-	height:100%;
+	/*height:100%;*/
 }
 #modelObjectsHeaderTypeSelect label {
 	font-weight:bold;
+	margin-top:4px;
 }
 #dataObjectsHeaderTypeSelect {
 	position:relative;
 	text-align:left;
 	vertical-align:middle;
+	margin-top:4px;
 	float:left;
 	left:400px;
 	/*width:14em;*/
   min-width:14em;
   max-width:14em;	
-	height:100%;
+	/*height:100%;*/
 }
 #dataObjectsHeaderTypeSelect label {
 	font-weight:bold;
+	margin-top:4px;
 }
 .objectsTypeSelect {
 	position:relative;
 	text-align:left;
 	vertical-align:middle;
+	margin-top:4px;
 	float:left;
 	left:400px;
 	/*width:14em;*/
   min-width:14em;
   max-width:14em;	
-	height:100%;
+	/*height:100%;*/
 }
 .objectsTypeSelect label {
 	font-weight:bold;
+	margin-top:4px;
 }
 
 #dataObjectsHeaderEntityFilter {
 	position:relative;
 	left:350px;
 	width:2.5em; //2.5em; //50px;
-	height:100%;
+	/*height:100%;*/
 	vertical-align:middle;
+	margin-top:4px;
 }
 #modelObjectsHeaderEntityFilter {
 	position:relative;
 	left:350px;
 	width:2.5em; //2.5em; //50px;
-	height:100%;
+	/*height:100%;*/
 	vertical-align:middle;
+	margin-top:4px;
 }
 .objectsEntityFilter {
 	position:relative;
 	left:350px;
 	width:2.5em; //2.5em; //50px;
-	height:100%;
+	/*height:100%;*/
 	vertical-align:middle;
+	margin-top:4px;
 }
 
 #modelObjectsHeaderEntityFilterButton {
 	position:relative;
 	text-align:center;
 	vertical-align:middle;
+	margin-top:3px;
 	left:410px;
 	float:left;
 	width:50px;
@@ -1302,6 +1377,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
 	position:relative;
 	text-align:center;
 	vertical-align:middle;
+	margin-top:3px;
 	left:410px;
 	float:left;
 	width:50px;
@@ -1310,6 +1386,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
 	position:relative;
 	text-align:center;
 	vertical-align:middle;
+	margin-top:3px;
 	left:410px;
 	float:left;
 	width:50px;
@@ -1330,13 +1407,15 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
 	left:0px;
 	text-align:center;
 	vertical-align:middle;
+	margin-top:4px;
 	/*width:150px;*/
   min-width:150px;
   max-width:150px;	
-	height:100%;
+	/*height:100%;*/
 }
 #settingSelect label {
 	font-weight:bold;
+	margin-top:4px;
 }
 
 #helpButton {
@@ -1345,6 +1424,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
   right:0px;
 	text-align:center;
 	vertical-align:middle;
+	margin-top:3px;
 	width:40px;
 }
 
@@ -1353,6 +1433,7 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
   float:right;
 	text-align:center;
 	vertical-align:middle;
+	margin-top:3px;
 	margin-right:20px;
 	width:55px;
 }
@@ -1360,6 +1441,12 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
 //////////////
 // GridList //
 //////////////
+.gridlist {
+	position:relative;
+  float:left;
+	width:100%;
+	height:100%;
+}
 .listLeft {
 	position:relative;
   float:left;
@@ -1375,20 +1462,22 @@ Fout: uncaught exception: [Exception... "Component returned failure code: 0xc1f3
 #modelObjectsTextsEditorLeft {
 	text-align:center;
   vertical-align:middle;
-  background-color:#FF887A;
+  background-color:#FAE4DB; /*#FF887A;*/
 }
 #modelObjectsTextsEditorRight {
-  background-image:url("https://na6.salesforce.com/resource/1285777333000/sja__text_bg_ruler91_gif");
+  /*background-image:url("https://na6.salesforce.com/resource/1285777333000/sja__text_bg_ruler91_gif");*/
+  background-image:url("http://sjamayee-explorer.googlecode.com/files//text_bg_ruler91.gif");
   background-position:left top;
   background-repeat:no-repeat;
 }
 #modelRelationsTextsEditorLeft {
 	text-align:center;
   vertical-align:middle;
-  background-color:#FF887A;
+  background-color:#FAE4DB; /*#FF887A;*/
 }
 #modelRelationsTextsEditorRight {
-  background-image:url("https://na6.salesforce.com/resource/1285777333000/sja__text_bg_ruler91_gif");
+  /*background-image:url("https://na6.salesforce.com/resource/1285777333000/sja__text_bg_ruler91_gif");*/
+  background-image:url("http://sjamayee-explorer.googlecode.com/files//text_bg_ruler91.gif");
   background-position:left top;
   background-repeat:no-repeat;
 }
@@ -1412,18 +1501,19 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
   width:65%;
   height:100%;
   background-color:white;
+  display:block;
 }
 #dataObjectsToolBar {
-  display:none;
+  display:block; /*none;*/
 }
 #dataRelationsToolBar {
-  display:none;
+  display:block; /*none;*/
 }
 #modelObjectsToolBar {
-  display:none;
+  display:block; /*none;*/
 }
 #modelRelationsToolBar {
-  display:none;
+  display:block; /*none;*/
 }
 
 .commonToolBar {
@@ -1436,6 +1526,7 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 }
 .messageText {
 	position:relative;
+	left:2px;
 	float:left;
   display:block;
   width:100%;
@@ -1460,7 +1551,7 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
   display:block;
 	vertical-align:middle;
   left:5px;
-  width:35%;
+  width:37%;
   height:100%;
 /*padding:0px 10px 0px 0px;*/
 }
@@ -1476,7 +1567,7 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 	position:relative;
 	float:right;
   display:block;
-  width:65%;
+  width:63%;
   height:100%;
   right:0px;
   vertical-align:middle;
@@ -1528,7 +1619,7 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 .relationsToolBarResizeButton {
   position:relative;
   float:left;
-  width:80px;
+  width:85px;
   margin:4px 0px 0px 3px;
 }
 .relationsToolBarResetButton {
@@ -1557,24 +1648,24 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 	display:block;
 	background-color:inherit;
 }
-
+*/
 #detailPaneLeft {
 	height:100%;
   width:35%;
 	display:block;
-	border:1px solid red;
+	/*border:1px solid red;
   background-color:white;
-  overflow:hidden;
+  overflow:hidden;*/
 }
 
 #detailPaneRight {
 	height:100%;
 	display:block;
-	border:1px solid lime;
+	/*border:1px solid lime;
   background-color:white;
-  overflow:hidden;
+  overflow:hidden;*/
 }
-*/
+
 .objectNTD {
 	position:relative;
 	float:left;
@@ -1584,6 +1675,7 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
   border:none;
   overflow:hidden;
   /*margin-right:5px;*/
+	background-color:white;
 	display:block;
 }
 
@@ -1619,20 +1711,22 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 	position:relative;
 	float:left;
 	left:0px;
-	width:50%;
+	width:100%; /*50%;*/
 	height:100%;
   border:none;
   overflow:hidden;
   /*margin-right:5px;*/
+	background-color:white;
 	display:block;
 }
 
 .parentProperties {
 	position:relative;
 	float:left;
-  width:50%;
+  width:100%; /*50%;*/
 	height:100%;
 	display:block;
+	overflow:hidden;
 	background-color:#F2F2F2; //inherit; //lightblue;
 }
 
@@ -1649,18 +1743,19 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 	position:relative;
 	float:left;
 	left:0px;
-	width:50%;
+  width:100%; /*50%;*/
 	height:100%;
   border:none;
   overflow:hidden;
   /*margin-right:5px;*/
+	background-color:white;
 	display:block;
 }
 
 .childProperties {
 	position:relative;
 	float:left;
-  width:50%;
+  width:100%; /*50%;*/
 	height:100%;
 	display:block;
 	background-color:#F2F2F2; //inherit; //yellow;
@@ -1691,14 +1786,15 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 
 .propertiesHeader {
 	position:relative;
-	float:left;
+	float:top; /*left;*/
 	top:0px;
 	width:100%;
 	height:20px;
 	background-color:lightblue;
 	font-weight:bold;
 	text-align:center;
-	**padding:3px 0px 0px 0px;**
+	padding:3px 0px 0px 0px;
+  cursor:ns-resize;
 	overflow:hidden;
 	display:block;
 }
@@ -1713,6 +1809,7 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 	font-weight:bold;
 	text-align:center;
 	padding:3px 0px 0px 0px;
+  cursor:ns-resize;
 	overflow:hidden;
 	display:block;
 }
@@ -1727,6 +1824,7 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 	font-weight:bold;
 	text-align:center;
 	padding:3px 0px 0px 0px;
+  cursor:ns-resize;
 	overflow:hidden;
 	display:block;
 }
@@ -1789,7 +1887,7 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 
 .detailName {
 	position:relative;
-	//width:50%;
+	/*width:50%;*/
 	left:0px;
 	background-color:lightgray;
 	margin:3px 0px 0px 0px;
@@ -1804,7 +1902,7 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 
 .detailType {
 	position:relative;
-	//width:20%;
+	/*width:20%;*/
 	left:0px;
 	background-color:lightgray;
 	margin:3px 0px 0px 0px;
@@ -1820,7 +1918,7 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 
 .detailCreatedBy {
 	position:relative;
-	//width:50%;
+	/*width:50%;*/
 	left:0px;
 	background-color:lightgray;
 	margin:3px 0px 0px 0px;
@@ -1828,7 +1926,7 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 
 .detailModifiedBy {
 	position:relative;
-	//width:50%;
+	/*width:50%;*/
 	left:0px;
 	background-color:lightgray;
 	margin:3px 0px 0px 0px;
@@ -1862,7 +1960,7 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 	position:relative;
 	float:left;
 	left:0px;
-	width:50%;
+	width:100%; /*50%;*/
 	height:100%;
 	text-align:left;
 	background-color:inherit; //yellow;
@@ -1878,7 +1976,7 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 	text-align:left;
 	background-color:inherit; //lime;
   /*border-left:1px dotted lightgray;*/
-	overflow:hidden;
+	/*overflow:hidden;*/
 	/*border-left:1px solid dotted;*/
 	display:block;
 }
@@ -1887,7 +1985,7 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 	position:relative;
 	float:left;
 	left:0px;
-	width:50%;
+	width:100%; /*50%;*/
 	height:100%;
 	text-align:left;
 	background-color:inherit; //yellow;
@@ -1898,7 +1996,7 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 #dataObjectPropertiesValues {
 	position:relative;
 	float:left;
-	width:50%;
+	width:100%; /*50%;*/
 	height:100%;
 	text-align:left;
 	background-color:inherit; //lime;
@@ -1910,7 +2008,7 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 	position:relative;
 	float:left;
 	left:0px;
-	width:50%;
+	width:100%; /*50%;*/
 	height:100%;
 	text-align:left;
 	background-color:inherit; //yellow;
@@ -1921,7 +2019,7 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 #dataParentPropertiesValues {
 	position:relative;
 	float:left;
-	width:50%;
+	width:100%; /*50%;*/
 	height:100%;
 	text-align:left;
 	background-color:inherit; //lime;
@@ -1933,7 +2031,7 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 	position:relative;
 	float:left;
 	left:0px;
-	width:50%;
+	width:100%; /*50%;*/
 	height:100%;
 	text-align:left;
 	background-color:inherit; //yellow;
@@ -1944,7 +2042,7 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 #dataChildPropertiesValues {
 	position:relative;
 	float:left;
-	width:50%;
+	width:100%; /*50%;*/
 	height:100%;
 	text-align:left;
 	background-color:inherit; //lime;
@@ -1956,7 +2054,7 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 	position:relative;
 	float:left;
 	left:0px;
-	width:50%;
+	width:100%; /*50%;*/
 	height:100%;
 	text-align:left;
 	background-color:inherit; //yellow;
@@ -1967,7 +2065,7 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 #modelObjectPropertiesValues {
 	position:relative;
 	float:left;
-	width:50%;
+	width:100%; /*50%;*/
 	height:100%;
 	text-align:left;
 	background-color:inherit; //lime;
@@ -1979,7 +2077,7 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 	position:relative;
 	float:left;
 	left:0px;
-	width:50%;
+	width:100%; /*50%;*/
 	height:100%;
 	text-align:left;
 	background-color:inherit; //yellow;
@@ -1990,7 +2088,7 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 #modelParentPropertiesValues {
 	position:relative;
 	float:left;
-	width:50%;
+	width:100%; /*50%;*/
 	height:100%;
 	text-align:left;
 	background-color:inherit; //lime;
@@ -2002,7 +2100,7 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 	position:relative;
 	float:left;
 	left:0px;
-	width:50%;
+	width:100%; /*50%;*/
 	height:100%;
 	text-align:left;
 	background-color:inherit; //yellow;
@@ -2013,7 +2111,7 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 #modelChildPropertiesValues {
 	position:relative;
 	float:left;
-	width:50%;
+	width:100%; /*50%;*/
 	height:100%;
 	text-align:left;
 	background-color:inherit; //lime;
@@ -2053,18 +2151,18 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 
 .attributeName {
   border-top:1px solid inherit;   
-  border-left:1px solid inherit;   
+  /*border-left:1px solid inherit;*/
   border-bottom:1px dotted lightgray;
 	background-color:inherit; //#F2F2F2;
   font-color:inherit;
   font-weight:inherit;
-//position:relative;
-//width:100%;
-//margin:1px 0px 1px 0px;
+/*position:relative;
+  width:100%;
+  margin:1px 0px 1px 0px;*/
   padding:0px 0px 0px 3px;
-//white-space:nowrap;
-//text-align:left;
-//color:black;
+/*white-space:nowrap;
+  text-align:left;
+  color:black;*/
 }
 /*
 .attributeListValues {
@@ -2097,23 +2195,23 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 
 .attributeValue {
   border-top:1px solid inherit;   
-  border-left:1px dotted lightgray;
+  /*border-left:1px dotted lightgray;*/
   border-bottom:1px dotted lightgray;
 	background-color:inherit; //#F2F2F2;
   font-color:inherit;
   font-weight:inherit;
-//position:relative;
-//width:100%;
-//margin:1px 0px 1px 0px;
+/*position:relative;
+  width:100%;
+  margin:1px 0px 1px 0px;*/
   padding:0px 0px 0px 2px;
-//white-space:nowrap;
-//text-align:left;
-//color:black;
+/*white-space:nowrap;
+  text-align:left;
+  color:black;*/
 }
 
 #objectPropertiesNames {
 	position:relative;
-	width:50%;
+	width:100%; /*50%;*/
 	height:100%;
 	float:left;
 	display:block;
@@ -2122,7 +2220,7 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 }
 #objectPropertiesValues {
 	position:relative;
-	width:50%;
+	width:100%; /*50%;*/
 	height:100%;
 	float:left;
 	display:block;
@@ -2137,7 +2235,7 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 
 #entityPropertiesNames {
 	position:relative;
-	width:50%;
+	width:100%; /*50%;*/
 	height:100%;
 	float:left;
 	display:block;
@@ -2146,7 +2244,7 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 }
 #entityPropertiesValues {
 	position:relative;
-	width:50%;
+	width:100%; /*50%;*/
 	height:100%;
 	float:left;
 	display:block;
@@ -2156,30 +2254,30 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 
 #childPropertiesNames {
 	position:relative;
-	width:50%;
+	width:100%; /*50%;*/
 	height:100%;
 	float:left;
 	display:block;
 	text-align:left;
 	background-color:inherit; //yellow;
-//border-left:1px dotted lightgray;
+/*border-left:1px dotted lightgray;*/
 	overflow:hidden;	
 }
 #childPropertiesValues {
 	position:relative;
-	width:50%;
+	width:100%; /*50%;*/
 	height:100%;
 	float:left;
 	display:block;
 	text-align:left;
 	background-color:inherit; //lime;
-//border-left:1px dotted lightgray;
+/*border-left:1px dotted lightgray;*/
 	overflow:hidden;	
 }
 
 #parentPropertiesNames {
 	position:relative;
-	width:50%;
+	width:100%; /*50%;*/
 	height:100%;
 	float:left;
 	display:block;
@@ -2188,12 +2286,13 @@ ModelRelationsTextsEditorRight.ID = "modelRelationsTextsEditorRight";
 }
 #parentPropertiesValues {
 	position:relative;
-	width:50%;
+	width:100%; /*50%;*/
 	height:100%;
 	float:left;
 	display:block;
 	text-align:left;
 	background-color:inherit; //lime;
+	overflow:hidden;	
 }
 
 textarea.TextsEditorUIComponent {
@@ -2215,20 +2314,21 @@ textarea.TextsEditorUIComponent {
 }
 
 BUTTON {
-	background:lime; //#CDD4E4;
+	/*background:inherit;*/
+	/*background:lime; //#CDD4E4;*/
 	font-weight:bold;
-	border:1px solid #999;
+	/*border:1px solid #999;*/
 	height:1.7em;
 	font-size:0.8em;
-	vertical-align: middle;
+	/*vertical-align: middle;*/
 	padding:0 0.1em 0.1em 0.1em;
 	margin-left:0.25em;
 }
 
 BUTTON:disabled {
-	color:#DDD;
+	/*color:#DDD;*/
 	/*border:none;*/
-	background:inherit; //lightblue; //#C0C5D0;
+	/*background:inherit; //lightblue; //#C0C5D0;*/
 }
 
 /*** STE - Simple Text Editor ***/
