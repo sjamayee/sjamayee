@@ -1,6 +1,5 @@
 Sjamayee datamodel.
 -------------------
-
 I would like to use these short fieldnames, to have a minimal overhead in JSON transport.
 
 Primary key: id              Values (GUID,SHA1,URI) 
@@ -9,24 +8,28 @@ Foreign keys:                Datasets
 ------------------------------------------------------------------------------
 cei: child_entity_id      -> model_entities/data_entities
 eid: entity_id            -> model_entities/data_entities
+exi: entended_entity_id   -> model_entities (entity extends entity)
 hxi: help_text_id         -> texts
 mai: model_attribute_id   -> model_attributes
 mei: model_entity_id      -> model_entities
-mri: model_relation_id    -> model_relations
+mri: model_reference_id   -> model_relations
 nid: next_id              -> same dataset (texts,model_attributes,model_relations,data_relations)
 oid: object_id            -> OBJECT_ID in target (Drupal,Salesforce,Git,SAP,...)
 pei: parent_entity_id     -> model_entities/data_entities
 pid: previous_id          -> same dataset (texts,model_relations,data_relations)
 tid: type_id              -> types
 txi: text_id              -> texts
-exi: entended_entity_id   -> model_entities (entity extends entity)
 
 Other fieldnames             Values
 ---------------------------------------------------------------
-cbi: created_by_id           To Be Defined (whatever).
+id: primary_id
 cat: created_at              DateTime
+cbi: created_by_id           To Be Defined (whatever).
+exi: entended_entity_id   	 Entity extends Entity.
 mbi: modified_by_id          TBD
 mat: modified_at             TimeStamp
+par: paragraph
+seq: sequence
 
 Sjamayee browser, explorer, composer make different use of this datamodel.
 --------------------------------------------------------------------------
