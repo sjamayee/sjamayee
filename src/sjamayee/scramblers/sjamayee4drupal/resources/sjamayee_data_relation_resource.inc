@@ -1,54 +1,59 @@
 <?php
-// $Id: sjamayee_data_relation_resource.inc
+// $Id$
+
+/**
+ * @file
+ * ....
+ */
 
 function _sjamayee_data_relation_resource_definition() {
   return array(
-	  'data_relation' => array(
-	    'retrieve' => array(
-	      'help' => 'Retrieves a data relation',
-	      'callback' => '_sjamayee_data_relation_resource_relation',
-	      'file' => array('file' => 'inc', 'module' => 'sjamayee', 'name' => 'resources/sjamayee_data_relation_resource'),
-	      'access callback' => '_sjamayee_data_relation_resource_access',
-	      'access arguments' => array('view'),
-	      'access arguments append' => TRUE,
-	      'args' => array(
-	        array(
-	          'name' => 'id',
-	          'type' => 'int',
-	          'description' => 'The id of the relation to get',
-	          'source' => array('path' => '0'),
-	          'optional' => FALSE,
-	        ),
-	      ),
-	    ),
-	    'index' => array(
-	      'help' => 'Retrieves a listing of data relations',
-	      'callback' => '_sjamayee_data_relation_resource_index',
-	      'file' => array('file' => 'inc', 'module' => 'sjamayee', 'name' => 'resources/sjamayee_data_relation_resource'),
-	      'access callback' => 'user_access',
-	      'access arguments' => array('access content'),
-	      'access arguments append' => FALSE,
-	      'args' => array(array(
-	          'name' => 'page',
-	          'type' => 'int',
-	          'description' => '',
-	          'source' => array(
-	            'params' => 'page',
-	          ),
-	          'optional' => TRUE,
-	          'default value' => 0,
-	        ),
-	        array(
-	          'name' => 'parameters',
-	          'type' => 'array',
-	          'description' => '',
-	          'source' => 'param',
-	          'optional' => TRUE,
-	          'default value' => array(),
-	        ),
-	      ),
-	    ),
-	  ),
+    'data_relation' => array(
+      'retrieve' => array(
+        'help' => 'Retrieves a data relation',
+        'callback' => '_sjamayee_data_relation_resource_relation',
+        'file' => array('file' => 'inc', 'module' => 'sjamayee', 'name' => 'resources/sjamayee_data_relation_resource'),
+        'access callback' => '_sjamayee_data_relation_resource_access',
+        'access arguments' => array('view'),
+        'access arguments append' => TRUE,
+        'args' => array(
+          array(
+            'name' => 'id',
+            'type' => 'int',
+            'description' => 'The id of the relation to get',
+            'source' => array('path' => '0'),
+            'optional' => FALSE,
+          ),
+        ),
+      ),
+      'index' => array(
+        'help' => 'Retrieves a listing of data relations',
+        'callback' => '_sjamayee_data_relation_resource_index',
+        'file' => array('file' => 'inc', 'module' => 'sjamayee', 'name' => 'resources/sjamayee_data_relation_resource'),
+        'access callback' => 'user_access',
+        'access arguments' => array('access content'),
+        'access arguments append' => FALSE,
+        'args' => array(array(
+            'name' => 'page',
+            'type' => 'int',
+            'description' => '',
+            'source' => array(
+              'params' => 'page',
+            ),
+            'optional' => TRUE,
+            'default value' => 0,
+          ),
+          array(
+            'name' => 'parameters',
+            'type' => 'array',
+            'description' => '',
+            'source' => 'param',
+            'optional' => TRUE,
+            'default value' => array(),
+          ),
+        ),
+      ),
+    ),
   );
 }
 
@@ -60,7 +65,7 @@ function _sjamayee_data_relation_resource_relation($id) {
   return db_query("SELECT * FROM {sja_data_relations} WHERE id = :id", array(':id' => $id))->fetchObject();
 }
 
-function _sjamayee_data_relation_resource_access($op,$args) {
+function _sjamayee_data_relation_resource_access($op, $args) {
   global $user;
   $access = FALSE;
   switch ($op) {
@@ -94,44 +99,44 @@ function sjamayee_data_relation_resource_schema() {
       'version' => array(
         'description' => 'Version',
         'type'        => 'int',
-				'size'				=> 'small',
+        'size'        => 'small',
         'not null'    => TRUE,
       ),
-	    'model_relation_id' => array(
-	      'description' => 'Model relation ID',
-	      'type'        => 'int',
-	      'unsigned'    => TRUE,
-	      'not null'    => TRUE,
-	    ),
+      'model_relation_id' => array(
+        'description' => 'Model relation ID',
+        'type'        => 'int',
+        'unsigned'    => TRUE,
+        'not null'    => TRUE,
+      ),
       'parent_entity_id' => array(
         'description' => 'Parent entity ID',
         'type'        => 'int',
         'unsigned'    => TRUE,
         'not null'    => TRUE,
       ),
-	    'child_entity_id' => array(
-	      'description' => 'Child entity ID',
-	      'type'        => 'int',
-	      'unsigned'    => TRUE,
-	      'not null'    => TRUE,
-	    ),
-		  'previous_id' => array(
-		    'description' => 'Previous ID',
-		    'type'        => 'int',
-		    'unsigned'    => TRUE,
-		    'not null'    => TRUE,
-		  ),
-			'next_id' => array(
-			  'description' => 'Next ID',
-			  'type'        => 'int',
-			  'unsigned'    => TRUE,
-			  'not null'    => TRUE,
-			),
+      'child_entity_id' => array(
+        'description' => 'Child entity ID',
+        'type'        => 'int',
+        'unsigned'    => TRUE,
+        'not null'    => TRUE,
+      ),
+      'previous_id' => array(
+        'description' => 'Previous ID',
+        'type'        => 'int',
+        'unsigned'    => TRUE,
+        'not null'    => TRUE,
+      ),
+      'next_id' => array(
+        'description' => 'Next ID',
+        'type'        => 'int',
+        'unsigned'    => TRUE,
+        'not null'    => TRUE,
+      ),
       'text_id' => array(
-	      'description' => 'Text ID',
-	      'type'        => 'int',
-	      'unsigned'    => TRUE,
-	      'not null'    => TRUE,
+        'description' => 'Text ID',
+        'type'        => 'int',
+        'unsigned'    => TRUE,
+        'not null'    => TRUE,
       ),
       'cby_id' => array(
         'description' => 'Created by ID',
@@ -142,11 +147,11 @@ function sjamayee_data_relation_resource_schema() {
       'mby_id' => array(
         'description' => 'Modified by ID',
         'type'        => 'int',
-     		'unsigned'    => TRUE,
-     		'not null'    => TRUE,
-    	),
+         'unsigned'    => TRUE,
+         'not null'    => TRUE,
+      ),
     ),
     'primary key' => array('id'),
-  );	
+  );
   return $schema;
 }

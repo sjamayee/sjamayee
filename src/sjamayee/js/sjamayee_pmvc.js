@@ -935,9 +935,12 @@ var PrepViewCommand = new Class({
     this.facade.registerMediator(new DataRelationsMediator(app.pane.dataRelationsPane));
     this.facade.registerMediator(new ModelObjectsMediator(app.pane.modelObjectsPane));
     this.facade.registerMediator(new ModelRelationsMediator(app.pane.modelRelationsPane));
-    
+
     //Fade out "Splash".
+    //$("sjamayeeSplash").setStyle("display","block");
     //Utils.fade("sjamayeeSplash");
+    //$("sjamayeeSplash").setStyle("display","none");
+    //$("sjamayeeForm").setStyle("display","block");
 
     //$("sjamayeeSplash").setStyle("display","none");
     //$("sjamayeeSplash2").setStyle("display","block");
@@ -18377,7 +18380,7 @@ var ModelObjectsListMediator = new Class({
     var gridList = this.getViewComponent();
     switch (note.getName()) {
       case SjamayeeFacade.OLIST_MODEL_SHOW:
-      //this.sendNotification(SjamayeeFacade.MODEL_SHOW);
+      /*//this.sendNotification(SjamayeeFacade.MODEL_SHOW);
       this.sendNotification(SjamayeeFacade.OLIST_SHOW);
       var state = null;
       var properties = note.getBody();
@@ -18390,7 +18393,7 @@ var ModelObjectsListMediator = new Class({
       this.hide();
       this.listUIC.setAttribute("style","width:100%;height:100%;display:block;");
       this.listUIC.keyboard.activate();
-      this.listUIC.focus();      
+      this.listUIC.focus();*/   
       this.setListSize(this.getListSize());
       //this.home();
       //this.sendNotification(SjamayeeFacade.OLIST_MODEL_REFRESH);           //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -21566,16 +21569,16 @@ if (diff) {
     var verticalSplitter = $(currentPane+'_'+SjamayeeFacade.SPLITTER_CLASS_NAME);*/
     var mainPane = DataObjectsPane.ID; //null;
     var verticalSplitter = null;
-    if (this.parentNode.id.substr(0,DataObjectsPane.ID.length) == DataObjectsPane.ID) {
+    if (parent.id.substr(0,DataObjectsPane.ID.length) == DataObjectsPane.ID) {
       mainPane = DataObjectsPane.ID;
     }
-    if (this.parentNode.id.substr(0,DataRelationsPane.ID.length) == DataRelationsPane.ID) {
+    if (parent.id.substr(0,DataRelationsPane.ID.length) == DataRelationsPane.ID) {
       mainPane = DataRelationsPane.ID;
     }
-    if (this.parentNode.id.substr(0,ModelObjectsPane.ID.length) == ModelObjectsPane.ID) {
+    if (parent.id.substr(0,ModelObjectsPane.ID.length) == ModelObjectsPane.ID) {
       mainPane = ModelObjectsPane.ID;
     }
-    if (this.parentNode.id.substr(0,ModelRelationsPane.ID.length) == ModelRelationsPane.ID) {
+    if (parent.id.substr(0,ModelRelationsPane.ID.length) == ModelRelationsPane.ID) {
       mainPane = ModelRelationsPane.ID;
     }
     if (mainPane) {

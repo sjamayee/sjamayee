@@ -1,54 +1,59 @@
 <?php
-// $Id: sjamayee_text_resource.inc
+// $Id$
+
+/**
+ * @file
+ * ....
+ */
 
 function _sjamayee_text_resource_definition() {
   return array(
-	  'text' => array(
-	    'retrieve' => array(
-	      'help' => 'Retrieves a text',
-	      'callback' => '_sjamayee_text_resource_text',
-	      'file' => array('file' => 'inc', 'module' => 'sjamayee', 'name' => 'resources/sjamayee_text_resource'),
-	      'access callback' => '_sjamayee_text_resource_access',
-	      'access arguments' => array('view'),
-	      'access arguments append' => TRUE,
-	      'args' => array(
-	        array(
-	          'name' => 'id',
-	          'type' => 'int',
-	          'description' => 'The id of the text to get',
-	          'source' => array('path' => '0'),
-	          'optional' => FALSE,
-	        ),
-	      ),
-	    ),
-	    'index' => array(
-	      'help' => 'Retrieves a listing of texts',
-	      'callback' => '_sjamayee_text_resource_index',
-	      'file' => array('file' => 'inc', 'module' => 'sjamayee', 'name' => 'resources/sjamayee_text_resource'),
-	      'access callback' => 'user_access',
-	      'access arguments' => array('access content'),
-	      'access arguments append' => FALSE,
-	      'args' => array(array(
-	          'name' => 'page',
-	          'type' => 'int',
-	          'description' => '',
-	          'source' => array(
-	            'params' => 'page',
-	          ),
-	          'optional' => TRUE,
-	          'default value' => 0,
-	        ),
-	        array(
-	          'name' => 'parameters',
-	          'type' => 'array',
-	          'description' => '',
-	          'source' => 'param',
-	          'optional' => TRUE,
-	          'default value' => array(),
-	        ),
-	      ),
-	    ),
-	  ),
+    'text' => array(
+      'retrieve' => array(
+        'help' => 'Retrieves a text',
+        'callback' => '_sjamayee_text_resource_text',
+        'file' => array('file' => 'inc', 'module' => 'sjamayee', 'name' => 'resources/sjamayee_text_resource'),
+        'access callback' => '_sjamayee_text_resource_access',
+        'access arguments' => array('view'),
+        'access arguments append' => TRUE,
+        'args' => array(
+          array(
+            'name' => 'id',
+            'type' => 'int',
+            'description' => 'The id of the text to get',
+            'source' => array('path' => '0'),
+            'optional' => FALSE,
+          ),
+        ),
+      ),
+      'index' => array(
+        'help' => 'Retrieves a listing of texts',
+        'callback' => '_sjamayee_text_resource_index',
+        'file' => array('file' => 'inc', 'module' => 'sjamayee', 'name' => 'resources/sjamayee_text_resource'),
+        'access callback' => 'user_access',
+        'access arguments' => array('access content'),
+        'access arguments append' => FALSE,
+        'args' => array(array(
+            'name' => 'page',
+            'type' => 'int',
+            'description' => '',
+            'source' => array(
+              'params' => 'page',
+            ),
+            'optional' => TRUE,
+            'default value' => 0,
+          ),
+          array(
+            'name' => 'parameters',
+            'type' => 'array',
+            'description' => '',
+            'source' => 'param',
+            'optional' => TRUE,
+            'default value' => array(),
+          ),
+        ),
+      ),
+    ),
   );
 }
 
@@ -67,7 +72,7 @@ function _sjamayee_text_resource_text($id) {
   return db_query("SELECT * FROM {sja_texts} WHERE id = :id", array(':id' => $id))->fetchObject();
 }
 
-function _sjamayee_text_resource_access($op,$args) {
+function _sjamayee_text_resource_access($op, $args) {
   global $user;
   $access = FALSE;
   switch ($op) {
@@ -101,7 +106,7 @@ function sjamayee_text_resource_schema() {
       'version' => array(
         'description' => 'Version',
         'type'        => 'int',
-				'size'				=> 'small',
+        'size'        => 'small',
         'not null'    => TRUE,
       ),
       'nid' => array(
@@ -110,32 +115,32 @@ function sjamayee_text_resource_schema() {
         'unsigned'    => TRUE,
         'not null'    => TRUE,
       ),
-	    'pid' => array(
-	      'description' => 'Previous ID',
-	      'type'        => 'int',
-	      'unsigned'    => TRUE,
-	      'not null'    => TRUE,
-	    ),
+      'pid' => array(
+        'description' => 'Previous ID',
+        'type'        => 'int',
+        'unsigned'    => TRUE,
+        'not null'    => TRUE,
+      ),
       'par' => array(
         'description' => 'Paragraph',
         'type'        => 'char',
         'length'      => 8,
-				'default'			=> '',
+        'default'      => '',
         'not null'    => TRUE,
       ),
       'seq' => array(
         'description' => 'Sequence',
         'type'        => 'float',
         'size'        => 'big',
-				'default'			=> 0,
+        'default'      => 0,
         'not null'    => TRUE,
       ),
-	    'text' => array(
-	      'description' => 'Text',
-	      'type'        => 'text',
-	      'size'     		=> 'long',
-	      'not null'    => TRUE,
-	    ),
+      'text' => array(
+        'description' => 'Text',
+        'type'        => 'text',
+        'size'         => 'long',
+        'not null'    => TRUE,
+      ),
       'cby_id' => array(
         'description' => 'Created by ID',
         'type'        => 'int',
@@ -145,11 +150,11 @@ function sjamayee_text_resource_schema() {
       'mby_id' => array(
         'description' => 'Modified by ID',
         'type'        => 'int',
-     		'unsigned'    => TRUE,
-     		'not null'    => TRUE,
-    	),
+         'unsigned'    => TRUE,
+         'not null'    => TRUE,
+      ),
     ),
     'primary key' => array('id'),
-  );	
+  );
   return $schema;
 }
