@@ -91,11 +91,18 @@ function sjamayee_type_resource_schema() {
     'description' => 'Sjamayee types',
     'fields' => array(
       'id' => array(
-        'type'        => 'serial',
         'description' => 'Primary ID',
-        'unsigned'    => TRUE,
+        'type'        => 'varchar',
+        'length'      => 255,
         'not null'    => TRUE,
         'no export'   => TRUE,
+      ),
+      'ver' => array(
+        'description' => 'Version',
+        'type'        => 'int',
+        'size'        => 'small',
+        'not null'    => TRUE,
+        'default'      => 0,
       ),
       'type' => array(
         'description' => 'Type',
@@ -103,7 +110,7 @@ function sjamayee_type_resource_schema() {
         'length'      => 32,
         'not null'    => TRUE,
       ),
-       'code' => array(
+      'code' => array(
         'description' => 'Code',
         'type'        => 'char',
         'length'      => 4,
@@ -115,43 +122,55 @@ function sjamayee_type_resource_schema() {
         'length'      => 255,
         'not null'    => TRUE,
       ),
-      'version' => array(
-        'description' => 'Version',
-        'type'        => 'int',
-        'size'        => 'small',
-        'not null'    => TRUE,
-      ),
       'description' => array(
         'description' => 'Description',
         'type'        => 'text',
         'size'        => 'medium',
-        'not null'    => FALSE,
       ),
       'in_use' => array(
         'description' => 'In use',
         'type'        => 'char',
         'length'      => 1,
-        'default'      => 'Y',
         'not null'    => TRUE,
+        'default'      => 'Y',
       ),
       'object' => array(
         'description' => 'Object',
         'type'        => 'varchar',
         'length'      => 255,
-        'not null'    => FALSE,
+        'default'     => NULL,
       ),
-      'cby_id' => array(
+      'txi' => array(
+        'description' => 'Text ID',
+        'type'        => 'varchar',
+        'length'      => 255,
+        'default'     => NULL,
+      ),
+/*
+      'cbi' => array(
         'description' => 'Created by ID',
-        'type'        => 'int',
-        'unsigned'    => TRUE,
+        'type'        => 'varchar',
+        'length'      => 255,
         'not null'    => TRUE,
       ),
-      'mby_id' => array(
-        'description' => 'Modified by ID',
-        'type'        => 'int',
-         'unsigned'    => TRUE,
-         'not null'    => TRUE,
+      'cat' => array(
+        'description' => 'Created at',
+        'type'        => 'timestamp',
+        'not null'    => TRUE,
+        'default'     => current_timestamp,
       ),
+      'mbi' => array(
+        'description' => 'Modified by ID',
+        'type'        => 'varchar',
+        'length'      => 255,
+        'not null'    => TRUE,
+      ),
+      'mat' => array(
+        'description' => 'Modified at',
+        'type'        => 'timestamp',
+        'not null'    => TRUE,
+        'default'     => current_timestamp,
+       )*/
     ),
     'primary key' => array('id'),
   );

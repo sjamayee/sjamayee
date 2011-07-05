@@ -6,14 +6,14 @@
  * ....
  */
 
-function _sjamayee_model_attribute_resource_definition() {
+function _sjamayee_attribute_resource_definition() {
   return array(
-    'model_attribute' => array(
+    'attribute' => array(
       'retrieve' => array(
-        'help' => 'Retrieves a model attribute',
-        'callback' => '_sjamayee_model_attribute_resource_attribute',
-        'file' => array('file' => 'inc', 'module' => 'sjamayee', 'name' => 'resources/sjamayee_model_attribute_resource'),
-        'access callback' => '_sjamayee_model_attribute_resource_access',
+        'help' => 'Retrieves an attribute',
+        'callback' => '_sjamayee_attribute_resource_attribute',
+        'file' => array('file' => 'inc', 'module' => 'sjamayee', 'name' => 'resources/sjamayee_attribute_resource'),
+        'access callback' => '_sjamayee_attribute_resource_access',
         'access arguments' => array('view'),
         'access arguments append' => TRUE,
         'args' => array(
@@ -27,9 +27,9 @@ function _sjamayee_model_attribute_resource_definition() {
         ),
       ),
       'index' => array(
-        'help' => 'Retrieves a listing of model attributes',
-        'callback' => '_sjamayee_model_attribute_resource_index',
-        'file' => array('file' => 'inc', 'module' => 'sjamayee', 'name' => 'resources/sjamayee_model_attribute_resource'),
+        'help' => 'Retrieves a listing of attributes',
+        'callback' => '_sjamayee_attribute_resource_index',
+        'file' => array('file' => 'inc', 'module' => 'sjamayee', 'name' => 'resources/sjamayee_attribute_resource'),
         'access callback' => 'user_access',
         'access arguments' => array('access content'),
         'access arguments append' => FALSE,
@@ -57,170 +57,192 @@ function _sjamayee_model_attribute_resource_definition() {
   );
 }
 
-function _sjamayee_model_attribute_resource_index($page, $parameters) {
-  return db_query("SELECT * FROM {sja_model_attributes}")->fetchAll();
+function _sjamayee_attribute_resource_index($page, $parameters) {
+  return db_query("SELECT * FROM {sja_attributes}")->fetchAll();
 }
 
-function _sjamayee_model_attribute_resource_attribute($id) {
-  return db_query("SELECT * FROM {sja_model_attributes} WHERE id = :id", array(':id' => $id))->fetchObject();
+function _sjamayee_attribute_resource_attribute($id) {
+  return db_query("SELECT * FROM {sja_attributes} WHERE id = :id", array(':id' => $id))->fetchObject();
 }
 
-function _sjamayee_model_attribute_resource_access($op, $args) {
+function _sjamayee_attribute_resource_access($op, $args) {
   global $user;
   $access = FALSE;
   switch ($op) {
     case 'view':
-      //$type = _sjamayee_model_attribute_resource_attribute($args[0]);
-      $access = user_access('model_attribute resource view any attribute');
-      //$access = $access || $type->id == $user->uid && user_access('model_attribute resource view own attributes');
+      //$type = _sjamayee_attribute_resource_attribute($args[0]);
+      $access = user_access('attribute_resource view any attribute');
+      //$access = $access || $type->id == $user->uid && user_access('attribute_resource view own attributes');
       break;
   }
   return TRUE; //FALSE; //$access;            // !!!!!!!!!!!!!!!!!!!!!!! NOK !!!!!!!!!!!!!!!!!!!!!!!
 }
 
-function sjamayee_model_attribute_resource_schema() {
+function sjamayee_attribute_resource_schema() {
   $schema = array();
-  $schema['sja_model_attributes'] = array(
-    'description' => 'Sjamayee model attributes',
+  $schema['sja_attributes'] = array(
+    'description' => 'Sjamayee attributes',
     'fields' => array(
       'id' => array(
-        'type'        => 'serial',
         'description' => 'Primary ID',
-        'unsigned'    => TRUE,
+        'type'        => 'varchar',
+        'length'      => 255,
         'not null'    => TRUE,
         'no export'   => TRUE,
+      ),
+      'ver' => array(
+        'description' => 'Version',
+        'type'        => 'int',
+        'size'        => 'small',
+        'not null'    => TRUE,
+        'default'     => 0,
       ),
       'name' => array(
         'description' => 'Name',
         'type'        => 'varchar',
         'length'      => 255,
-        'not null'    => TRUE,
+        'default'     => NULL,
       ),
-      'version' => array(
-        'description' => 'Version',
-        'type'        => 'int',
-        'size'        => 'small',
-        'not null'    => TRUE,
+      'value' => array(
+        'description' => 'Value',
+        'type'        => 'varchar',
+        'length'      => 255,
+        'default'     => NULL,
       ),
-      'entity_id' => array(
+      'mai' => array(
+        'description' => 'Model attribute ID',
+        'type'        => 'varchar',
+        'length'      => 255,
+        'default'     => NULL,
+      ),
+      'eid' => array(
         'description' => 'Entity ID',
-        'type'        => 'int',
-        'unsigned'    => TRUE,
+        'type'        => 'varchar',
+        'length'      => 255,
         'not null'    => TRUE,
       ),
       'default_value' => array(
         'description' => 'Default value',
         'type'        => 'varchar',
         'length'      => 255,
-        'default'      => '',
-        'not null'    => TRUE,
+        'default'     => NULL,
       ),
       'description' => array(
         'description' => 'Description',
         'type'        => 'varchar',
         'length'      => 255,
-        'default'      => '',
-        'not null'    => TRUE,
+        'default'     => NULL,
       ),
       'digits' => array(
         'description' => 'Digits',
         'type'        => 'int',
         'size'        => 'small',
-        'not null'    => TRUE,
+        'default'     => NULL,
       ),
       'format' => array(
         'description' => 'Format',
         'type'        => 'varchar',
         'length'      => 255,
-        'default'      => '',
-        'not null'    => TRUE,
+        'default'     => NULL,
       ),
-      'help_text_id' => array(
+      'hxi' => array(
         'description' => 'Help text ID',
-        'type'        => 'int',
-        'unsigned'    => TRUE,
-        'not null'    => TRUE,
+        'type'        => 'varchar',
+        'length'      => 255,
+        'default'     => NULL,
       ),
       'identifier' => array(
         'description' => 'Identifier flag',
         'type'        => 'char',
         'length'      => 1,
-        'default'      => 'N',
         'not null'    => TRUE,
+        'default'     => 'N',
       ),
       'label' => array(
         'description' => 'Label',
         'type'        => 'varchar',
         'length'      => 255,
-        'default'      => '',
-        'not null'    => TRUE,
+        'default'     => NULL,
       ),
       'length' => array(
         'description' => 'Length',
         'type'        => 'int',
         'size'        => 'small',
-        'default'      => 0,
         'not null'    => TRUE,
+        'default'     => 0,
       ),
       'mandatory' => array(
         'description' => 'Mandatory',
         'type'        => 'char',
         'length'      => 1,
-        'default'      => 'N',
         'not null'    => TRUE,
+        'default'     => 'N',
       ),
-      'next_id' => array(
+      'nid' => array(
         'description' => 'Next ID',
-        'type'        => 'int',
-        'unsigned'    => TRUE,
-        'not null'    => TRUE,
+        'type'        => 'varchar',
+        'length'      => 255,
+        'default'     => NULL,
       ),
       'precision' => array(
         'description' => 'Precision',
         'type'        => 'int',
         'size'        => 'small',
-        'default'      => 0,
         'not null'    => TRUE,
+        'default'     => 0,
       ),
       'scale' => array(
         'description' => 'Scale',
         'type'        => 'int',
         'size'        => 'small',
-        'default'      => 0,
         'not null'    => TRUE,
+        'default'     => 0,
       ),
-      'text_id' => array(
+      'txi' => array(
         'description' => 'Text ID',
-        'type'        => 'int',
-        'unsigned'    => TRUE,
-        'not null'    => TRUE,
+        'type'        => 'varchar',
+        'length'      => 255,
+        'default'     => NULL,
       ),
       'type' => array(
         'description' => 'Type',
         'type'        => 'varchar',
-        'length'      => 255,
-        'default'      => '',
+        'length'      => 32,
         'not null'    => TRUE,
+        'default'     => 'Text',
       ),
       'unique' => array(
         'description' => 'Unique',
         'type'        => 'char',
         'length'      => 1,
-        'default'      => 'N',
         'not null'    => TRUE,
+        'default'     => 'N',
       ),
-      'cby_id' => array(
+/*
+      'cbi' => array(
         'description' => 'Created by ID',
-        'type'        => 'int',
-        'unsigned'    => TRUE,
+        'type'        => 'varchar',
+        'length'      => 255,
         'not null'    => TRUE,
       ),
-      'mby_id' => array(
+      'cat' => array(
+        'description' => 'Created at',
+        'type'        => 'timestamp',
+        'not null'    => TRUE,
+        'default'     => current_timestamp,
+      ),
+      'mbi' => array(
         'description' => 'Modified by ID',
-        'type'        => 'int',
-         'unsigned'    => TRUE,
+        'type'        => 'varchar',
+        'length'      => 255,
          'not null'    => TRUE,
       ),
+      'mat' => array(
+        'description' => 'Modified at',
+        'type'        => 'timestamp',
+        'not null'    => TRUE,
+        'default'     => current_timestamp,
+       )*/
     ),
     'primary key' => array('id'),
   );
