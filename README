@@ -83,10 +83,12 @@ Goal:
 
 New/Other Goal: The same simple interface on all data sources, like:
 
-1. sjamayee4drupal / Sjamayee on Drupal: A view on all Drupals and their dynamic content.
-2. sjamayee4sfdc   / Sjamayee on Salesforce: A view/console for Salesforce.com.
-3. sjamayee4git    / Sjamayee on Git: A view on Git (repositories).
-4. sjamayee4db     / Sjamayee on MySql, Oracle, ... (database).
-5. sjamayee4sap    / Sjamayee on SAP, Documentum and others.
-5. sjamayee4ppp    / Sjamayee on the Semantic Web (RDF) ...
+1. sjamayee4drupal  / Sjamayee on Drupal: A view on all Drupals and their dynamic content.
+2. sjamayee4sfdc    / Sjamayee on Salesforce: A view/console for Salesforce.com.
+3. sjamayee4git     / Sjamayee on Git: A view on Git (repositories).
+4. sjamayee4db      / Sjamayee on MySql, Oracle, ... (database).
+5. sjamayee4sap     / Sjamayee on SAP, Documentum and others.
+5. sjamayee4ppp     / Sjamayee on the Semantic Web (RDF) ...
+6. sjamayee4twitter / Sjamayee o Twitter: A view on Twitter.
 
+OR a combination of these!
