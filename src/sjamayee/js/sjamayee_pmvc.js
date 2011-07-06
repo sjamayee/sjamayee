@@ -790,6 +790,18 @@ SjamayeeFacade.TEXT_PARENT_EDIT = SjamayeeFacade.TEXT_PARENT+"Edit";
 SjamayeeFacade.TEXT_CHILD = SjamayeeFacade.TEXT+SjamayeeFacade.CHILD;           //verify !!!
 SjamayeeFacade.TEXT_CHILD_EDIT = SjamayeeFacade.TEXT_CHILD+"Edit";
 
+SjamayeeFacade.CSS_SJAMAYEE = "css/sjamayee.css";
+SjamayeeFacade.CSS_FONTS_MIN = "yui.yahooapis.com/3.1.0/build/cssfonts/fonts-min.css";
+SjamayeeFacade.JS_YUI_MIN = "src/externs/js/yui_min.js";
+SjamayeeFacade.JS_JSMIN = "src/externs/js/jsmin.js";
+SjamayeeFacade.JS_JSON = "src/externs/js/json.js";
+SjamayeeFacade.JS_MOOTOOLS_CORE = "src/externs/js/mootools_1_2_5_core_nc.js";
+SjamayeeFacade.JS_MOOTOOLS_MORE = "src/externs/js/mootools_1_2_4_4_more_nc.js";
+SjamayeeFacade.JS_PUREMVC = "src/externs/js/pureMVC_2_0_Mini.js";
+SjamayeeFacade.JS_SJAMAYEE_BASE = "js/sjamayee_base.js";
+SjamayeeFacade.JS_SJAMAYEE_GRID = "js/sjamayee_grid.js";
+SjamayeeFacade.JS_SJAMAYEE_PMVC = "js/sjamayee_pmvc.js";
+
 SjamayeeFacade.getInstance = function() {
   if (Facade.instance === undefined)  {
     //The classFactory is used as a descriptor for the ApplicatonFacade
@@ -6446,7 +6458,6 @@ var ObjectsHeader = new Class({
   filter_changeHandler: function()                  { this.fireEvent(SjamayeeFacade.OLIST_FILTER_CHANGE); },
   filterCaseCheckBox_clickHandler: function()       { this.fireEvent(SjamayeeFacade.OLIST_FILTER_CASE_CLICK); },
   filterButton_clickHandler: function()             { this.fireEvent(SjamayeeFacade.OLIST_FILTER_CLICK); },
-
 });
 ObjectsHeader.SPECIAL_HEADER_ID = "SpecialHeader";
 ObjectsHeader.SPECIAL_HEADER_CLASS_ID = "objectsSpecialHeader";
@@ -9501,6 +9512,10 @@ var HeaderMediator = new Class({
       this.dataModelChange(properties);
       break;
       case SjamayeeFacade.SETTING_CLICK:
+      //TEST - REMOVE !!! ///////////////////////////////
+      alert("HeaderMediator/TEST - settingButton/click");
+      var scrambler = new Scrambler();
+      ///////////////////////////////////////////////////
       break;
       case SjamayeeFacade.HELP_CLICK:
       break;
@@ -23451,10 +23466,77 @@ DataObjectsListMediator.ID = "DataObjectsListMediator";
 //////////////////////////////////////////////////////////////////////////
 //Class: Scrambler
 var Scrambler = new Class({
-
-  initialize: function(app) {
-    try {
-      switch (app) {
+  Extends: SjamayeeUIComponent,
+  initialize: function() {
+    this.typeSelect = null;
+    this.url = null;
+    this.okButton = null;
+    this.cancelButton = null;
+    var html = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">'+
+               '<html>'+
+               '<head>'+
+               '<title>Sjamayee - Scrambler</title>'+
+             	 '<link rel="stylesheet" type="text/css" href="../'+SjamayeeFacade.CSS_SJAMAYEE+'"/>'+
+               '<link rel="stylesheet" type="text/css" href="http://'+SjamayeeFacade.CSS_FONTS_MIN+'"/>'+
+               '<script type="text/javascript" src="../../../'+SjamayeeFacade.JS_YUI_MIN+'"></script>'+
+               '<script type="text/javascript" src="../../../'+SjamayeeFacade.JS_JSMIN+'"></script>'+
+               '<script type="text/javascript" src="../../../'+SjamayeeFacade.JS_JSON+'"></script>'+
+               '<script type="text/javascript" src="../../../'+SjamayeeFacade.JS_MOOTOOLS_CORE+'"></script>'+
+               '<script type="text/javascript" src="../../../'+SjamayeeFacade.JS_MOOTOOLS_MORE+'"></script>'+
+               '<script type="text/javascript" src="../../../'+SjamayeeFacade.JS_PUREMVC+'"></script>'+
+               '<script type="text/javascript" src="../'+SjamayeeFacade.JS_SJAMAYEE_BASE+'"></script>'+
+               '<!-- script type="text/javascript" src="../'+SjamayeeFacade.JS_SJAMAYEE_GRID+'"></script -->'+
+               '<script type="text/javascript" src="../'+SjamayeeFacade.JS_SJAMAYEE_PMVC+'"></script>'+
+             	 '<style type="text/css" media="all">'+
+             	 ' html, body { margin:0; padding:0;	overflow:hidden; }'+
+             	 ' #header { padding: 1em; }'+
+             	 ' div { border:none; }'+
+             	 '</style>'+
+               '<script type="text/javascript">'+
+             	 ' window.addEvent("domready", function() { init(); });'+
+               ' function init() { alert("The DOM is ready!"); }'+
+               '</script>'+
+               '</head>'+
+               '<body>'+
+               '<div style="margin:20px 50px 20px 50px;border:none;">'+
+               '<label for="'+Scrambler.TYPE_SELECT_ID+'">'+Scrambler.TYPE_SELECT_LABEL+'</label>'+
+               '<select id="'+Scrambler.TYPE_SELECT_ID+'">'+
+               '<option>'+Scrambler.TYPE_DOCUMENTUM+'</option>'+
+               '<option>'+Scrambler.TYPE_DRUPAL+'</option>'+
+               '<option>'+Scrambler.TYPE_FACEBOOK+'</option>'+
+               '<option>'+Scrambler.TYPE_GIT+'</option>'+
+               '<option>'+Scrambler.TYPE_GOOGLE+'</option>'+
+               '<option>'+Scrambler.TYPE_LINUX+'</option>'+
+               '<option>'+Scrambler.TYPE_MYSQL+'</option>'+
+               '<option>'+Scrambler.TYPE_OPENSOCIAL+'</option>'+
+               '<option>'+Scrambler.TYPE_ORACLE+'</option>'+
+               '<option>'+Scrambler.TYPE_OSX+'</option>'+
+               '<option>'+Scrambler.TYPE_SALESFORCE+'</option>'+
+               '<option>'+Scrambler.TYPE_SAP+'</option>'+
+               '<option>'+Scrambler.TYPE_TEST+'</option>'+
+               '<option>'+Scrambler.TYPE_TWITTER+'</option>'+
+               '<option>'+Scrambler.TYPE_UNIX+'</option>'+
+               '<option>'+Scrambler.TYPE_WIKIPEDIA+'</option>'+
+               '<option>'+Scrambler.TYPE_YOUTUBE+'</option>'+
+               '</select>'+   
+               '<label for="'+Scrambler.URL_ID+'">'+Scrambler.URL_LABEL+'</label>'+
+               '<input type="text" id="'+Scrambler.URL_ID+'" value=""/>'+
+               '<button id="'+Scrambler.OK_BUTTON_ID+'" title="'+Scrambler.OK_BUTTON_TITLE+'">'+Scrambler.OK_BUTTON_LABEL+'</button>'+
+               '<button id="'+Scrambler.CANCEL_BUTTON_ID+'" title="'+Scrambler.CANCEL_BUTTON_TITLE+'">'+Scrambler.CANCEL_BUTTON_LABEL+'</button>'+
+               '</div>';
+               '</body>'+
+               '<script type="text/javascript">'+
+               'Utils.disableSelection(document.body); //disable text selection on entire body of page'+
+               '</script>'+
+               '</html>';
+    this.parent(Scrambler.ID,{html:html});    
+    this.typeSelect_changeHandler = this.typeSelect_changeHandler.bindWithEvent(this);
+    this.okButton_clickHandler = this.okButton_clickHandler.bindWithEvent(this);
+    this.cancelButton_clickHandler = this.cancelButton_clickHandler.bindWithEvent(this);
+    //window.open('','','width=200,height=200',true); //false);
+    window.open('','','fullscreen=yes',true); //false);
+    /*try {
+      switch (type) {
         case 'documentum': alert("Scrambler/documentum");
         break;
         case 'drupal': alert("Scrambler/drupal");
@@ -23492,7 +23574,91 @@ var Scrambler = new Class({
       }
     } catch(error) {
       Utils.alert("Scrambler/constructor Error: "+error.message,Utils.LOG_LEVEL_ERROR);
+    }*/
+  },
+  initializeChildren: function() {
+    this.typeSelect = $(Scrambler.TYPE_SELECT_ID);
+    this.url = $(Scrambler.URL_ID);
+    this.okButton = $(Scrambler.OK_BUTTON_ID);
+    this.cancelButton = $(Scrambler.CANCEL_BUTTON_ID);
+  },
+  childrenInitialized: function() {
+    this.typeSelect.addEvent(SjamayeeFacade.CHANGE, this.typeSelect_changeHandler);
+    this.okButton.addEvent(SjamayeeFacade.CLICK, this.okButton_clickHandler);
+    this.cancelButton.addEvent(SjamayeeFacade.CLICK, this.cancelButton_clickHandler);
+  },
+  typeSelect_changeHandler: function()  {
+    //this.fireEvent(Scrambler.TYPE_SELECT_CHANGE);
+    try {
+      switch (this.typeSelect.value) {
+        case 'Documentum': alert("Scrambler/documentum");
+        break;
+        case 'Drupal': alert("Scrambler/drupal");
+        break;
+        case 'Facebook': alert("Scrambler/facebook");
+        break;
+        case 'Git': alert("Scrambler/git");
+        break;
+        case 'Google': alert("Scrambler/google");
+        break;
+        case 'Linux': alert("Scrambler/linux");
+        break;
+        case 'Mysql': alert("Scrambler/mysql");
+        break;
+        case 'Opensocial': alert("Scrambler/opensocial");
+        break;
+        case 'Oracle': alert("Scrambler/oracle");
+        break;
+        case 'Osx': alert("Scrambler/osx");
+        break;
+        case 'Salesforce': alert("Scrambler/salesforce");
+        break;
+        case 'Sap': alert("Scrambler/sap");
+        break;
+        case 'TEST': alert("Scrambler/TEST");
+        break;
+        case 'Twitter': alert("Scrambler/twitter");
+        break;
+        case 'Unix': alert("Scrambler/unix");
+        break;
+        case 'Wikipedia': alert("Scrambler/wikipedia");
+        break;
+        case 'Youtube': alert("Scrambler/youtube");
+        break;
+      }
+    } catch(error) {
+      Utils.alert("Scrambler/constructor Error: "+error.message,Utils.LOG_LEVEL_ERROR);
     }
-  }
+  },
+  okButton_clickHandler: function()     { this.fireEvent(Scrambler.OK_BUTTON_CLICK); },  
+  cancelButton_clickHandler: function() { this.fireEvent(Scrambler.CANCEL_BUTTON_CLICK); },  
 });
 Scrambler.ID = "SjamayeeScrambler";
+Scrambler.TYPE_SELECT_ID = "scramblerTypeSelect";
+Scrambler.TYPE_SELECT_LABEL = "Type";
+Scrambler.TYPE_SELECT_CHANGE = Scrambler.TYPE_SELECT_ID+"Change";
+Scrambler.TYPE_DOCUMENTUM = "Documentum";
+Scrambler.TYPE_DRUPAL = "Drupal";
+Scrambler.TYPE_FACEBOOK = "Facebook";
+Scrambler.TYPE_GIT = "Git";
+Scrambler.TYPE_GOOGLE = "Google";
+Scrambler.TYPE_LINUX = "Linux";
+Scrambler.TYPE_MYSQL = "Mysql";
+Scrambler.TYPE_OPENSOCIAL = "Opensocial";
+Scrambler.TYPE_ORACLE = "Oracle";
+Scrambler.TYPE_OSX = "Osx";
+Scrambler.TYPE_SALESFORCE = "Salesforce";
+Scrambler.TYPE_SAP = "Sap";
+Scrambler.TYPE_TEST = "TEST";
+Scrambler.TYPE_TWITTER = "Twitter";
+Scrambler.TYPE_UNIX = "Unix";
+Scrambler.TYPE_WIKIPEDIA = "Wikipedia";
+Scrambler.TYPE_YOUTUBE = "Youtube";
+Scrambler.URL_ID = "scramblerUrl";
+Scrambler.URL_LABEL = "Url";
+Scrambler.OK_BUTTON_ID = "scramblerOkButton";
+Scrambler.OK_BUTTON_LABEL = "Ok";
+Scrambler.OK_BUTTON_CLICK = Scrambler.OK_BUTTON_ID+"Click";
+Scrambler.CANCEL_BUTTON_ID = "scramblerCancelButton";
+Scrambler.CANCEL_BUTTON_LABEL = "Cancel";
+Scrambler.CANCEL_BUTTON_CLICK = Scrambler.CANCEL_BUTTON_ID+"Click";
