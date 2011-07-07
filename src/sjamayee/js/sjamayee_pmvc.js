@@ -802,6 +802,9 @@ SjamayeeFacade.JS_SJAMAYEE_BASE = "js/sjamayee_base.js";
 SjamayeeFacade.JS_SJAMAYEE_GRID = "js/sjamayee_grid.js";
 SjamayeeFacade.JS_SJAMAYEE_PMVC = "js/sjamayee_pmvc.js";
 
+//Scrambler
+SjamayeeFacade.SCRAMBLER_SHOW = "scramblerShow";
+
 SjamayeeFacade.getInstance = function() {
   if (Facade.instance === undefined)  {
     //The classFactory is used as a descriptor for the ApplicatonFacade
@@ -8864,7 +8867,7 @@ var DetailNTD = new Class({
 //DetailNTD.CLASS_ID = "detailNTD";
 DetailNTD.HEADER_CLASS_ID = "detailNTDHeader";
 DetailNTD.FIELD_CLASS_ID = "detailNTDField";
-DetailNTD.FIELD_LABEL__CLASS_ID = "detailNTDFieldLabel";
+DetailNTD.FIELD_LABEL_CLASS_ID = "detailNTDFieldLabel";
 DetailNTD.NAME_FIELD_CLASS_ID = "detailNTDTextFieldName";
 DetailNTD.TYPE_FIELD_CLASS_ID = "detailNTDTextFieldType";
 DetailNTD.DESC_FIELD_CLASS_ID = "detailNTDTextFieldDescription";
@@ -8898,23 +8901,23 @@ var ObjectNTD = new Class({
   initialize: function(name,properties) {
     var html = '<div id="'+name+ObjectNTD.HEADER_ID+'" class="'+DetailNTD.HEADER_CLASS_ID+" "+this.getClassName()+'">'+ObjectNTD.HEADER_VALUE+'</div>'+ //alert(\'objectNTD/header!!!\') /*SjamayeeFacade.getInstance().hello()*/ /* onmousedown="$(\'dataObjects_splitter\').mousedown()"*/
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
-               ' <label for="'+name+DetailNTD.NAME_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.NAME_FIELD_LABEL+'</label>'+
+               ' <label for="'+name+DetailNTD.NAME_ID+'" class="'+DetailNTD.FIELD_LABEL_CLASS_ID+'">'+DetailNTD.NAME_FIELD_LABEL+'</label>'+
                ' <div id="'+name+DetailNTD.NAME_ID+'" class="'+DetailNTD.NAME_FIELD_CLASS_ID+'">Sjamayee is in the house! The time is now!</div>'+
                '</div><br/>'+
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
-               ' <label for="'+name+DetailNTD.TYPE_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.TYPE_FIELD_LABEL+'</label>'+
+               ' <label for="'+name+DetailNTD.TYPE_ID+'" class="'+DetailNTD.FIELD_LABEL_CLASS_ID+'">'+DetailNTD.TYPE_FIELD_LABEL+'</label>'+
                ' <div id="'+name+DetailNTD.TYPE_ID+'" class="'+DetailNTD.TYPE_FIELD_CLASS_ID+'">Lead</div>'+
                '</div><br/>'+
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
-               ' <label for="'+name+DetailNTD.DESC_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.DESC_FIELD_LABEL+'</label>'+
+               ' <label for="'+name+DetailNTD.DESC_ID+'" class="'+DetailNTD.FIELD_LABEL_CLASS_ID+'">'+DetailNTD.DESC_FIELD_LABEL+'</label>'+
                ' <div id="'+name+DetailNTD.DESC_ID+'" class="'+DetailNTD.DESC_FIELD_CLASS_ID+'" onoverflowchanged="alert(\'*** OveRFloW ***\')">Sjamayee is now *** Object *** jssjsj dldldld mfmfmfmf kekeke mdmdmdm kqkqkqk l lsslsl 123456790 14226 djdjjd jkfkfkfkf skksks lqlqlql zyzzyu hdhdhd jfff jfjjf fjfjfjf vcvc dsds 123</div>'+
                '</div>'+
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
-               ' <label for="'+name+DetailNTD.CBY_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.CBY_FIELD_LABEL+'</label>'+
+               ' <label for="'+name+DetailNTD.CBY_ID+'" class="'+DetailNTD.FIELD_LABEL_CLASS_ID+'">'+DetailNTD.CBY_FIELD_LABEL+'</label>'+
                ' <div id="'+name+DetailNTD.CBY_ID+'" class="'+DetailNTD.CBY_FIELD_CLASS_ID+'">Jan Creemers 2011-10-12 13:54:07</div>'+
                '</div>'+
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
-               ' <label for="'+name+DetailNTD.MBY_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.MBY_FIELD_LABEL+'</label>'+
+               ' <label for="'+name+DetailNTD.MBY_ID+'" class="'+DetailNTD.FIELD_LABEL_CLASS_ID+'">'+DetailNTD.MBY_FIELD_LABEL+'</label>'+
                ' <div id="'+name+DetailNTD.MBY_ID+'" class="'+DetailNTD.MBY_FIELD_CLASS_ID+'">Alma VandenBroeck 2011-10-17 23:14:12</div>'+
                '</div><br/>'+
                '<div id="'+DetailNTD.BUTTONS_ID+'" class="'+DetailNTD.BUTTONS_CLASS_ID+'">'+
@@ -9068,23 +9071,23 @@ var ParentNTD = new Class({
   initialize: function(name,properties) {
     var html = '<div id="'+name+ParentNTD.HEADER_ID+'" class="'+DetailNTD.HEADER_CLASS_ID+" "+this.getClassName()+'">'+ParentNTD.HEADER_VALUE+'</div>'+ //alert(\'parentNTD/header!!!\') // onmousedown="SjamayeeFacade.getInstance().hello()"
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
-               ' <label for="'+name+DetailNTD.NAME_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.NAME_FIELD_LABEL+'</label>'+
+               ' <label for="'+name+DetailNTD.NAME_ID+'" class="'+DetailNTD.FIELD_LABEL_CLASS_ID+'">'+DetailNTD.NAME_FIELD_LABEL+'</label>'+
                ' <div id="'+name+DetailNTD.NAME_ID+'" class="'+DetailNTD.NAME_FIELD_CLASS_ID+'">Parent *** Sjamayee *** Parent 1234567890 123456789012 345678901234 567890ABC DEFGHIJKLMNO</div>'+
                '</div><br/>'+
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
-               ' <label for="'+name+DetailNTD.TYPE_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.TYPE_FIELD_LABEL+'</label>'+
+               ' <label for="'+name+DetailNTD.TYPE_ID+'" class="'+DetailNTD.FIELD_LABEL_CLASS_ID+'">'+DetailNTD.TYPE_FIELD_LABEL+'</label>'+
                ' <div id="'+name+DetailNTD.TYPE_ID+'" class="'+DetailNTD.TYPE_FIELD_CLASS_ID+'">Opportunity</div>'+
                '</div><br/>'+
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
-               ' <label for="'+name+DetailNTD.DESC_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.DESC_FIELD_LABEL+'</label>'+
+               ' <label for="'+name+DetailNTD.DESC_ID+'" class="'+DetailNTD.FIELD_LABEL_CLASS_ID+'">'+DetailNTD.DESC_FIELD_LABEL+'</label>'+
                ' <div id="'+name+DetailNTD.DESC_ID+'" class="'+DetailNTD.DESC_FIELD_CLASS_ID+'">Sjamayee is now *** Parent ***jssjsj dldldld mfmfmfmf kek 111 22 33 44 55 hqhhshshssh slsl 123456790 14226  aez hdhd mqmmq qlqlql zyzzyu hdhdhd jfff jfjjf fjfjfjf vcvc dsds 123</div>'+
                '</div>'+
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
-               ' <label for="'+name+DetailNTD.CBY_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.CBY_FIELD_LABEL+'</label>'+
+               ' <label for="'+name+DetailNTD.CBY_ID+'" class="'+DetailNTD.FIELD_LABEL_CLASS_ID+'">'+DetailNTD.CBY_FIELD_LABEL+'</label>'+
                ' <div id="'+name+DetailNTD.CBY_ID+'" class="'+DetailNTD.CBY_FIELD_CLASS_ID+'">Jan Creemers 2011-10-12 13:54:07</div>'+
                '</div>'+
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
-               ' <label for="'+name+DetailNTD.MBY_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.MBY_FIELD_LABEL+'</label>'+
+               ' <label for="'+name+DetailNTD.MBY_ID+'" class="'+DetailNTD.FIELD_LABEL_CLASS_ID+'">'+DetailNTD.MBY_FIELD_LABEL+'</label>'+
                ' <div id="'+name+DetailNTD.CBY_ID+'" class="'+DetailNTD.CBY_FIELD_CLASS_ID+'">Bill Gates 2010-11-15 14:14:17</div>'+
                '</div><br/>'+
                '<div id="'+name+DetailNTD.BUTTONS_ID+'" class="'+DetailNTD.BUTTONS_CLASS_ID+'">'+
@@ -9235,23 +9238,23 @@ var ChildNTD = new Class({
   initialize: function(name,properties) {
     var html = '<div id="'+name+ChildNTD.HEADER_ID+'" class="'+DetailNTD.HEADER_CLASS_ID+" "+this.getClassName()+'">'+ChildNTD.HEADER_VALUE+'</div>'+ //alert(\'childNTD/header!!!\') // onmousedown="SjamayeeFacade.getInstance().hello()"
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
-               ' <label for="'+name+DetailNTD.NAME_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.NAME_FIELD_LABEL+'</label>'+
+               ' <label for="'+name+DetailNTD.NAME_ID+'" class="'+DetailNTD.FIELD_LABEL_CLASS_ID+'">'+DetailNTD.NAME_FIELD_LABEL+'</label>'+
                ' <div id="'+name+DetailNTD.NAME_ID+'" class="'+DetailNTD.NAME_FIELD_CLASS_ID+'">Child *** Sjamayee *** Sjamayee *** Child 123456 78 90123 45 6789 012345 678 90</div>'+
                '</div><br/>'+
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
-               ' <label for="'+name+DetailNTD.TYPE_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.TYPE_FIELD_LABEL+'</label>'+
+               ' <label for="'+name+DetailNTD.TYPE_ID+'" class="'+DetailNTD.FIELD_LABEL_CLASS_ID+'">'+DetailNTD.TYPE_FIELD_LABEL+'</label>'+
                ' <div id="'+name+DetailNTD.TYPE_ID+'" class="'+DetailNTD.TYPE_FIELD_CLASS_ID+'">Account</div>'+
                '</div><br/>'+
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
-               ' <label for="'+name+DetailNTD.DESC_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.DESC_FIELD_LABEL+'</label>'+
+               ' <label for="'+name+DetailNTD.DESC_ID+'" class="'+DetailNTD.FIELD_LABEL_CLASS_ID+'">'+DetailNTD.DESC_FIELD_LABEL+'</label>'+
                ' <div id="'+name+DetailNTD.DESC_ID+'" class="'+DetailNTD.DESC_FIELD_CLASS_ID+'">Sjamayee is now *** CHILD *** CHILD *** CHILD *** jssjsj dldldld mfmfmfmf kekeke mdmdmdm kqkqkqk l lsslsl 123456790 14226 djdjjd jkfkfk</div>'+
                '</div>'+
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
-               ' <label for="'+name+DetailNTD.CBY_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.CBY_FIELD_LABEL+'</label>'+
+               ' <label for="'+name+DetailNTD.CBY_ID+'" class="'+DetailNTD.FIELD_LABEL_CLASS_ID+'">'+DetailNTD.CBY_FIELD_LABEL+'</label>'+
                ' <div id="'+name+DetailNTD.CBY_ID+'" class="'+DetailNTD.CBY_FIELD_CLASS_ID+'">Jan Creemers 2011-10-12 13:54:07</div>'+
                '</div>'+
                '<div class="'+DetailNTD.FIELD_CLASS_ID+'">'+
-               ' <label for="'+name+DetailNTD.MBY_ID+'" class="'+DetailNTD.FIELD_LABEL__CLASS_ID+'">'+DetailNTD.MBY_FIELD_LABEL+'</label>'+
+               ' <label for="'+name+DetailNTD.MBY_ID+'" class="'+DetailNTD.FIELD_LABEL_CLASS_ID+'">'+DetailNTD.MBY_FIELD_LABEL+'</label>'+
                ' <div id="'+name+DetailNTD.CBY_ID+'" class="'+DetailNTD.MBY_FIELD_CLASS_ID+'">Steve Jobs 2009-02-10 03:14:27</div>'+
                '</div><br/>'+
                '<div id="'+DetailNTD.BUTTONS_ID+'" class="'+DetailNTD.BUTTONS_CLASS_ID+'">'+
@@ -9513,8 +9516,12 @@ var HeaderMediator = new Class({
       break;
       case SjamayeeFacade.SETTING_CLICK:
       //TEST - REMOVE !!! ///////////////////////////////
-      alert("HeaderMediator/TEST - settingButton/click");
-      var scrambler = new Scrambler();
+      //alert("HeaderMediator/TEST - settingButton/click");
+
+      var url_scrambler = document.URL.replace("sjamayee\.html","scrambler.html");
+      window.open(url_scrambler,'scrambler','',false);      
+      //var url_settings = document.URL.replace("sjamayee\.html","settings.html");
+      //window.open(url_settings,'settings','',false);
       ///////////////////////////////////////////////////
       break;
       case SjamayeeFacade.HELP_CLICK:
@@ -23466,13 +23473,13 @@ DataObjectsListMediator.ID = "DataObjectsListMediator";
 //////////////////////////////////////////////////////////////////////////
 //Class: Scrambler
 var Scrambler = new Class({
-  Extends: SjamayeeUIComponent,
+  //Extends: SjamayeeUIComponent,
   initialize: function() {
     this.typeSelect = null;
     this.url = null;
     this.okButton = null;
     this.cancelButton = null;
-    var html = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">'+
+    var html = /*'<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">'+
                '<html>'+
                '<head>'+
                '<title>Sjamayee - Scrambler</title>'+
@@ -23485,10 +23492,10 @@ var Scrambler = new Class({
                '<script type="text/javascript" src="../../../'+SjamayeeFacade.JS_MOOTOOLS_MORE+'"></script>'+
                '<script type="text/javascript" src="../../../'+SjamayeeFacade.JS_PUREMVC+'"></script>'+
                '<script type="text/javascript" src="../'+SjamayeeFacade.JS_SJAMAYEE_BASE+'"></script>'+
-               '<!-- script type="text/javascript" src="../'+SjamayeeFacade.JS_SJAMAYEE_GRID+'"></script -->'+
+               '<script type="text/javascript" src="../'+SjamayeeFacade.JS_SJAMAYEE_GRID+'"></script>'+
                '<script type="text/javascript" src="../'+SjamayeeFacade.JS_SJAMAYEE_PMVC+'"></script>'+
              	 '<style type="text/css" media="all">'+
-             	 ' html, body { margin:0; padding:0;	overflow:hidden; }'+
+             	 ' html, body { margin:0; padding:0; overflow:hidden; }'+
              	 ' #header { padding: 1em; }'+
              	 ' div { border:none; }'+
              	 '</style>'+
@@ -23497,9 +23504,9 @@ var Scrambler = new Class({
                ' function init() { alert("The DOM is ready!"); }'+
                '</script>'+
                '</head>'+
-               '<body>'+
+               '<body>'+*/
                '<div style="margin:20px 50px 20px 50px;border:none;">'+
-               '<label for="'+Scrambler.TYPE_SELECT_ID+'">'+Scrambler.TYPE_SELECT_LABEL+'</label>'+
+               '<label for="'+Scrambler.TYPE_SELECT_ID+'">'+Scrambler.TYPE_SELECT_LABEL+'XXXXYY </label>'+
                '<select id="'+Scrambler.TYPE_SELECT_ID+'">'+
                '<option>'+Scrambler.TYPE_DOCUMENTUM+'</option>'+
                '<option>'+Scrambler.TYPE_DRUPAL+'</option>'+
@@ -23518,23 +23525,45 @@ var Scrambler = new Class({
                '<option>'+Scrambler.TYPE_UNIX+'</option>'+
                '<option>'+Scrambler.TYPE_WIKIPEDIA+'</option>'+
                '<option>'+Scrambler.TYPE_YOUTUBE+'</option>'+
-               '</select>'+   
+               '</select>'+
+               '<br/><br/>'+
                '<label for="'+Scrambler.URL_ID+'">'+Scrambler.URL_LABEL+'</label>'+
                '<input type="text" id="'+Scrambler.URL_ID+'" value=""/>'+
+               '<br/><br/>'+
                '<button id="'+Scrambler.OK_BUTTON_ID+'" title="'+Scrambler.OK_BUTTON_TITLE+'">'+Scrambler.OK_BUTTON_LABEL+'</button>'+
                '<button id="'+Scrambler.CANCEL_BUTTON_ID+'" title="'+Scrambler.CANCEL_BUTTON_TITLE+'">'+Scrambler.CANCEL_BUTTON_LABEL+'</button>'+
-               '</div>';
+               '</div>';/*
                '</body>'+
                '<script type="text/javascript">'+
                'Utils.disableSelection(document.body); //disable text selection on entire body of page'+
                '</script>'+
-               '</html>';
-    this.parent(Scrambler.ID,{html:html});    
+               '</html>';*/
+    //this.parent(Scrambler.ID,{html:html});
     this.typeSelect_changeHandler = this.typeSelect_changeHandler.bindWithEvent(this);
     this.okButton_clickHandler = this.okButton_clickHandler.bindWithEvent(this);
     this.cancelButton_clickHandler = this.cancelButton_clickHandler.bindWithEvent(this);
     //window.open('','','width=200,height=200',true); //false);
-    window.open('','','fullscreen=yes',true); //false);
+    //window.open('','_self','fullscreen=yes',true); //false);
+    //var scramberWindow = window.open('','','fullscreen=yes',true); //false);
+    //scramblerWindow.document.write(html);
+    //scramblerWindow.focus();
+
+    //var scramblerWindow = window.open('','Scrambler','fullscreen=yes',false); //true); //false);
+    //this.window = window.open('./scrambler.html','Scrambler','left=200,right=200,fullscreen=no',false); //true); //false);
+    //this.window.document.write(html);
+
+    //window.location.assign('./scrambler.html');
+    //this.window = window.open('http://www.google.be','Scrambler','',false); //true); //false);
+    //x = window.open('http://www.google.be','Scrambler','',false); //true); //false);
+    x = window.open('./scrambler.html','Scrambler','',false); //true); //false);
+    x.document.write(html);
+    
+    //this.window.location.assign('./scrambler.html');
+    //document.open("text/html","replace");
+    //this.window.document.write(html);
+    
+    //x.document.write('<html><head><title>AHAHAHHAH</title></head></html>');
+
     /*try {
       switch (type) {
         case 'documentum': alert("Scrambler/documentum");
@@ -23630,12 +23659,23 @@ var Scrambler = new Class({
       Utils.alert("Scrambler/constructor Error: "+error.message,Utils.LOG_LEVEL_ERROR);
     }
   },
-  okButton_clickHandler: function()     { this.fireEvent(Scrambler.OK_BUTTON_CLICK); },  
-  cancelButton_clickHandler: function() { this.fireEvent(Scrambler.CANCEL_BUTTON_CLICK); },  
+  okButton_clickHandler: function() {
+    alert("Scrambler/okButton - click");
+    this.fireEvent(Scrambler.OK_BUTTON_CLICK);
+  },
+  cancelButton_clickHandler: function() {
+    alert("Scrambler/cancelButton - click");
+    this.fireEvent(Scrambler.CANCEL_BUTTON_CLICK);
+    //document = this.document;
+    window.close();
+    //window.location.replace(this.location);    
+    //window.document.reload(); //write(this.document);
+    //window.location.reload(); //write(this.document);
+  },  
 });
 Scrambler.ID = "SjamayeeScrambler";
 Scrambler.TYPE_SELECT_ID = "scramblerTypeSelect";
-Scrambler.TYPE_SELECT_LABEL = "Type";
+Scrambler.TYPE_SELECT_LABEL = "Type ";
 Scrambler.TYPE_SELECT_CHANGE = Scrambler.TYPE_SELECT_ID+"Change";
 Scrambler.TYPE_DOCUMENTUM = "Documentum";
 Scrambler.TYPE_DRUPAL = "Drupal";
@@ -23655,7 +23695,7 @@ Scrambler.TYPE_UNIX = "Unix";
 Scrambler.TYPE_WIKIPEDIA = "Wikipedia";
 Scrambler.TYPE_YOUTUBE = "Youtube";
 Scrambler.URL_ID = "scramblerUrl";
-Scrambler.URL_LABEL = "Url";
+Scrambler.URL_LABEL = "Url ";
 Scrambler.OK_BUTTON_ID = "scramblerOkButton";
 Scrambler.OK_BUTTON_LABEL = "Ok";
 Scrambler.OK_BUTTON_CLICK = Scrambler.OK_BUTTON_ID+"Click";

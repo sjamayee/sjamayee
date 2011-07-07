@@ -1,0 +1,97 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+ <head>
+  <title>Settings</title>
+	<link rel="stylesheet" type="text/css" href="../css/sjamayee.css"/>
+	<link rel="stylesheet" type="text/css" href="../css/settings.css"/>
+  <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.1.0/build/cssfonts/fonts-min.css"/>
+  <script type="text/javascript" src="../../../src/externs/js/yui_min.js"></script>
+  <script type="text/javascript" src="../../../src/externs/js/jsmin.js"></script>
+  <script type="text/javascript" src="../../../src/externs/js/json.js"></script>
+  <script type="text/javascript" src="../../../src/externs/js/mootools_1_2_5_core_nc.js"></script>
+  <script type="text/javascript" src="../../../src/externs/js/mootools_1_2_4_4_more_nc.js"></script>
+  <script type="text/javascript" src="../../../src/externs/js/pureMVC_2_0_Mini.js"></script>
+  <script type="text/javascript" src="../js/sjamayee_base.js"></script>
+  <script type="text/javascript" src="../js/sjamayee_grid.js"></script>
+  <script type="text/javascript" src="../js/sjamayee_pmvc.js"></script>
+  <script type="text/javascript" src="../js/sjamayee_settings.js"></script>
+  <style type="text/css" media="all">
+   html, body { margin:0; padding:0; overflow:hidden; }
+   #header { padding: 1em; }
+   div { border:none; }
+  </style>
+  <script type="text/javascript">
+   window.addEvent("domready", function() { init(); });
+   function init()    {
+     //alert("Settings started!");
+     var settings = new Settings(); //SettingsForm();
+     settings.initializeChildren();
+     settings.childrenInitialized();
+     settings.initializationComplete();        
+     //alert("Settings created!");
+   }
+  </script>
+ </head>
+ <body>
+  <div style="margin:50px 50px 20px 50px;border:none;">
+   <div id="settingsForm" style="width:100%;height:100%;overflow:hidden;">
+		<div style="width:100%;height:200px;display:block;">
+		 <div style="width:100%;height:26px;">
+			<div style="position:relative;float:left;align:left;width:100%;height:100%;background-color:lightgray;">
+			 <div class="select-all" style="position:relative;float:left;align:left;width:10%;vertical-align:middle;">
+				<input type="checkbox" class="form-checkbox" title="Select all rows in this table">
+			 </div>
+			 <div style="position:relative;float:left;align:left;width:10%;">
+			  <a href="/sjamayee/admin/content?sort=asc&amp;order=Title" title="sort by Title" class="active">Title</a>
+			 </div>
+			 <div class="active" style="position:relative;float:left;align:left;width:10%;">
+				<a href="/sjamayee/admin/content?sort=asc&amp;order=Type" title="sort by Type" class="active">Type<img typeof="foaf:Image" src="http://localhost/sjamayee/misc/arrow-asc.png" alt="sort ascending" title="sort ascending"></a>
+			 </div>
+			 <div style="position:relative;float:left;align:left;width:10%;">Author</div>
+			 <div style="position:relative;float:left;align:left;width:10%;"><a href="/sjamayee/admin/content?sort=asc&amp;order=Status" title="sort by Status" class="active">Status</a></div>
+			<div style="position:relative;float:left;align:left;width:10%;"><a href="/sjamayee/admin/content?sort=asc&amp;order=Updated" title="sort by Updated" class="active">Updated</a></div>
+			<div style="position:relative;float:left;align:left;width:10%;vertical-align:bottom;">Operations</div>
+		 </div>
+		</div>
+		<!-- <tbody>
+		 <tr class="odd"><td><div class="form-item form-type-checkbox form-item-nodes-3">
+		  <label class="element-invisible" for="edit-nodes-3">Update BABAB </label>
+		 <input type="checkbox" id="edit-nodes-3" name="nodes[3]" value="3" class="form-checkbox">
+		</div>
+		</td><td><a href="/sjamayee/node/3">BABAB</a> </td><td>Recipe</td><td><a href="/sjamayee/user/1" title="View user profile." class="username" xml:lang="" about="/sjamayee/user/1" typeof="sioc:UserAccount" property="foaf:name">admin</a></td><td>published</td><td>02/08/2011 - 21:54</td><td><ul class="links inline"><li class="edit first"><a href="/sjamayee/node/3/edit?destination=admin/content%3Fsort%3Ddesc%26order%3DType">edit</a></li>
+		<li class="delete last"><a href="/sjamayee/node/3/delete?destination=admin/content%3Fsort%3Ddesc%26order%3DType">delete</a></li>
+		</ul></td> </tr>
+		 <tr class="even"><td><div class="form-item form-type-checkbox form-item-nodes-5">
+		  <label class="element-invisible" for="edit-nodes-5">Update Pizza </label>
+		 <input type="checkbox" id="edit-nodes-5" name="nodes[5]" value="5" class="form-checkbox">
+		</div>
+		</td><td><a href="/sjamayee/node/5">Pizza</a> </td><td>Recipe</td><td><a href="/sjamayee/user/1" title="View user profile." class="username" xml:lang="" about="/sjamayee/user/1" typeof="sioc:UserAccount" property="foaf:name">admin</a></td><td>published</td><td>02/09/2011 - 17:13</td><td><ul class="links inline"><li class="edit first"><a href="/sjamayee/node/5/edit?destination=admin/content%3Fsort%3Ddesc%26order%3DType">edit</a></li>
+		<li class="delete last"><a href="/sjamayee/node/5/delete?destination=admin/content%3Fsort%3Ddesc%26order%3DType">delete</a></li>
+		</ul></td> </tr>
+		</tbody> -->
+		<table class="sticky-enabled table-select-processed tableheader-processed sticky-table">
+		 <thead><tr><th class="select-all"><input type="checkbox" class="form-checkbox" title="Select all rows in this table"></th><th><a href="/sjamayee/admin/content?sort=asc&amp;order=Title" title="sort by Title" class="active">Title</a></th><th class="active"><a href="/sjamayee/admin/content?sort=asc&amp;order=Type" title="sort by Type" class="active">Type<img typeof="foaf:Image" src="http://localhost/sjamayee/misc/arrow-asc.png" alt="sort ascending" title="sort ascending"></a></th><th>Author</th><th><a href="/sjamayee/admin/content?sort=asc&amp;order=Status" title="sort by Status" class="active">Status</a></th><th><a href="/sjamayee/admin/content?sort=asc&amp;order=Updated" title="sort by Updated" class="active">Updated</a></th><th>Operations</th> </tr></thead>
+		<tbody>
+		 <tr class="odd"><td><div class="form-item form-type-checkbox form-item-nodes-3">
+		  <label class="element-invisible" for="edit-nodes-3">Update BABAB </label>
+		 <input type="checkbox" id="edit-nodes-3" name="nodes[3]" value="3" class="form-checkbox">
+		</div>
+		</td><td><a href="/sjamayee/node/3">BABAB</a> </td><td>Recipe</td><td><a href="/sjamayee/user/1" title="View user profile." class="username" xml:lang="" about="/sjamayee/user/1" typeof="sioc:UserAccount" property="foaf:name">admin</a></td><td>published</td><td>02/08/2011 - 21:54</td><td><ul class="links inline"><li class="edit first"><a href="/sjamayee/node/3/edit?destination=admin/content%3Fsort%3Ddesc%26order%3DType">edit</a></li>
+		<li class="delete last"><a href="/sjamayee/node/3/delete?destination=admin/content%3Fsort%3Ddesc%26order%3DType">delete</a></li>
+		</ul></td> </tr>
+		 <tr class="even"><td><div class="form-item form-type-checkbox form-item-nodes-5">
+		  <label class="element-invisible" for="edit-nodes-5">Update Pizza </label>
+		 <input type="checkbox" id="edit-nodes-5" name="nodes[5]" value="5" class="form-checkbox">
+		</div>
+		</td><td><a href="/sjamayee/node/5">Pizza</a> </td><td>Recipe</td><td><a href="/sjamayee/user/1" title="View user profile." class="username" xml:lang="" about="/sjamayee/user/1" typeof="sioc:UserAccount" property="foaf:name">admin</a></td><td>published</td><td>02/09/2011 - 17:13</td><td><ul class="links inline"><li class="edit first"><a href="/sjamayee/node/5/edit?destination=admin/content%3Fsort%3Ddesc%26order%3DType">edit</a></li>
+		<li class="delete last"><a href="/sjamayee/node/5/delete?destination=admin/content%3Fsort%3Ddesc%26order%3DType">delete</a></li>
+		</ul></td> </tr>
+		</tbody>
+		</table>
+  </div>
+  </div>
+ </body>
+ <script type="text/javascript">
+  Utils.disableSelection(document.body); //disable text selection on entire body of page
+ </script>
+</html>
