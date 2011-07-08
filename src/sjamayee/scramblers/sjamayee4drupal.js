@@ -1,3 +1,5 @@
+// $Id$
+
 //Class: DrupalScrambler
 var DrupalScrambler = new Class({
   Extends: Scrambler,
