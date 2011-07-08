@@ -10,14 +10,15 @@ var ScramblerForm = new Class({
     this.appName = "Scrambler";
     this.typeSelect = null;
     this.url = null;
+    this.objectsLimit = null;
+    this.referencesLimit = null;
+    this.attributesLimit = null;
     this.clearCheckBox = null;
     this.okButton = null;
     this.cancelButton = null;
     var html = '<table style="height:90%;width:100%;position:relative;float:left;align:left;border:none;">'+
                '<tr style="height:40px;">'+
-               '<td style="width:5%;">'+
-               ScramblerForm.TYPE_SELECT_LABEL+
-               '</td>'+
+               '<td style="width:5%;">'+ScramblerForm.TYPE_SELECT_LABEL+'</td>'+
                '<td style="width:95%;">'+
                '<select id="'+ScramblerForm.TYPE_SELECT_ID+'">'+
                '<option>'+ScramblerForm.TYPE_DOCUMENTUM+'</option>'+
@@ -41,25 +42,31 @@ var ScramblerForm = new Class({
                '</td>'+
                '</tr>'+
                '<tr style="height:40px;">'+
-               '<td>'+
-               ScramblerForm.URL_LABEL+
-               '</td>'+
-               '<td>'+
-               '<input type="text" id="'+ScramblerForm.URL_ID+'" value=""/>'+
-               '</td>'+
+               '<td>'+ScramblerForm.URL_LABEL+'</td>'+
+               '<td>'+'<input type="text" id="'+ScramblerForm.URL_ID+'" value=""/>'+'</td>'+
+               '</tr>'+
+               '<tr style="height:40px;">'+'<td>'+ScramblerForm.LIMITS_LABEL+'</td>'+
+               '<td>&nbsp;</td>'+
                '</tr>'+
                '<tr style="height:40px;">'+
-               '<td>'+
-               ScramblerForm.CLEAR_CHECKBOX_LABEL+
-               '</td>'+
-               '<td>'+
-               '<input type="checkbox" id="'+ScramblerForm.CLEAR_CHECKBOX_ID+'" name="'+ScramblerForm.CLEAR_CHECKBOX_ID+'" value="true"/>'+
-               '</td>'+
+               '<td>'+ScramblerForm.OBJECTS_LIMIT_LABEL+'</td>'+
+               '<td>'+'<input type="text" id="'+ScramblerForm.OBJECTS_LIMIT_ID+'" value="" maxlength="6"/>'+'</td>'+
+               '</tr>'+
+               '<tr style="height:40px;">'+
+               '<td>'+ScramblerForm.REFERENCES_LIMIT_LABEL+'</td>'+
+               '<td>'+'<input type="text" id="'+ScramblerForm.REFERENCES_LIMIT_ID+'" value="" maxlength="6"/>'+'</td>'+
+               '</tr>'+
+               '<tr style="height:40px;">'+
+               '<td>'+ScramblerForm.ATTRIBUTES_LIMIT_LABEL+'</td>'+
+               '<td>'+'<input type="text" id="'+ScramblerForm.ATTRIBUTES_LIMIT_ID+'" value="" maxlength="4"/>'+'</td>'+
+               '</tr>'+
+               '<tr style="height:40px;">'+
+               '<td>'+ScramblerForm.CLEAR_CHECKBOX_LABEL+'</td>'+
+               '<td>'+'<input type="checkbox" id="'+ScramblerForm.CLEAR_CHECKBOX_ID+'" name="'+ScramblerForm.CLEAR_CHECKBOX_ID+'" value="true"/>'+'</td>'+
                '</tr>'+
                //'<tr style="height:20px;"><td>&nbsp;</td><td>&nbsp;</td></tr>'+
                '<tr style="height:40px;">'+
-               '<td>'+
-               '</td>'+
+               '<td>&nbsp;</td>'+
                '<td>'+
                '<button id="'+ScramblerForm.OK_BUTTON_ID+'" title="'+ScramblerForm.OK_BUTTON_TITLE+'">'+ScramblerForm.OK_BUTTON_LABEL+'</button>'+
                '<button id="'+ScramblerForm.CANCEL_BUTTON_ID+'" title="'+ScramblerForm.CANCEL_BUTTON_TITLE+'">'+ScramblerForm.CANCEL_BUTTON_LABEL+'</button>'+
@@ -75,6 +82,9 @@ var ScramblerForm = new Class({
   initializeChildren: function() {
     this.typeSelect = $(ScramblerForm.TYPE_SELECT_ID);
     this.url = $(ScramblerForm.URL_ID);
+    this.objectsLimit = $(ScramblerForm.OBJECTS_LIMIT_ID);
+    this.referencesLimit = $(ScramblerForm.REFERENCES_LIMIT_ID);
+    this.attributesLimit = $(ScramblerForm.ATTRIBUTES_LIMIT_ID);
     this.clearCheckBox = $(ScramblerForm.CLEAR_CHECKBOX_ID);
     this.okButton = $(ScramblerForm.OK_BUTTON_ID);
     this.cancelButton = $(ScramblerForm.CANCEL_BUTTON_ID);
@@ -167,6 +177,13 @@ ScramblerForm.TYPE_WIKIPEDIA = "Wikipedia";
 ScramblerForm.TYPE_YOUTUBE = "Youtube";
 ScramblerForm.URL_ID = "scramblerUrl";
 ScramblerForm.URL_LABEL = "Url:";
+ScramblerForm.LIMITS_LABEL = "Limits";
+ScramblerForm.OBJECTS_LIMIT_ID = "scramblerObjectsLimit";
+ScramblerForm.OBJECTS_LIMIT_LABEL = "Objects/Scramble:";
+ScramblerForm.REFERENCES_LIMIT_ID = "scramblerReferencesLimit";
+ScramblerForm.REFERENCES_LIMIT_LABEL = "References/Object:";
+ScramblerForm.ATTRIBUTES_LIMIT_ID = "scramblerAttributesLimit";
+ScramblerForm.ATTRIBUTES_LIMIT_LABEL = "Attributes/Object:";
 ScramblerForm.CLEAR_CHECKBOX_ID = "scramblerClear";
 ScramblerForm.CLEAR_CHECKBOX_LABEL = "Clear before:";
 ScramblerForm.OK_BUTTON_ID = "scramblerOkButton";
@@ -200,7 +217,13 @@ var ScramblerMediator = new Class({
     try {
       var scrambler = null;
       var form = this.getViewComponent();
-      var options = { url:form.url.value, clear:(form.clearCheckBox.checked?'TRUE':'FALSE') };
+      var options = {
+        url:form.url.value,
+        objectsLimit:form.objectsLimit.value,
+        referencesLimit:form.referencesLimit.value,
+        attributesLimit:form.attributesLimit.value,
+        clear:(form.clearCheckBox.checked?'TRUE':'FALSE')
+      };
       switch (form.typeSelect.value) {
         case 'Documentum':
         //alert("ScramblerMediator/documentum");
@@ -208,6 +231,9 @@ var ScramblerMediator = new Class({
         case 'Drupal':
         /*alert("ScramblerMediator/drupal"+
               "\nurl: "+form.url.value+
+              "\nobjectsLimit: "+form.objectsLimit.value+
+              "\nreferencesLimit: "+form.referencesLimit.value+
+              "\nattributesLimit: "+form.attributesLimit.value+
               "\nclear: "+(form.clearCheckBox.checked?'TRUE':'FALSE'));*/
         scrambler = new DrupalScrambler(options);
         scrambler.scramble();
@@ -282,6 +308,47 @@ var Scrambler = new Class({
   },
   scramble: function() {
     alert("Scrambler/scramble - not implemented.");
+    //Server side.
+    //Call WebService (evt.REST-service) and get json result.
+    
+    //Client side.
+    //Load datasets (types,texts,objects,references,attributes) from json result.
+    
+    //Link all model child references for one parent by previous and next id's.
+    this.linkModelReferences();
+    //Link all data child references for one parent by previous and next id's.
+    this.linkDataReferences();
+  },
+  linkReferences: function() {
+    alert("Scrambler/linkReferences");    
+  },
+  linkModelReferences: function() {
+    alert("Scrambler/linkModelReferences");
+    this.linkReferences();
+  },
+  linkDataReferences: function() {
+    alert("Scrambler/linkDataReferences");    
+    this.linkReferences();
   }
 });
 Scrambler.ID = "Scrambler";
+
+/*
+//Link References.
+//Link all model child references for one parent by previous and next id's.
+$model_objects = db_query('select * from {' . $O . '} where mei = NULL');
+foreach ($model_objects as $model_object) {
+  //$model_references = db_select($R, 'r')->condition('r.pei', $model_object->id, '=')->execute();
+  $model_references = db_query('select * from {' . $R . '} where pei = :pei', array(':pei' => $model_object->id));
+  //_sjamayee_link_references($R, $model_references);
+  _sjamayee_link_references($model_references);
+}
+//Link all data child references for one parent by previous and next id's.
+$data_objects = db_query('select * from {' . $O . '} where mei != NULL');
+foreach ($data_objects as $data_object) {
+  //$data_references = db_select($R, 'r')->condition('r.pei', $data_object->id, '=')->execute();
+  $data_references = db_query('select * from {' . $R . '} where pei = :pei', array(':pei' => $data_object->id));
+  //_sjamayee_link_references($R, $data_references);
+  _sjamayee_link_references($data_references);
+}
+*/
