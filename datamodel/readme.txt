@@ -25,7 +25,7 @@ Other fieldnames             Values
 id: primary_id
 cat: created_at              DateTime
 cbi: created_by_id           To Be Defined (whatever).
-exi: entended_entity_id   	 Entity extends Entity.
+exi: entended_entity_id      Entity extends Entity.
 mbi: modified_by_id          TBD
 mat: modified_at             TimeStamp
 par: paragraph
@@ -37,17 +37,17 @@ Sjamayee browser, explorer, composer make different use of this datamodel.
 The browser uses the minimal model:
 For browsing of data from different data sources.
 
-sequences				- sja_sequences
-types						- sja_types
-texts						- sja_texts
-data_entities		- sja_objects
-data_attributes	- sja_attributes
-data_relations	- sja_references
+sequences       - sja_sequences
+types           - sja_types
+texts           - sja_texts
+data_entities   - sja_objects
+data_attributes - sja_attributes
+data_relations  - sja_references
 
 The explorer and composer additionaly make use of the model_tables.
 
 model_entities  - sja_objects
-model_attrbutes	- sja_attributes
+model_attrbutes - sja_attributes
 model_relations - sja_references
 
 2. As an explorer:
