@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="demos/20110110_SFDC"/>
+	<classpathentry excluding="data/" kind="src" path="demos/demo1"/>
+	<classpathentry kind="src" path="demos/demo1/data"/>
+	<classpathentry kind="src" path="src/externs/js"/>
+	<classpathentry kind="src" path="src/sjamayee/js"/>
+	<classpathentry kind="src" path="src/sjamayee/js_old/base"/>
+	<classpathentry kind="src" path="src/sjamayee/js_old/grid"/>
+	<classpathentry excluding="model/vo/data/|bo/model/|model/vo/model/|model/vo/common/|controller/data/|controller/model/|bo/data/|view/mediator/data/|view/mediator/model/texts/|model/proxy/common/|view/components/model/texts/|view/mediator/model/|view/components/|view/components/model/|controller/model/texts/|controller/common/|view/components/common/|view/components/data/|model/proxy/model/|bo/common/|view/mediator/common/|model/proxy/data/" kind="src" path="src/sjamayee/js_old/pmvc"/>
+	<classpathentry kind="src" path="src/sjamayee/js_old/pmvc/bo/common"/>
+	<classpathentry kind="src" path="src/sjamayee/js_old/pmvc/bo/data"/>
+	<classpathentry kind="src" path="src/sjamayee/js_old/pmvc/bo/model"/>
+	<classpathentry kind="src" path="src/sjamayee/js_old/pmvc/controller/common"/>
+	<classpathentry kind="src" path="src/sjamayee/js_old/pmvc/controller/data"/>
+	<classpathentry excluding="texts/" kind="src" path="src/sjamayee/js_old/pmvc/controller/model"/>
+	<classpathentry kind="src" path="src/sjamayee/js_old/pmvc/controller/model/texts"/>
+	<classpathentry kind="src" path="src/sjamayee/js_old/pmvc/model/proxy/common"/>
+	<classpathentry kind="src" path="src/sjamayee/js_old/pmvc/model/proxy/data"/>
+	<classpathentry kind="src" path="src/sjamayee/js_old/pmvc/model/proxy/model"/>
+	<classpathentry kind="src" path="src/sjamayee/js_old/pmvc/model/vo/common"/>
+	<classpathentry kind="src" path="src/sjamayee/js_old/pmvc/model/vo/data"/>
+	<classpathentry kind="src" path="src/sjamayee/js_old/pmvc/model/vo/model"/>
+	<classpathentry excluding="model/texts/|model/|common/|data/" kind="src" path="src/sjamayee/js_old/pmvc/view/components"/>
+	<classpathentry kind="src" path="src/sjamayee/js_old/pmvc/view/components/common"/>
+	<classpathentry kind="src" path="src/sjamayee/js_old/pmvc/view/components/data"/>
+	<classpathentry excluding="texts/" kind="src" path="src/sjamayee/js_old/pmvc/view/components/model"/>
+	<classpathentry kind="src" path="src/sjamayee/js_old/pmvc/view/components/model/texts"/>
+	<classpathentry kind="src" path="src/sjamayee/js_old/pmvc/view/mediator/common"/>
+	<classpathentry kind="src" path="src/sjamayee/js_old/pmvc/view/mediator/data"/>
+	<classpathentry excluding="texts/" kind="src" path="src/sjamayee/js_old/pmvc/view/mediator/model"/>
+	<classpathentry kind="src" path="src/sjamayee/js_old/pmvc/view/mediator/model/texts"/>
+	<classpathentry kind="src" path="src/sjamayee/scramblers"/>
+	<classpathentry kind="src" path="src/sjamayee/settings"/>
+	<classpathentry kind="con" path="org.eclipse.wst.jsdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path=""/>
+</classpath>
