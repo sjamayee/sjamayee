@@ -1,0 +1,39 @@
+Sjamayee - New edition 20120613
+-------------------------------
+
+1. Inventarisatie van de toestand
+   - github
+   - versies on MacbookPro,Sony
+   - oude screenshots!!!
+   - laatste wijzigingen in js-bestanden (o.a. sjamayee_pmvc.js)
+   - Drupal on MacbookPro - recupereren
+   - Salesforce - situation?
+
+2. Refactor datamodel
+   - delete pid,nid-velden
+   - add veld seq (ipv. pid,nid) in references,attributes,texts,...
+   - bekijk impact on code ...
+   - datamodel should be as lite as possible with minor scrambling.
+
+3. Scramblers
+   - wat en wat niet!
+   - review, rewrite sjamayee4drupal,sjamayee4sf
+   - datamodel 
+   - should be possible to finish sjamayee4drupal for the most of the datasets!
+  
+4. SjamayeeGrid
+   - review/rewrite data-queries ifv. pid,nid -> seq (order by, greater than SEQ)
+   - should be much faster (get order by seq <> chained individual gets)
+   - review code starting from display empty grid!
+
+5. Model on sjamayee_server (drupal), Data on local (mongodb)
+   - what databases (drupal,mongodb,sqlite,...) 
+   - initial start with model on sjamayee_server
+   - data will be written local   
+   - model will be kept local with the data.
+   - restart with local model/data.
+
+6. Development environment - IDE
+   - situation?
+   - Eclipse!
+   - Browser/Debugger: Chrome
