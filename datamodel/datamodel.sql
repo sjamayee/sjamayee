@@ -1,6 +1,10 @@
 -- phpMyAdmin SQL Dump
 -- version 3.2.5
 
+************************************
+* deleted obsolete pid,nid fields. *
+************************************
+
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
 --
@@ -44,8 +48,8 @@ CREATE TABLE `sja_texts` (
   `id` varchar(255) NOT NULL COMMENT 'Primary ID',
   `version` smallint(6) NOT NULL DEFAULT '0' COMMENT 'Version',
   `name` varchar(255) DEFAULT NULL COMMENT 'Name',
-  `nid` varchar(255) DEFAULT NULL COMMENT 'Next ID',
-  `pid` varchar(255) DEFAULT NULL COMMENT 'Previous ID',
+--`nid` varchar(255) DEFAULT NULL COMMENT 'Next ID',
+--`pid` varchar(255) DEFAULT NULL COMMENT 'Previous ID',
   `par` char(8) NOT NULL DEFAULT '' COMMENT 'Paragraph',
   `seq` float NOT NULL DEFAULT '0' COMMENT 'Sequence',
   `text` longtext NOT NULL COMMENT 'Text',
@@ -88,8 +92,8 @@ CREATE TABLE `sja_references` (
   `mri` varchar(255) NOT NULL COMMENT 'Model Reference ID',
   `pei` varchar(255) NOT NULL COMMENT 'Parent entity ID',
   `cei` varchar(255) NOT NULL COMMENT 'Child entity ID',
-  `pid` varchar(255) DEFAULT NULL COMMENT 'Previous ID',
-  `nid` varchar(255) DEFAULT NULL COMMENT 'Next ID',
+--`pid` varchar(255) DEFAULT NULL COMMENT 'Previous ID',
+--`nid` varchar(255) DEFAULT NULL COMMENT 'Next ID',
   `txi` varchar(255) DEFAULT NULL COMMENT 'Text ID',
   `cbi` varchar(255) NOT NULL COMMENT 'Created by ID',
   `cat` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Created at',
@@ -118,7 +122,7 @@ CREATE TABLE `sja_attributes` (
   `label` varchar(255) DEFAULT NULL COMMENT 'Label',
   `length` smallint(6) NOT NULL DEFAULT '0' COMMENT 'Length',
   `mandatory` char(1) NOT NULL DEFAULT 'N' COMMENT 'Mandatory',
-  `nid` varchar(255) NOT NULL COMMENT 'Next ID',
+--`nid` varchar(255) NOT NULL COMMENT 'Next ID',
   `precision` smallint(6) NOT NULL DEFAULT '0' COMMENT 'Precision',
   `scale` smallint(6) NOT NULL DEFAULT '0' COMMENT 'Scale',
   `txi` varchar(255) DEFAULT NULL COMMENT 'Text ID',
