@@ -25,7 +25,8 @@ Sjamayee - New edition 20120613
    - review/rewrite data-queries ifv. pid,nid -> seq (order by, greater than SEQ)
    - should be much faster (get order by seq <> chained individual gets)
    - review code starting from display empty grid!
-
+   - HTML/grid with supporting code (js) is NOK - recup LAST VERSION from MacbookPro !!!
+   
 5. Model on sjamayee_server (drupal), Data on local (mongodb)
    - what databases (drupal,mongodb,sqlite,...) 
    - initial start with model on sjamayee_server
