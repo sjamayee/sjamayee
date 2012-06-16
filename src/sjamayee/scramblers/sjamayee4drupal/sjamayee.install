@@ -44,7 +44,7 @@ function _sjamayee_schema() {
       ),
       'value' => array(
         'description' => 'Value',
-        'type'         => 'serial',
+        'type'        => 'serial',
         'unsigned'    => TRUE,
         'not null'    => TRUE,
         'no export'   => TRUE,
@@ -111,8 +111,7 @@ function _sjamayee_schema() {
         'length'      => 255,
         'default'     => NULL,
       ),
-/*
-      'cbi' => array(
+/*    'cbi' => array(
         'description' => 'Created by ID',
         'type'        => 'varchar',
         'length'      => 255,
@@ -162,7 +161,7 @@ function _sjamayee_schema() {
         'size'        => 255,
         'default'     => NULL,
       ),
-      'nid' => array(
+    /*'nid' => array(
         'description' => 'Next ID',
         'type'        => 'varchar',
         'length'      => 255,
@@ -173,7 +172,7 @@ function _sjamayee_schema() {
         'type'        => 'varchar',
         'length'      => 255,
         'default'     => NULL,
-      ),
+      ),*/
       'par' => array(
         'description' => 'Paragraph',
         'type'        => 'char',
@@ -408,12 +407,19 @@ function _sjamayee_schema() {
         'not null'    => TRUE,
         'default'     => 'N',
       ),
-      'nid' => array(
+    /*'nid' => array(
         'description' => 'Next ID',
         'type'        => 'varchar',
         'length'      => 255,
         'default'     => NULL,
-      ),
+      ),*/
+      'seq' => array(
+        'description' => 'Sequence',
+        'type'        => 'float',
+        'size'        => 'big',
+        'not null'    => TRUE,
+        'default'     => 0,
+      ),      
       'precision' => array(
         'description' => 'Precision',
         'type'        => 'int',
@@ -517,7 +523,7 @@ function _sjamayee_schema() {
         'length'      => 255,
         'default'     => NULL,
       ),
-      'pid' => array(
+    /*'pid' => array(
         'description' => 'Previous ID',
         'type'        => 'varchar',
         'length'      => 255,
@@ -528,7 +534,14 @@ function _sjamayee_schema() {
         'type'        => 'varchar',
         'length'      => 255,
         'default'     => NULL,
-      ),
+      ),*/
+      'seq' => array(
+        'description' => 'Sequence',
+        'type'        => 'float',
+        'size'        => 'big',
+        'not null'    => TRUE,
+        'default'     => 0,
+      ),      
       'txi' => array(
         'description' => 'Text ID',
         'type'        => 'varchar',

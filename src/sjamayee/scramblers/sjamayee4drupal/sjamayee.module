@@ -66,7 +66,7 @@ function sjamayee_scramble() {
     //$model_references = db_select($R, 'r')->condition('r.pei', $model_object->id, '=')->execute();
     $model_references = db_query('select * from {' . $R . '} where pei = :pei', array(':pei' => $model_object->id));
     //_sjamayee_link_references($R, $model_references);
-    //_sjamayee_link_references($model_references);
+    _sjamayee_link_references($model_references);
   }
   //Link all data child references for one parent by previous and next id's.
   $data_objects = db_query('select * from {' . $O . '} where mei != NULL');
@@ -74,7 +74,7 @@ function sjamayee_scramble() {
     //$data_references = db_select($R, 'r')->condition('r.pei', $data_object->id, '=')->execute();
     $data_references = db_query('select * from {' . $R . '} where pei = :pei', array(':pei' => $data_object->id));
     //_sjamayee_link_references($R, $data_references);
-    //_sjamayee_link_references($data_references);
+    _sjamayee_link_references($data_references);
   }
 }
 
@@ -190,11 +190,10 @@ function _sjamayee_create_reference($fields) {
   return db_query('select * from {' . $R . '} where id = :id', array(':id' => $id))->fetchObject();
 }
 
-/* *** Deleted / Obsolete
 //Link all child references for one parent by previous and next id's.
 //function _sjamayee_link_references($dataset_name, $references) {
 function _sjamayee_link_references($references) {
-  $previous_reference = NULL;
+  /*$previous_reference = NULL;
   foreach ($references as $reference) {
     if (!$previous_reference) {
       $previous_reference = $reference;
@@ -204,9 +203,14 @@ function _sjamayee_link_references($references) {
     db_update($R)->fields(array('pid' => $previous_reference->id))->condition('id', $reference->id, '=')->execute();
     //Update nid
     db_update($R)->fields(array('nid' => $reference->id))->condition('id', $previous_reference->id, '=')->execute();
-  }
+  }*/
+  $sequence = 0;
+  foreach ($references as $reference) {
+	$sequence = $sequence + 1;
+    //Update sequence;
+    db_update($R)->fields(array('seq' => $sequence))->condition('id', $reference->id, '=')->execute();
+  }  
 }
-*/
 
 /***************************************************************/
 /* PROJECT_PLANNING IS JUST FOR DEMO / TEST - NOT FOR REAL !!! */
