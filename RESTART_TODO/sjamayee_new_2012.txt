@@ -38,3 +38,21 @@ Sjamayee - New edition 20120613
    - situation?
    - Eclipse!
    - Browser/Debugger: Chrome
+   
+7. Create a new light version - only browser.
+   - very light Javascript
+   - use of MongoDB
+   - small schema (objects,references)
+
+8. MongoDB Schema
+   - objects:
+  	 - id x(255),
+	 - name x(255),
+  	 - description text
+   - references:
+  	 - id x(255),
+  	 - name x(255),
+  	 - poi x(255),
+  	 - coi x(255),
+  	 - seq float
+   
