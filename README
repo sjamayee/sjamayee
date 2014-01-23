@@ -98,6 +98,7 @@ New/Other Goal: The same simple interface on all data sources, like:
 4. sjamayee4db      / Sjamayee on MySql, Oracle, ... (database).
 5. sjamayee4sap     / Sjamayee on SAP, Documentum and others.
 5. sjamayee4ppp     / Sjamayee on the Semantic Web (RDF) ...
-6. sjamayee4twitter / Sjamayee o Twitter: A view on Twitter.
+6. sjamayee4twitter / Sjamayee on Twitter: A view on Twitter.
+7. sjamayee4pebble  / Sjamayee on Peblle: A view on all your data! 
 
 OR a combination of these!
